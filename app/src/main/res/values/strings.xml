@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PlaneTracker</string>
+    <string name="title_activity_trip_view">Map</string>
+</resources>

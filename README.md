@@ -20,25 +20,30 @@ Please check out the prototype by clicking [right here!](https://abicelis.github
 [ ![](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/6%20image%20edit.png) ](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/6%20image%20edit.png)
 --->
 
+
 ## Skills learnt while building the app 
 - MVP: Model View Presenter with configuration change survival
 - New fancy architecture, loosely based on [ribot-boilerplate](https://github.com/ribot/android-boilerplate)
-- Dagger 2
-- Retrofit
-- Google Maps API
 - RxJava 2 and Rx Android!
-- Timber
-- Butterknife
-- APIs for flights and plane tracking
+- Retrofit
+- Dagger 2
+
 
 ## Code dependencies
 
 This Project uses external dependencies and SDK's
 
 * [Butterknife](https://github.com/JakeWharton/butterknife) - Android view binder library by JakeWharton
-* [Dagger 2](https://github.com/google/dagger) - Dependency Injection library by Square
+* [Timber](https://github.com/JakeWharton/timber) - Logger by JakeWharton
+* [Dagger 2](https://github.com/google/dagger) - Dependency Injection by Square
 * [TransitionsEverywhere](https://github.com/andkulikov/Transitions-Everywhere) - Backported Transitions library by andkulikov
 * [CircleImageView](https://github.com/hdodenhof/CircleImageView) - CircleImageView by hdodenhof
+
+
+## External APIs
+
+* [ADS-B Exchange](https://www.adsbexchange.com) - Flight Data API
+* [Google Maps API](https://developers.google.com/maps/) - Google Maps API
 
 
 ## Software used

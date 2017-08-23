@@ -23,7 +23,7 @@ Please check out the prototype by clicking [right here!](https://abicelis.github
 
 ## Skills learnt while building the app 
 - MVP: Model View Presenter with configuration change survival
-- New fancy architecture, loosely based on [ribot-boilerplate](https://github.com/ribot/android-boilerplate)
+- New fancy MVP+RxJava+DataLayer architecture, loosely based on [ribot-boilerplate](https://github.com/ribot/android-boilerplate)
 - RxJava 2 and Rx Android!
 - Retrofit
 - Dagger 2

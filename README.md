@@ -4,9 +4,9 @@ I don't like huge, slow, complicated, non-intuitive, odd-looking, bloated, add-r
 
 Its free, has NO ADS, looks great, lets you set trips with multiple flights. That's it.
 
-<!----
-Please check out the prototype by clicking [right here!](https://abicelis.github.io/ChefBuddyPrototype/ "Chef Buddy Prototype")
 
+Please check out the prototype by clicking [right here!](https://abicelis.github.io/PlaneTracker/ "PlaneTracker Prototype")
+<!----
 <a target="_blank" href='https://play.google.com/store/apps/details?id=ve.com.abicelis.chefbuddy&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="240px"/></a>
 
 ## Screenshots
@@ -25,8 +25,10 @@ Please check out the prototype by clicking [right here!](https://abicelis.github
 - MVP: Model View Presenter with configuration change survival
 - New fancy MVP+RxJava+DataLayer architecture, loosely based on [ribot-boilerplate](https://github.com/ribot/android-boilerplate)
 - RxJava 2 and Rx Android!
+- Java lambdas (retrolambda)
 - Retrofit
 - Dagger 2
+- Realm database
 
 
 ## Code dependencies
@@ -37,7 +39,12 @@ This Project uses external dependencies and SDK's
 * [Timber](https://github.com/JakeWharton/timber) - Logger by JakeWharton
 * [Dagger 2](https://github.com/google/dagger) - Dependency Injection by Square
 * [TransitionsEverywhere](https://github.com/andkulikov/Transitions-Everywhere) - Backported Transitions library by andkulikov
-* [CircleImageView](https://github.com/hdodenhof/CircleImageView) - CircleImageView by hdodenhof
+* [CircleImageView](https://github.com/hdodenhof/CircleImageView) - Circular ImageView by hdodenhof
+* [Gradle Retrolambda](https://github.com/evant/gradle-retrolambda) - Java lambda support by evant
+* [RxJava 2](https://github.com/ReactiveX/RxJava) - Reactive Extensions by ReactiveX
+* [RxAndroid](https://github.com/ReactiveX/RxAndroid) - RxJava bindings for Android by ReactiveX
+* [Retrofit](https://github.com/square/retrofit) - Type-safe HTTP client for Android by square
+* [Realm](https://github.com/realm/realm-java) - Realm mobile database by realm
 
 
 ## External APIs

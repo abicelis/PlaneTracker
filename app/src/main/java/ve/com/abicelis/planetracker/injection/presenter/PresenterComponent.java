@@ -9,7 +9,8 @@ import ve.com.abicelis.planetracker.ui.test.TestActivity;
 
 @Subcomponent(
         modules = {
-                PresenterModule.class
+                PresenterModule.class,
+                RemoteModule.class
         }
 )
 public interface PresenterComponent {

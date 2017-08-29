@@ -5,6 +5,7 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
+import ve.com.abicelis.planetracker.data.remote.FlightawareApi;
 import ve.com.abicelis.planetracker.ui.test.TestPresenter;
 
 /**
@@ -31,8 +32,8 @@ public class PresenterModule {
 
     /* Presenters */
     @Provides
-    TestPresenter testPresenter() {
-        return new TestPresenter();
+    TestPresenter testPresenter(FlightawareApi flightawareApi) {
+        return new TestPresenter(flightawareApi);
     }
 
 }

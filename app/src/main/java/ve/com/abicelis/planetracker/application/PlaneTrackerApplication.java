@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.UiThread;
 
+import timber.log.Timber;
+import ve.com.abicelis.planetracker.BuildConfig;
 import ve.com.abicelis.planetracker.injection.application.ApplicationComponent;
 import ve.com.abicelis.planetracker.injection.application.ApplicationModule;
 import ve.com.abicelis.planetracker.injection.application.DaggerApplicationComponent;
@@ -19,9 +21,16 @@ public class PlaneTrackerApplication extends Application {
 
     @Override
     public void onCreate() {
+        super.onCreate();
+
         getApplicationComponent().inject(this);
         mAppContext = this;
-        super.onCreate();
+
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+            //Fabric.with(this, new Crashlytics());
+        }
     }
 
     @UiThread

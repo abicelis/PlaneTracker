@@ -59,6 +59,7 @@ dependencies {
 
     //Room DB
     compile 'android.arch.persistence.room:runtime:' + rootProject.roomVersion;
+    compile 'android.arch.persistence.room:rxjava2:' + rootProject.roomVersion;
     annotationProcessor 'android.arch.persistence.room:compiler:' + rootProject.roomVersion;
 
 

@@ -3,14 +3,14 @@ apply plugin: 'me.tatarka.retrolambda'    //For Retrolambda, must be last plugin
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion rootProject.buildToolsVersion
     defaultConfig {
-        applicationId "ve.com.abicelis.planetracker"
+        applicationId 've.com.abicelis.planetracker'
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionName '1.0'
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
         release {
@@ -37,32 +37,40 @@ dependencies {
     })
 
     //Dagger 2
-    compile 'com.google.dagger:dagger:2.11'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+    compile 'com.google.dagger:dagger:' + rootProject.daggerVersion;
+    annotationProcessor 'com.google.dagger:dagger-compiler:' + rootProject.daggerVersion;
 
     // Butterknife
-    compile 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    compile 'com.jakewharton:butterknife:' + rootProject.butterknifeVersion;
+    annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.butterknifeVersion;
 
     //Timber
-    compile 'com.jakewharton.timber:timber:4.5.1'
+    compile 'com.jakewharton.timber:timber:' + rootProject.timberVersion;
 
 
     //Retrofit
-    compile "com.squareup.retrofit2:retrofit:2.3.0"
-    compile "com.squareup.retrofit2:converter-gson:2.3.0"
-    compile 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    compile 'com.squareup.retrofit2:retrofit:' + rootProject.retrofitVersion;
+    compile 'com.squareup.retrofit2:converter-gson:' + rootProject.retrofitVersion;
+    compile 'com.squareup.retrofit2:converter-scalars:' + rootProject.retrofitVersion;
 
+    //RxJava 2
+    compile 'io.reactivex.rxjava2:rxjava:' + rootProject.rxJavaVersion;
+    compile 'io.reactivex.rxjava2:rxandroid:' + rootProject.rxAndroidVersion;
+
+    //Room DB
+    compile 'android.arch.persistence.room:runtime:' + rootProject.roomVersion;
+    annotationProcessor 'android.arch.persistence.room:compiler:' + rootProject.roomVersion;
 
 
     //Play services
-    compile 'com.google.android.gms:play-services-maps:11.0.4'
+    compile 'com.google.android.gms:play-services-maps:' + rootProject.playServicesVersion;
 
     //Support
-    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
+    compile 'com.android.support:appcompat-v7:' + rootProject.supportLibVersion;
+    compile 'com.android.support:design:' + rootProject.supportLibVersion;
+    compile 'com.android.support:recyclerview-v7:' + rootProject.supportLibVersion;
+    compile 'com.android.support:cardview-v7:' + rootProject.supportLibVersion;
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
-    compile 'com.android.support:design:26.0.0-alpha1'
-    compile 'com.android.support:recyclerview-v7:26.0.0-alpha1'
-    compile 'com.android.support:cardview-v7:26.0.0-alpha1'
+
 
 }

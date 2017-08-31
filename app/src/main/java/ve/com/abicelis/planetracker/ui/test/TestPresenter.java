@@ -14,7 +14,9 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
+import ve.com.abicelis.planetracker.data.DataManager;
 import ve.com.abicelis.planetracker.data.local.AppDatabase;
+import ve.com.abicelis.planetracker.data.model.Airline;
 import ve.com.abicelis.planetracker.data.model.Airport;
 import ve.com.abicelis.planetracker.data.remote.FlightawareApi;
 import ve.com.abicelis.planetracker.ui.base.BasePresenter;
@@ -26,12 +28,10 @@ import ve.com.abicelis.planetracker.util.CalendarUtil;
 
 public class TestPresenter extends BasePresenter<TestMvpView> {
 
-    private FlightawareApi mFlightawareApi;
-    private AppDatabase mAppDatabase;
+    private DataManager mDataManager;
 
-    public TestPresenter(FlightawareApi flightawareApi, AppDatabase appDatabase){
-        mFlightawareApi = flightawareApi;
-        mAppDatabase = appDatabase;
+    public TestPresenter(DataManager dataManager){
+        mDataManager = dataManager;
     }
 
     public void getWelcomeMessage() {
@@ -39,51 +39,35 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
         getMvpView().showWelcomeMessage("WELCOME");
 
 
-        //Testing airport db
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
 
-                getUrls()
-                        .flatMap(new Function<List<String>, ObservableSource<?>>() {
-                            @Override
-                            public ObservableSource<?> apply(@NonNull List<String> strings) throws Exception {
-                                return Observable.fromIterable(strings);
-                            }
-                        })
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe();
 
-                Timber.e("Current thread! " + Thread.currentThread().toString());
-                mAppDatabase.airportDao().deleteAll();
-                mAppDatabase.airportDao().insert(new Airport(1, "La Chinita", "Maracaibo", "Venezuela", "MAR", "SVMC", 10, 10, 100, "GMT-4", "S", "America / Caracas?"));
-                mAppDatabase.airportDao().insert(new Airport(2, "La Chinitxa", "MaracaiboP", "Venezuela", "MAR", "SVMC", 10, 10, 100, "GMT-4", "S", "America / Caracas?"));
-                mAppDatabase.airportDao().insert(new Airport(3, "Some poop", "Maracaibo", "Venezuela", "MAR", "SVMC", 10, 10, 100, "GMT-4", "S", "America / Caracas?"));
-                mAppDatabase.airportDao().getAll()
+        new Thread(() -> {
+            //mDataManager.refreshAirlineData();
+            //mDataManager.refreshAirportData();
+
+//                mDataManager.deleteAllAirports();
+//                mDataManager.insertAirports(new Airport(1, "La Chinita", "Maracaibo", "Venezuela", "MAR", "SVMC", 10, 10, 100, "GMT-4", "S", "America / Caracas?"));
+//                mDataManager.insertAirports(new Airport(2, "La Chinitxa", "MaracaiboP", "Venezuela", "MAR", "SVMC", 10, 10, 100, "GMT-4", "S", "America / Caracas?"));
+//                mDataManager.insertAirports(new Airport(3, "Coconasa", "Maracaibo", "Venezuela", "MAR", "SVMC", 10, 10, 100, "GMT-4", "S", "America / Caracas?"));
+//
+//                mDataManager.deleteAllAirlines();
+//                mDataManager.insertAirlines(new Airline(1, "Copa Airlines", "", "CM", "CMP", "COPA", "Panama"));
+//                mDataManager.insertAirlines(new Airline(2, "Lufthansa", "", "LH", "DLH", "LUFTHANSA", "Germany"));
+//                mDataManager.insertAirlines(new Airline(3, "Marcopolo Airways", "", "", "MCP", "MARCOPOLO", "Afghanistan"));
+
+                mDataManager.findAirlinesOrAirports("york")
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.newThread())
-                        .subscribe(airports -> {
-                                    Timber.d("Got all airports");
+                        .subscribe(combinedSearchResult -> {
+                            Timber.d("Got a result! %s", combinedSearchResult.toString());
+                        }, throwable -> {
+                                                                Timber.e("Error fetching all airports");
 
-                                    for (Airport a : airports)
-                                        Timber.d("%s", a.toString());
-                                },
-                                throwable -> {
-                                    Timber.e("Error fetching all airports");
-                                });
-
-
-                mAppDatabase.airportDao().find("%chi%")
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.newThread())
-                        .subscribe(airports -> {
-                            for (Airport a : airports)
-                                Timber.d("Found an airport! %s", a.toString());
                         });
-            }
-        }).start();
+            }).start();
+
+
 
 
 

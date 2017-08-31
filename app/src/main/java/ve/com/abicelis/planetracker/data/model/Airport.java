@@ -70,8 +70,6 @@ public class Airport {
     }
 
     public long getId() {return mId;}
-    public void setId(long mId) {this.mId = mId;}
-
     public String getName() {return mName;}
     public String getCity() {return mCity;}
     public String getCountry() {return mCountry;}

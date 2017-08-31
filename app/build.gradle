@@ -52,6 +52,8 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:' + rootProject.retrofitVersion;
     compile 'com.squareup.retrofit2:converter-gson:' + rootProject.retrofitVersion;
     compile 'com.squareup.retrofit2:converter-scalars:' + rootProject.retrofitVersion;
+    compile 'com.squareup.retrofit2:adapter-rxjava2:' + rootProject.retrofitVersion;
+
 
     //RxJava 2
     compile 'io.reactivex.rxjava2:rxjava:' + rootProject.rxJavaVersion;

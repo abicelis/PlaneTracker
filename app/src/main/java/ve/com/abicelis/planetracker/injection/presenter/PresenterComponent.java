@@ -1,6 +1,7 @@
 package ve.com.abicelis.planetracker.injection.presenter;
 
 import dagger.Subcomponent;
+import ve.com.abicelis.planetracker.injection.application.RemoteModule;
 import ve.com.abicelis.planetracker.ui.test.TestActivity;
 
 /**
@@ -10,7 +11,6 @@ import ve.com.abicelis.planetracker.ui.test.TestActivity;
 @Subcomponent(
         modules = {
                 PresenterModule.class,
-                RemoteModule.class
         }
 )
 public interface PresenterComponent {

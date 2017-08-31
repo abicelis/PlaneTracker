@@ -2,6 +2,7 @@ package ve.com.abicelis.planetracker.injection.application;
 
 import dagger.Component;
 import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
+import ve.com.abicelis.planetracker.data.DataManager;
 import ve.com.abicelis.planetracker.injection.presenter.PresenterComponent;
 import ve.com.abicelis.planetracker.injection.presenter.PresenterModule;
 
@@ -12,7 +13,8 @@ import ve.com.abicelis.planetracker.injection.presenter.PresenterModule;
 @ApplicationScope
 @Component(
         modules = {
-                ApplicationModule.class
+                ApplicationModule.class,
+                RemoteModule.class
         }
 )
 public interface ApplicationComponent {
@@ -26,7 +28,7 @@ public interface ApplicationComponent {
     // Global dagger services, which should be instantiated only once per app lifecycle
     // A service to be injected into Application object
     // Services required by more than one sub-component of ApplicationComponent
-
+    DataManager dataManager();
 
 
 

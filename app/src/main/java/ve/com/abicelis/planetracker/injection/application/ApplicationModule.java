@@ -43,7 +43,8 @@ public class ApplicationModule {
     @ApplicationScope
     AppDatabase provideRoomAppDatabase(Application applicationContext, @Named(ROOM_DATABASE_NAME) String databaseName) {
         return Room.databaseBuilder(applicationContext,
-                AppDatabase.class, databaseName).build();
+                AppDatabase.class, databaseName).fallbackToDestructiveMigration().build();
+        //TODO remember to kill fallbackToDestructiveMigration() and provide a proper migration plan on prod!
     }
 
 }

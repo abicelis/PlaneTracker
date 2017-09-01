@@ -20,6 +20,12 @@ public interface AirportDao {
     @Query("SELECT * FROM airport")
     Single<List<Airport>> getAll();
 
+    @Query("SELECT * FROM airport where airport_id = :airportId")
+    Single<Airport> getById(long airportId);
+
+    @Query("SELECT * FROM airport where airport_id IN (:airportIds)")
+    Single<List<Airport>> getByIds(long[] airportIds);
+
     @Query("SELECT * FROM airport WHERE name LIKE :query OR iata LIKE :query OR icao LIKE :query")
     Single<List<Airport>> find(String query);
 

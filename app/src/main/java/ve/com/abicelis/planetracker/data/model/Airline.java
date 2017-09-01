@@ -58,12 +58,13 @@ public class Airline {
 
     @Override
     public String toString() {
-        return    "Airline ID=" + mId
-                + ": name=" + mName
-                + ": alias=" + mAlias
-                + ", iata=" + mIata
-                + ", icao=" + mIcao
-                + ", callsign=" + mCallsign
-                + ", country=" + mCountry;
+        return    "Airline ID="     + mId
+                + ": name="         + (mName != null ? mName : "NULL")
+                + ": alias="        + (mAlias != null ? mAlias : "NULL")
+                + ", iata="         + (mIata != null ? mIata : "NULL")
+                + ", icao="         + (mIcao != null ? mIcao : "NULL")
+                + ", callsign="     + (mCallsign != null ? mCallsign : "NULL")
+                + ", country="      + (mCountry != null ? mCountry : "NULL")
+                ;
     }
 }

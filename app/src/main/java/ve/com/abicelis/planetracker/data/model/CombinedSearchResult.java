@@ -55,11 +55,12 @@ public class CombinedSearchResult {
 
     @Override
     public String toString() {
-        return    "CombinedSearchResult ID=" + mId
-                + ": getmSearchResultType=" + mSearchResultType.name()
-                + ", name=" + mName
-                + ", iata=" + mIata
-                + ", icao=" + mIcao;
+        return    "CombinedSearchResult ID="    + mId
+                + ": getmSearchResultType="     + mSearchResultType.name()
+                + ", name="                     + (mName != null ? mName : "NULL")
+                + ", iata="                     + (mIata != null ? mIata : "NULL")
+                + ", icao="                     + (mIcao != null ? mIcao : "NULL")
+                ;
     }
 
     public enum SearchResultType {

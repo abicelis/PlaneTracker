@@ -5,6 +5,10 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.TimeZone;
+
+import ve.com.abicelis.planetracker.util.TimezoneUtil;
+
 /**
  * Created by abicelis on 29/8/2017.
  */
@@ -42,19 +46,19 @@ public class Airport {
     @ColumnInfo(name = "altitude")
     private int mAltitude;                  //In feet.
 
-    @ColumnInfo(name = "timezone")
-    private String mTimezone;               //Hours offset from UTC. Fractional hours are expressed as decimals, eg. India is 5.5.
+    @ColumnInfo(name = "timezone_offset")
+    private String mTimezoneOffset;         //Hours offset from UTC. Fractional hours are expressed as decimals, eg. India is 5.5.
 
-    @ColumnInfo(name = "dst")
-    private String mDst;                    //Daylight savings time. One of E (Europe), A (US/Canada), S (South America), O (Australia), Z (New Zealand), N (None) or U (Unknown)
-                                            //See also https://openflights.org/help/time.html
+    @ColumnInfo(name = "timezone_olson")    //Timezone in Olson format, eg. "America/Los_Angeles"
+    private String mTimezoneOlson;          // See https://en.wikipedia.org/wiki/Tz_database
 
-    @ColumnInfo(name = "timezone_tz")       //Timezone in "tz" (Olson) format, eg. "America/Los_Angeles".
-    private String mTimezoneTz;             //See https://en.wikipedia.org/wiki/Tz_database
+    @ColumnInfo(name = "dst")               //Daylight savings time. One of E (Europe), A (US/Canada), S (South America), O (Australia), Z (New Zealand), N (None) or U (Unknown)
+    private String mDst;                    //See also https://openflights.org/help/time.html
+
 
 
     public Airport(long id, String name, String city, String country, String iata, String icao, float latitude,
-                   float longitude, int altitude, String timezone, String dst, String timezoneTz) {
+                   float longitude, int altitude, String timezoneOffset, String timezoneOlson, String dst) {
         mId = id;
         mName = name;
         mCity = city;
@@ -64,9 +68,9 @@ public class Airport {
         mLatitude = latitude;
         mLongitude = longitude;
         mAltitude = altitude;
-        mTimezone = timezone;
+        mTimezoneOffset = timezoneOffset;
+        mTimezoneOlson = timezoneOlson;
         mDst = dst;
-        mTimezoneTz = timezoneTz;
     }
 
     public long getId() {return mId;}
@@ -78,24 +82,27 @@ public class Airport {
     public float getLatitude() {return mLatitude;}
     public float getLongitude() {return mLongitude;}
     public int getAltitude() {return mAltitude;}
-    public String getTimezone() {return mTimezone;}
+    public TimeZone getTimezone() {return TimezoneUtil.getTimeZoneFromString(mTimezoneOffset, mTimezoneOlson);}
+    public String getTimezoneOffset() {return mTimezoneOffset;}
+    public String getTimezoneOlson() {return mTimezoneOlson;}
     public String getDst() {return mDst;}
-    public String getTimezoneTz() {return mTimezoneTz;}
 
 
     @Override
     public String toString() {
-        return    "Airport ID=" + mId
-                + ": name=" + mName
-                + ", city=" + mCity
-                + ", country=" + mCountry
-                + ", iata=" + mIata
-                + ", icao=" + mIcao
-                + ", lat=" + mLatitude
-                + ", long=" + mLongitude
-                + ", altitude=" + mAltitude
-                + ", timezone=" + mTimezone
-                + ", dst=" + mDst
-                + ", timezone_tz=" + mTimezoneTz;
+        return    "Airport ID="         + mId
+                + ": name="             + (mName != null ? mName : "NULL")
+                + ", city="             + (mCity != null ? mCity : "NULL")
+                + ", country="          + (mCountry != null ? mCountry : "NULL")
+                + ", iata="             + (mIata != null ? mIata : "NULL")
+                + ", icao="             + (mIcao != null ? mIcao : "NULL")
+                + ", lat="              + mLatitude
+                + ", long="             + mLongitude
+                + ", altitude="         + mAltitude
+                + ", timezone="         + (getTimezone() != null ? getTimezone().getDisplayName() : "NULL")
+                + ", timezoneOffset="   + (mTimezoneOffset != null ? mTimezoneOffset : "NULL")
+                + ", timezoneOlson="    + (mTimezoneOlson != null ? mTimezoneOlson : "NULL")
+                + ", dst="              + (mDst != null ? mDst : "NULL")
+                ;
     }
 }

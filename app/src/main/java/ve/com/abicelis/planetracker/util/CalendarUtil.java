@@ -11,6 +11,7 @@ import java.util.TimeZone;
 
 public class CalendarUtil {
 
+
     public static Calendar getZeroedCalendarFromYearMonthDay(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -26,6 +27,7 @@ public class CalendarUtil {
 
     public static Calendar getNewInstanceZeroedCalendarForTimezone(TimeZone timeZone) {
         Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(timeZone);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);

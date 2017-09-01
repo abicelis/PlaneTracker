@@ -3,6 +3,7 @@ package ve.com.abicelis.planetracker.injection.application;
 import dagger.Component;
 import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
 import ve.com.abicelis.planetracker.data.DataManager;
+import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.injection.presenter.PresenterComponent;
 import ve.com.abicelis.planetracker.injection.presenter.PresenterModule;
 
@@ -14,7 +15,8 @@ import ve.com.abicelis.planetracker.injection.presenter.PresenterModule;
 @Component(
         modules = {
                 ApplicationModule.class,
-                RemoteModule.class
+                RemoteModule.class,
+                LocalModule.class
         }
 )
 public interface ApplicationComponent {
@@ -29,6 +31,7 @@ public interface ApplicationComponent {
     // A service to be injected into Application object
     // Services required by more than one sub-component of ApplicationComponent
     DataManager dataManager();
+    SharedPreferenceHelper sharedPreferenceHelper();
 
 
 

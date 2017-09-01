@@ -8,17 +8,12 @@ import java.util.TimeZone;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import ve.com.abicelis.planetracker.data.DataManager;
-import ve.com.abicelis.planetracker.data.local.AppDatabase;
-import ve.com.abicelis.planetracker.data.model.Airline;
 import ve.com.abicelis.planetracker.data.model.Airport;
-import ve.com.abicelis.planetracker.data.remote.FlightawareApi;
 import ve.com.abicelis.planetracker.ui.base.BasePresenter;
 import ve.com.abicelis.planetracker.util.CalendarUtil;
 
@@ -38,11 +33,42 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
         checkViewAttached();
         getMvpView().showWelcomeMessage("WELCOME");
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mDataManager.refreshAirportData();
+                mDataManager.refreshAirlineData();
+
+                mDataManager.findAirports("Chinita")
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.newThread())
+                        .firstElement()
+                        .subscribe(origin -> {
+
+                            mDataManager.findAirports("Tocumen")
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribeOn(Schedulers.newThread())
+                                    .firstElement()
+                                    .subscribe(destination -> {
+
+                                        mDataManager.findFlightsByRoute(origin, destination, Calendar.getInstance())
+                                                .observeOn(AndroidSchedulers.mainThread())
+                                                .subscribeOn(Schedulers.newThread())
+                                                .subscribe(flight -> {
+                                                    Timber.d("Got a result! %s", flight.toString());
+
+                                                });
+                                    });
+
+                        }, throwable -> {
+                            Timber.e("Error fetching all airports");
+                        });
+            }
+        }).start();
 
 
 
-
-        new Thread(() -> {
+//        new Thread(() -> {
             //mDataManager.refreshAirlineData();
             //mDataManager.refreshAirportData();
 
@@ -56,16 +82,16 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
 //                mDataManager.insertAirlines(new Airline(2, "Lufthansa", "", "LH", "DLH", "LUFTHANSA", "Germany"));
 //                mDataManager.insertAirlines(new Airline(3, "Marcopolo Airways", "", "", "MCP", "MARCOPOLO", "Afghanistan"));
 
-                mDataManager.findAirlinesOrAirports("york")
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.newThread())
-                        .subscribe(combinedSearchResult -> {
-                            Timber.d("Got a result! %s", combinedSearchResult.toString());
-                        }, throwable -> {
-                                                                Timber.e("Error fetching all airports");
-
-                        });
-            }).start();
+//                mDataManager.findAirlinesOrAirports("york")
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeOn(Schedulers.newThread())
+//                        .subscribe(combinedSearchResult -> {
+//                            Timber.d("Got a result! %s", combinedSearchResult.toString());
+//                        }, throwable -> {
+//                                                                Timber.e("Error fetching all airports");
+//
+//                        });
+//            }).start();
 
 
 

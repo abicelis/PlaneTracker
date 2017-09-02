@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
 import io.reactivex.Maybe;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 import ve.com.abicelis.planetracker.application.Constants;
@@ -18,14 +17,13 @@ import ve.com.abicelis.planetracker.data.local.AppDatabase;
 import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.data.model.Airline;
 import ve.com.abicelis.planetracker.data.model.Airport;
-import ve.com.abicelis.planetracker.data.model.CombinedSearchResult;
 import ve.com.abicelis.planetracker.data.model.Flight;
+import ve.com.abicelis.planetracker.data.model.exception.ErrorParsingDataException;
 import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedulesFlights;
 import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedulesResponse;
 import ve.com.abicelis.planetracker.data.remote.FlightawareApi;
 import ve.com.abicelis.planetracker.data.remote.OpenFlightsApi;
 import ve.com.abicelis.planetracker.util.CalendarUtil;
-import ve.com.abicelis.planetracker.util.TimezoneUtil;
 
 /**
  * Created by abicelis on 29/8/2017.
@@ -46,18 +44,26 @@ public class DataManager {
         mOpenFlightsApi = openFlightsApi;
     }
 
+
+
+    //TODO kill these, are only here for testing purposes
+    public AppDatabase getDatabase() {
+        return mAppDatabase;
+    }
+
+
+
     /**
      * Queries openflights.org for a recent list of Airline data and refreshes the local db
      */
-    public void refreshAirlineData(){
-        mAppDatabase.airlineDao().deleteAll();
+    public void refreshAirlineData() throws ErrorParsingDataException {
         mOpenFlightsApi.getAirlines()
                 .subscribe(s -> {
                     String lines[] = s.split("\\n");
                     List<Airline> airlines = new ArrayList<>();
 
                     for (String line : lines) {
-                        String fields[] = line.split(",");
+                        String fields[] = line.split(Constants.OPENFLIGHTS_SEPARATOR);
                         if(fields.length == Constants.OPENFLIGHTS_AIRLINES_FIELDS) {
                             try {
                                 long id =           Long.parseLong(fields[0]);
@@ -70,31 +76,34 @@ public class DataManager {
 
                                 if(id != -1)
                                     airlines.add(new Airline(id, name, alias, iata, icao, callsign, country));
-                            }catch (Exception e) {
-                                    /* Just skip it */
-                            }
+                            }catch (Exception e) {/* Just skip the line */}
                         }
                     }
-                    insertAirlines(airlines.toArray(new Airline[airlines.size()]));
 
+                    if(airlines.size() > 0) {
+                        //Delete old data
+                        mAppDatabase.airlineDao().deleteAll();
+                        //Insert new data
+                        mAppDatabase.airlineDao().insert(airlines.toArray(new Airline[airlines.size()]));
+                    } else {
+                        throw new ErrorParsingDataException("Received airline data, but could not extract Airlines from it. Maybe data was corrupted");
+                    }
                 }, throwable -> {
-                    //TODO notify the error somewhere? idk
+                    throw new ErrorParsingDataException("Error. Did not receive airline data");
                 });
     }
 
     /**
      * Queries openflights.org for a recent list of Airport data and refreshes the local db
      */
-    public void refreshAirportData(){
-
-        mAppDatabase.airportDao().deleteAll();
+    public void refreshAirportData() throws ErrorParsingDataException {
         mOpenFlightsApi.getAirports()
                 .subscribe(s -> {
                     String lines[] = s.split("\\n");
                     List<Airport> airports = new ArrayList<>();
 
                     for (String line : lines) {
-                        String fields[] = line.split(",");
+                        String fields[] = line.split(Constants.OPENFLIGHTS_SEPARATOR);
                         if(fields.length == Constants.OPENFLIGHTS_AIRPORTS_FIELDS) {
                             try {
                                 long id =               Long.parseLong(fields[0]);
@@ -110,15 +119,20 @@ public class DataManager {
                                 String dst =            (fields[10].equals("\\N") ? "" : fields[10].replace("\"", "").trim());
                                 String timezoneOlsen =  (fields[11].equals("\\N") ? "" : fields[11].replace("\"", "").trim());
                                 airports.add(new Airport(id, name, city, country, iata, icao, latitude, longitude, altitude, timezoneOffset, timezoneOlsen, dst));
-                            }catch (Exception e) {
-                                /* Just skip it */
-                            }
+                            }catch (Exception e) {/* Just skip the line */}
                         }
                     }
-                    insertAirports(airports.toArray(new Airport[airports.size()]));
 
+                    if(airports.size() > 0) {
+                        //Delete old data
+                        mAppDatabase.airportDao().deleteAll();
+                        //Insert new data
+                        mAppDatabase.airportDao().insert(airports.toArray(new Airport[airports.size()]));
+                    } else {
+                        throw new ErrorParsingDataException("Received airport data, but could not extract Airports from it. Maybe data was corrupted");
+                    }
                 }, throwable -> {
-                    //TODO notify the error somewhere? idk
+                    throw new ErrorParsingDataException("Error. Did not receive airport data", throwable);
                 });
     }
 
@@ -127,83 +141,95 @@ public class DataManager {
     /**
      * Queries local sharedPreferences for recent airline ids. If they exist, this method fetches
      * them on the local db.
-     * @return An Observable if Airlines
+     * @return A Maybe if {@code List<Airline>}
      */
-    public Observable<Airline> getRecentAirlines() {
+    public Maybe<List<Airline>> getRecentAirlines() {
         long[] recentAirlineIds = mSharedPreferenceHelper.getRecentAirlineIds();
-        return mAppDatabase.airlineDao().getByIds(recentAirlineIds)
-                .toObservable()
-                .flatMap(new Function<List<Airline>, ObservableSource<Airline>>() {
-                    @Override
-                    public ObservableSource<Airline> apply(@NonNull List<Airline> airlines) throws Exception {
-                        return Observable.fromIterable(airlines);
-                    }
-                });
+        return mAppDatabase.airlineDao().getByIds(recentAirlineIds);
     }
 
     /**
      * Queries local sharedPreferences for recent airport ids. If they exist, this method fetches
      * them on the local db.
-     * @return An Observable if Airports
+     * @return A Maybe if {@code List<Airport>}
      */
-    public Observable<Airport> getRecentAirports() {
+    public Maybe<List<Airport>> getRecentAirports() {
         long[] recentAirportIds = mSharedPreferenceHelper.getRecentAirportIds();
-        return mAppDatabase.airportDao().getByIds(recentAirportIds)
-                .toObservable()
-                .flatMap(new Function<List<Airport>, ObservableSource<Airport>>() {
-                    @Override
-                    public ObservableSource<Airport> apply(@NonNull List<Airport> airports) throws Exception {
-                        return Observable.fromIterable(airports);
-                    }
-                });
+        return mAppDatabase.airportDao().getByIds(recentAirportIds);
     }
 
 
+//    /**
+//     * Returns an Observable of {@link CombinedSearchResult}, which can return a list of
+//     * Airports and/or Airlines, this search queries the local db.
+//     * @param query A string with which Airports and Airlines will be searched for. This method will
+//     *              query the db by Airline/Airport name, IATA and ICAO.
+//     */
+//    public Maybe<List<CombinedSearchResult>> findAirlinesOrAirports(@NonNull String query) {
+//        if(query.isEmpty())
+//            return Maybe.error(InvalidParameterException::new);
+//
+//        query = "%"+query+"%";
+//
+//        Maybe<List<CombinedSearchResult>> result = mAppDatabase.airportDao().find(query)
+//                .subscribe(airports -> {
+//                    Maybe<List<Airline>> airlines = mAppDatabase.airlineDao().find(query)
+//                            .subscribe(airlines1 -> )
+//                },throwable -> {
+//
+//                },() -> {
+//
+//                })
+//                .map(new Function<List<Airport>, List<CombinedSearchResult>>() {
+//                    @Override
+//                    public List<CombinedSearchResult> apply(@NonNull List<Airport> airports) throws Exception {
+//                        List<CombinedSearchResult> result = new ArrayList<>();
+//                        for (Airport a : airports)
+//                            result.add(new CombinedSearchResult(a));
+//                        return result;
+//                    }
+//                });
+//
+//
+//        Maybe<List<CombinedSearchResult>> airports = mAppDatabase.airportDao().find(query)
+//                .map(new Function<List<Airport>, List<CombinedSearchResult>>() {
+//                    @Override
+//                    public List<CombinedSearchResult> apply(@NonNull List<Airport> airports) throws Exception {
+//                        List<CombinedSearchResult> result = new ArrayList<>();
+//                        for (Airport a : airports)
+//                            result.add(new CombinedSearchResult(a));
+//                        return result;
+//                    }
+//                });
+//
+//        Maybe<List<CombinedSearchResult>> airlines = mAppDatabase.airlineDao().find(query)
+//                .map(new Function<List<Airline>, List<CombinedSearchResult>>() {
+//                    @Override
+//                    public List<CombinedSearchResult> apply(@NonNull List<Airline> airlines) throws Exception {
+//                        List<CombinedSearchResult> result = new ArrayList<>();
+//                        for (Airline a : airlines)
+//                            result.add(new CombinedSearchResult(a));
+//                        return result;
+//                    }
+//                });
+//
+//        return Maybe.concat(airports, airlines);
+//    }
 
     /**
-     * Returns an Observable of {@link CombinedSearchResult}, which can return a list of
-     * Airports and/or Airlines, this search queries the local db.
-     * @param query A string with which Airports and Airlines will be searched for. This method will
-     *              query the db by Airline/Airport name, IATA and ICAO.
+     * Returns an Observable of {@link Airline}, which can return a list of
+     * Airlines, this search queries the local db.
+     * @param query A string with which Airlines will be searched for. This method will
+     *              query the db by Airport name, IATA and ICAO.
      */
-    public Observable<CombinedSearchResult> findAirlinesOrAirports(@NonNull String query) {
+    public Maybe<List<Airline>> findAirlines(@NonNull String query) {
         if(query.isEmpty())
-            return Observable.error(InvalidParameterException::new);
+            return Maybe.error(InvalidParameterException::new);
 
         query = "%"+query+"%";
-
-        Observable<CombinedSearchResult> airports = mAppDatabase.airportDao().find(query)
-                .toObservable()
-                .flatMap(new Function<List<Airport>, Observable<Airport>>() {
-                    @Override
-                    public Observable<Airport> apply(@NonNull List<Airport> airports) throws Exception {
-                        return Observable.fromIterable(airports);
-                    }
-                })
-                .map(new Function<Airport, CombinedSearchResult>() {
-                    @Override
-                    public CombinedSearchResult apply(@NonNull Airport airport) throws Exception {
-                        return new CombinedSearchResult(airport);
-                    }
-                });
-
-        Observable<CombinedSearchResult> airlines = mAppDatabase.airlineDao().find(query)
-                .toObservable()
-                .flatMap(new Function<List<Airline>, Observable<Airline>>() {
-                    @Override
-                    public Observable<Airline> apply(@NonNull List<Airline> airlines) throws Exception {
-                        return Observable.fromIterable(airlines);
-                    }
-                })
-                .map(new Function<Airline, CombinedSearchResult>() {
-                    @Override
-                    public CombinedSearchResult apply(@NonNull Airline airline) throws Exception {
-                        return new CombinedSearchResult(airline);
-                    }
-                });
-
-        return Observable.concat(airports, airlines);
+        return mAppDatabase.airlineDao().find(query);
     }
+
 
     /**
      * Returns an Observable of {@link Airport}, which can return a list of
@@ -211,20 +237,12 @@ public class DataManager {
      * @param query A string with which Airports will be searched for. This method will
      *              query the db by Airport name, IATA and ICAO.
      */
-    public Observable<Airport> findAirports(@NonNull String query) {
+    public Maybe<List<Airport>> findAirports(@NonNull String query) {
         if(query.isEmpty())
-            return Observable.error(InvalidParameterException::new);
+            return Maybe.error(InvalidParameterException::new);
 
         query = "%"+query+"%";
-
-        return mAppDatabase.airportDao().find(query)
-                .toObservable()
-                .flatMap(new Function<List<Airport>, Observable<Airport>>() {
-                    @Override
-                    public Observable<Airport> apply(@NonNull List<Airport> airports) throws Exception {
-                        return Observable.fromIterable(airports);
-                    }
-                });
+        return mAppDatabase.airportDao().find(query);
     }
 
 
@@ -238,9 +256,9 @@ public class DataManager {
      * @param origin The origin Airport
      * @param destination The destination Airport
      * @param day The day when to look for flights
-     * @return An Observable of Flights
+     * @return An Maybe of {@code List<Flight>}
      */
-    public Observable<Flight> findFlightsByRoute(Airport origin, Airport destination, Calendar day) {
+    public Maybe<List<Flight>> findFlightsByRoute(Airport origin, Airport destination, Calendar day) {
 
         //Get origin airport's timezone, to get the start and end UNIX times based on that airport's timezone
         TimeZone originTz = origin.getTimezone();
@@ -256,26 +274,10 @@ public class DataManager {
         long startTodayEpoch = startToday.getTimeInMillis() / 1000L;
         long endTodayEpoch = endToday.getTimeInMillis() / 1000L;
 
-
-
-        // 1. Figure out the local timezone GMT of the departure airport!, lets say departure is MAR, so my local time.
-        //Start of day at departure airport's timezone.
-//        TimeZone tz = TimeZone.getTimeZone("GMT-4");
-//        Calendar startToday = CalendarUtil.getNewInstanceZeroedCalendarForTimezone(tz);
-//        Calendar endToday = CalendarUtil.getNewInstanceZeroedCalendarForTimezone(tz);
-//        CalendarUtil.copyCalendar(startToday, endToday);
-//
-//        endToday.add(Calendar.DATE, 1);
-//        endToday.add(Calendar.MILLISECOND, -1);
-//
-//        long startTodayEpoch = startToday.getTimeInMillis() / 1000L;
-//        long endTodayEpoch = endToday.getTimeInMillis() / 1000L;
-
-
         return mFlightawareApi.getFlightSchedulesByRoute(String.valueOf(startTodayEpoch), String.valueOf(endTodayEpoch), origin.getIata(), destination.getIata())
-                .flatMap(new Function<AirlineFlightSchedulesResponse, ObservableSource<Flight>>() {
+                .map(new Function<AirlineFlightSchedulesResponse, List<Flight>>() {
                     @Override
-                    public ObservableSource<Flight> apply(@NonNull AirlineFlightSchedulesResponse airlineFlightSchedulesResponse) throws Exception {
+                    public List<Flight> apply(@NonNull AirlineFlightSchedulesResponse airlineFlightSchedulesResponse) throws Exception {
                         List<Flight> flights = new ArrayList<>();
                         for(AirlineFlightSchedulesFlights f : airlineFlightSchedulesResponse.getResult().getFlights()) {
                             Calendar departure = CalendarUtil.getNewInstanceZeroedCalendar();
@@ -283,37 +285,22 @@ public class DataManager {
 
                             Calendar arrival = CalendarUtil.getNewInstanceZeroedCalendar();
                             arrival.setTimeInMillis(f.getArrivaltime()*1000);
-                            flights.add(new Flight(origin, destination, null, departure, arrival, f.getIdent()));
-                        }
 
-                        return Observable.fromIterable(flights);
+                            //Extract 3-letter ICAO code from f.getIdent()
+                            Pattern icaoRegex = Pattern.compile("^[A-Za-z]{3}\\d*$");
+                            Airline airline = null;
+                            if (icaoRegex.matcher(f.getIdent()).matches()) {
+                                String icao = f.getIdent().substring(0, 3);
+                                airline = mAppDatabase.airlineDao().getByIcao(icao).blockingGet();
+                            }
+
+                            flights.add(new Flight(f.getFaIdent(), f.getIdent(), origin, destination, airline, departure, arrival, f.getAircraftType()));
+                        }
+                        return flights;
                     }
                 });
-
-
     }
 
 
 
-
-
-
-    /* AIRPORTS LOCAL DB */
-    public void insertAirports(Airport ... airports) {
-        mAppDatabase.airportDao().insert(airports);
-    }
-
-    public void deleteAllAirports() {
-        mAppDatabase.airportDao().deleteAll();
-    }
-
-
-    /* AIRLINES LOCAL DB */
-    public void insertAirlines(Airline ... airlines) {
-        mAppDatabase.airlineDao().insert(airlines);
-    }
-
-    public void deleteAllAirlines() {
-        mAppDatabase.airlineDao().deleteAll();
-    }
 }

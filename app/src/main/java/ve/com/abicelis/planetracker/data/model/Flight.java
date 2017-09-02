@@ -12,12 +12,14 @@ import java.util.Calendar;
 @Entity(tableName = "flight")
 public class Flight {
 
-
     @ColumnInfo(name = "flight_id")
     private long mId;
 
+    @ColumnInfo(name = "flight_aware_id")
+    private String mFlightAwareId;
+
     @ColumnInfo(name = "callsign")
-    private String mCallsign;                //CMP317
+    private String mCallsign;                //CMP317       Airline 3-letter ICAO Flight #
 
     @ColumnInfo(name = "origin")
     private Airport mOrigin;
@@ -34,9 +36,8 @@ public class Flight {
     @ColumnInfo(name = "arrival")
     private Calendar mArrival;
 
-
-    @Ignore
-    private String aircraftModel;           //Boeing 737NG 8V3/W
+    @ColumnInfo(name = "aircraft_model")
+    private String mAircraftModel;           //E190      Embraer 190
 
     @Ignore
     private double latitude;
@@ -57,33 +58,39 @@ public class Flight {
     private float heading;                  //In degrees
 
 
-    public Flight(Airport origin, Airport destination, Airline airline, Calendar departure, Calendar arrival, String callsign) {
+    public Flight(String flightAwareId, String callsign, Airport origin, Airport destination, Airline airline, Calendar departure, Calendar arrival, String aircraftModel) {
+        mFlightAwareId = flightAwareId;
+        mCallsign = callsign;
         mOrigin = origin;
         mDestination = destination;
         mAirline = airline;
         mDeparture = departure;
         mArrival = arrival;
-        mCallsign = callsign;
+        mAircraftModel = aircraftModel;
     }
 
+    public String getFlightAwareId() {return mFlightAwareId;}
+    public String getCallsign() {return mCallsign;}
     public Airport getOrigin() {return mOrigin;}
     public Airport getDestination() {return mDestination;}
     public Airline getAirline() {return mAirline;}
     public Calendar getDeparture() {return mDeparture;}
     public Calendar getArrival() {return mArrival;}
-    public String getCallsign() {return mCallsign;}
+    public String getAircraftModel() {return mAircraftModel;}
 
 
 
     @Override
     public String toString() {
         return    "Flight ID="      + mId
-                + ": origin="       + (mOrigin != null ? mOrigin.toString() : "NULL")
-                + ", destination="  + (mDestination != null ? mDestination.toString() : "NULL")
-                + ", airline="      + (mAirline != null ? mAirline.toString() : "NULL")
-                + ", departure="    + (mDeparture != null ? mDeparture.getTime().toString() : "NULL")
-                + ", arrival="      + (mArrival != null ? mArrival.getTime().toString() : "NULL")
-                + ", callsign="     + (mCallsign != null ? mCallsign : "NULL")
+                + "\n   flightAwareID=" + (mFlightAwareId != null ? mFlightAwareId : "NULL")
+                + "\n   callsign="      + (mCallsign != null ? mCallsign : "NULL")
+                + "\n   origin="        + (mOrigin != null ? mOrigin.toString() : "NULL")
+                + "\n   destination="   + (mDestination != null ? mDestination.toString() : "NULL")
+                + "\n   airline="       + (mAirline != null ? mAirline.toString() : "NULL")
+                + "\n   departure="     + (mDeparture != null ? mDeparture.getTime().toString() : "NULL")
+                + "\n   arrival="       + (mArrival != null ? mArrival.getTime().toString() : "NULL")
+                + "\n   aircraftModel=" + (mAircraftModel != null ? mAircraftModel : "NULL")
                 ;
     }
 }

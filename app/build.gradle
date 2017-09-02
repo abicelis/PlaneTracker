@@ -75,5 +75,6 @@ dependencies {
     compile 'com.android.support:cardview-v7:' + rootProject.supportLibVersion;
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
 
-
+    //Picasso
+    compile 'com.squareup.picasso:picasso:' + rootProject.picassoVersion;
 }

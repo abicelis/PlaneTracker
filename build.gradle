@@ -45,4 +45,5 @@ ext {
     roomVersion = '1.0.0-alpha9'
     playServicesVersion = '11.0.4'
     supportLibVersion = '26.0.0'
+    picassoVersion = '2.5.2'
 }

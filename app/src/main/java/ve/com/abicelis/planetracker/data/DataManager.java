@@ -1,5 +1,10 @@
 package ve.com.abicelis.planetracker.data;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+
+import com.squareup.picasso.Picasso;
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,6 +15,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 import ve.com.abicelis.planetracker.application.Constants;
@@ -23,6 +29,7 @@ import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedule
 import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedulesResponse;
 import ve.com.abicelis.planetracker.data.remote.FlightawareApi;
 import ve.com.abicelis.planetracker.data.remote.OpenFlightsApi;
+import ve.com.abicelis.planetracker.data.remote.QwantApi;
 import ve.com.abicelis.planetracker.util.CalendarUtil;
 
 /**
@@ -35,13 +42,17 @@ public class DataManager {
     private SharedPreferenceHelper mSharedPreferenceHelper;
     private FlightawareApi mFlightawareApi;
     private OpenFlightsApi mOpenFlightsApi;
+    private QwantApi mQwantApi;
 
     @Inject
-    public DataManager(AppDatabase appDatabase, SharedPreferenceHelper sharedPreferenceHelper, FlightawareApi flightawareApi, OpenFlightsApi openFlightsApi) {
+    public DataManager(AppDatabase appDatabase, SharedPreferenceHelper sharedPreferenceHelper,
+                       FlightawareApi flightawareApi, OpenFlightsApi openFlightsApi,
+                       QwantApi qwantApi) {
         mAppDatabase = appDatabase;
         mSharedPreferenceHelper = sharedPreferenceHelper;
         mFlightawareApi = flightawareApi;
         mOpenFlightsApi = openFlightsApi;
+        mQwantApi = qwantApi;
     }
 
 
@@ -302,5 +313,82 @@ public class DataManager {
     }
 
 
+    /**
+     * Given an Airline, a flight number and a day, this method looks for Flights
+     * using FlightAware API's getFlightSchedulesByFlightNumber()
+     * @param airline Fileting by this airline
+     * @param flightNumber The number of the flight to search for
+     * @param day The day when to look for the flight
+     * @return An Maybe of {@code List<Flight>}
+     */
+    public Maybe<Flight> findFlightsByFlightNumber(Airline airline, int flightNumber, Calendar day) {
 
+
+        Calendar start = CalendarUtil.getZeroedCalendarFromYearMonthDay(day.get(Calendar.YEAR), day.get(Calendar.MONTH), day.get(Calendar.DAY_OF_MONTH));
+        Calendar end = Calendar.getInstance();
+        CalendarUtil.copyCalendar(start, end);
+
+        start.add(Calendar.DATE, -1);
+        end.add(Calendar.DATE, 1);
+
+        long startEpoch = start.getTimeInMillis() / 1000L;
+        long endEpoch = end.getTimeInMillis() / 1000L;
+
+        return mFlightawareApi.getFlightScheduleByFlightNumber(String.valueOf(startEpoch), String.valueOf(endEpoch), airline.getIcao(), flightNumber)
+                .map(new Function<AirlineFlightSchedulesResponse, Flight>() {
+                    @Override
+                    public Flight apply(@NonNull AirlineFlightSchedulesResponse airlineFlightSchedulesResponse) throws Exception {
+
+
+                        //Get departing airport, get its timezone, check if the departure date of the flight is the same day as Calendar day
+                        //If so... proceed to return that flight. Remember to return only one flight!
+                        //The flight on "Calendar day" @param
+
+                        List<Flight> flights = new ArrayList<>();
+                        for (AirlineFlightSchedulesFlights f : airlineFlightSchedulesResponse.getResult().getFlights()) {
+
+                            Airport origin = mAppDatabase.airportDao().getByIcao(f.getOrigin()).blockingGet();
+                            if (origin != null) {
+
+                                //Calculate the start and end of the day at the departure airport's timezone!
+                                Calendar startToday = CalendarUtil.getZeroedCalendarFromYearMonthDay(day.get(Calendar.YEAR), day.get(Calendar.MONTH), day.get(Calendar.DAY_OF_MONTH));
+                                startToday.setTimeZone(origin.getTimezone());
+                                Calendar endToday = CalendarUtil.getNewInstanceZeroedCalendarForTimezone(origin.getTimezone());
+                                CalendarUtil.copyCalendar(startToday, endToday);
+                                endToday.add(Calendar.DATE, 1);
+                                endToday.add(Calendar.MILLISECOND, -1);
+
+                                //Get Calendar of flight departure
+                                Calendar flightDeparture = CalendarUtil.getNewInstanceZeroedCalendar();
+                                flightDeparture.setTimeInMillis(f.getDeparturetime());
+                                flightDeparture.setTimeZone(origin.getTimezone());
+
+                                if (flightDeparture.compareTo(startToday) >= 0 && flightDeparture.compareTo(endToday) <= 0) {
+                                    //What we're looking for!
+                                    Airport destination = mAppDatabase.airportDao().getByIcao(f.getDestination()).blockingGet();
+                                    Calendar flightArrival = CalendarUtil.getNewInstanceZeroedCalendar();
+                                    flightArrival.setTimeInMillis(f.getArrivaltime());
+                                    flightArrival.setTimeZone(destination.getTimezone());
+
+                                    return new Flight(f.getFaIdent(), f.getIdent(), origin, destination, airline, flightDeparture, flightArrival, f.getAircraftType());
+                                }
+
+
+                            }
+                        }
+                        //TODO figure how to return an empty maybe!
+                        //return Maybe.empty();
+                        return null;
+                    }
+                });
+    }
+
+
+    Single<Bitmap> getImageUrl(Context context, String query) {
+        return mQwantApi.getImage(query)
+                .map(url -> {
+                    //TODO: maybe resize the image if too large? Use an ImageUtil for that or something.
+                    return Picasso.with(context).load(url).get();
+                });
+    }
 }

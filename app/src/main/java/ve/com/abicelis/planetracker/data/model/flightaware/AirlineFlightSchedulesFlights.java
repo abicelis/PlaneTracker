@@ -29,9 +29,7 @@ public class AirlineFlightSchedulesFlights {
         return arrivaltime;
     }
 
-    public String getOrigin() {
-        return origin;
-    }
+    public String getOrigin() {return origin;}
 
     public String getDestination() {
         return destination;

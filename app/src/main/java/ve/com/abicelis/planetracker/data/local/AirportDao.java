@@ -26,6 +26,12 @@ public interface AirportDao {
     @Query("SELECT * FROM airport where airport_id IN (:airportIds)")
     Maybe<List<Airport>> getByIds(long[] airportIds);
 
+    @Query("SELECT * FROM airport where iata = :iata")
+    Maybe<Airport> getByIata(String iata);
+
+    @Query("SELECT * FROM airport where icao = :icao")
+    Maybe<Airport> getByIcao(String icao);
+
     @Query("SELECT * FROM airport WHERE name LIKE :query OR iata LIKE :query OR icao LIKE :query")
     Maybe<List<Airport>> find(String query);
 

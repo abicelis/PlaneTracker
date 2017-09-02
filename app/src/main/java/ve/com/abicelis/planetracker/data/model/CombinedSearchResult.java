@@ -8,7 +8,7 @@ import ve.com.abicelis.planetracker.data.local.AirportDao_Impl;
  * This is used by DataManager.find
  */
 
-
+///TODO probably delete this
 public class CombinedSearchResult {
 
     private long mId;                               //Unique id for this airport or airline

@@ -3,6 +3,7 @@ package ve.com.abicelis.planetracker.data.remote;
 import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
+import ve.com.abicelis.planetracker.data.model.qwant.QwantResponse;
 
 /**
  * Created by abicelis on 1/9/2017.
@@ -11,6 +12,6 @@ import retrofit2.http.Query;
 public interface QwantApi {
 
     @GET("images?count=1")
-    Single<String> getImage(@Query("q") String query);
+    Single<QwantResponse> getImage(@Query("q") String query);
 
 }

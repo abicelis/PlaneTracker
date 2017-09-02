@@ -27,6 +27,7 @@ import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.data.model.exception.ErrorParsingDataException;
 import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedulesFlights;
 import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedulesResponse;
+import ve.com.abicelis.planetracker.data.model.qwant.QwantResponse;
 import ve.com.abicelis.planetracker.data.remote.FlightawareApi;
 import ve.com.abicelis.planetracker.data.remote.OpenFlightsApi;
 import ve.com.abicelis.planetracker.data.remote.QwantApi;
@@ -321,15 +322,20 @@ public class DataManager {
      * @param day The day when to look for the flight
      * @return An Maybe of {@code List<Flight>}
      */
-    public Maybe<Flight> findFlightsByFlightNumber(Airline airline, int flightNumber, Calendar day) {
+    public Maybe<Flight> findFlightByFlightNumber(Airline airline, int flightNumber, Calendar day) {
 
+        //Flights departure/arrival time are local to the airport.
+        //Since we're searching for flights given an airline and a flight number (And we have no timezone)
+        //Search +- 1day timeSpan from given date.
+        //E.g.:  If day= 15th May 2017. Search from start of the 14th till the end of the 13th (in UNIX UTC)
 
         Calendar start = CalendarUtil.getZeroedCalendarFromYearMonthDay(day.get(Calendar.YEAR), day.get(Calendar.MONTH), day.get(Calendar.DAY_OF_MONTH));
         Calendar end = Calendar.getInstance();
         CalendarUtil.copyCalendar(start, end);
 
         start.add(Calendar.DATE, -1);
-        end.add(Calendar.DATE, 1);
+        end.add(Calendar.DATE, 2);
+        end.add(Calendar.MILLISECOND, -1);
 
         long startEpoch = start.getTimeInMillis() / 1000L;
         long endEpoch = end.getTimeInMillis() / 1000L;
@@ -360,15 +366,15 @@ public class DataManager {
 
                                 //Get Calendar of flight departure
                                 Calendar flightDeparture = CalendarUtil.getNewInstanceZeroedCalendar();
-                                flightDeparture.setTimeInMillis(f.getDeparturetime());
+                                flightDeparture.setTimeInMillis(f.getDeparturetime()*1000L);
                                 flightDeparture.setTimeZone(origin.getTimezone());
 
                                 if (flightDeparture.compareTo(startToday) >= 0 && flightDeparture.compareTo(endToday) <= 0) {
                                     //What we're looking for!
                                     Airport destination = mAppDatabase.airportDao().getByIcao(f.getDestination()).blockingGet();
-                                    Calendar flightArrival = CalendarUtil.getNewInstanceZeroedCalendar();
-                                    flightArrival.setTimeInMillis(f.getArrivaltime());
-                                    flightArrival.setTimeZone(destination.getTimezone());
+                                    TimeZone tzDest = destination.getTimezone();
+                                    Calendar flightArrival = CalendarUtil.getNewInstanceZeroedCalendarForTimezone(tzDest);
+                                    flightArrival.setTimeInMillis(f.getArrivaltime()*1000L);
 
                                     return new Flight(f.getFaIdent(), f.getIdent(), origin, destination, airline, flightDeparture, flightArrival, f.getAircraftType());
                                 }
@@ -384,11 +390,19 @@ public class DataManager {
     }
 
 
-    Single<Bitmap> getImageUrl(Context context, String query) {
+    public Single<Bitmap> getImage(Context context, String query) {
         return mQwantApi.getImage(query)
-                .map(url -> {
-                    //TODO: maybe resize the image if too large? Use an ImageUtil for that or something.
-                    return Picasso.with(context).load(url).get();
+                .map(new Function<QwantResponse, Bitmap>() {
+                    @Override
+                    public Bitmap apply(@NonNull QwantResponse qwantResponse) throws Exception {
+                        if(qwantResponse.getData().getResult().getItems().size() > 0) {
+                            String url = qwantResponse.getData().getResult().getItems().get(0).getMedia();
+
+                            //TODO: maybe resize the image if too large? Use an ImageUtil for that or something.
+                            return Picasso.with(context).load(url).get();
+                        }
+                        return null;
+                    }
                 });
     }
 }

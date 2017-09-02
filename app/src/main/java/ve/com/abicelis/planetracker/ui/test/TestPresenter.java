@@ -1,5 +1,7 @@
 package ve.com.abicelis.planetracker.ui.test;
 
+import android.content.Context;
+
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -7,6 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import ve.com.abicelis.planetracker.data.DataManager;
+import ve.com.abicelis.planetracker.data.model.Airline;
 import ve.com.abicelis.planetracker.data.model.Airport;
 import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.data.model.exception.ErrorParsingDataException;
@@ -20,9 +23,11 @@ import ve.com.abicelis.planetracker.util.CalendarUtil;
 public class TestPresenter extends BasePresenter<TestMvpView> {
 
     private DataManager mDataManager;
+    private Context mContext;
 
-    public TestPresenter(DataManager dataManager){
+    public TestPresenter(Context context, DataManager dataManager){
         mDataManager = dataManager;
+        mContext = context;
     }
 
     public void getWelcomeMessage() {
@@ -30,66 +35,94 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
         getMvpView().showWelcomeMessage("WELCOME");
 
 
+//        mDataManager.getImage(mContext, "rio de janeiro")
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(bitmap -> {
+//                    //TODO check if null!
+//                    Bitmap bmp = bitmap;
+//                }, throwable -> {
+//                    Timber.e("Error getting bitmap!", throwable);
+//
+//                });
+
+
+        mDataManager.getDatabase().airportDao().getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(airports -> {
+                            Timber.d("Airports in db = %d", airports.size());
+
+                            if(airports.size() == 0) {
+                                Timber.d("No airports in db, refreshing airport and airline data");
+                                try {
+                                    mDataManager.refreshAirportData();
+                                    mDataManager.refreshAirlineData();
+
+                                    mDataManager.getDatabase().airportDao().getAll()
+                                            .subscribe(a -> {
+                                                        Timber.d("Airports in db = %d", a.size());
+                                                    },
+                                                    throwable -> {
+                                                        Timber.e("Error getting airports 2");
+                                                    });
+                                } catch (ErrorParsingDataException e) {
+                                    Timber.e("Error refreshing airport and airline data", e);
+                                }
+                            }
+                        },
+                        throwable -> {
+                            Timber.e("Error getting airports");
+                        });
+
+        mDataManager.findAirlines("Copa")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(airlines -> {
+                    Airline airline = airlines.get(0);
+
+                    mDataManager.findFlightByFlightNumber(airline, 713, Calendar.getInstance())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(flight -> {
+                                Timber.d("Found a flight! = %s", flight.toString());
+                            },throwable -> {
+                                Timber.e("Error getting flight", throwable);
+                            });
+
+                });
+
 
 
 
         new Thread(() -> {
-            mDataManager.getDatabase().airportDao().getAll()
-                    .subscribe(airports -> {
-                                Timber.d("Airports in db = %d", airports.size());
 
-                                if(airports.size() == 0) {
-                                    Timber.d("No airports in db, refreshing airport and airline data");
-
-                                    try {
-                                        mDataManager.refreshAirportData();
-                                        mDataManager.refreshAirlineData();
-                                    } catch (ErrorParsingDataException e) {
-                                        Timber.e("Error refreshing airport and airline data", e);
-                                    }
-                                }
-                            },
-                            throwable -> {
-                                Timber.e("Error getting airports");
-                            });
-
-
-
-            mDataManager.getDatabase().airportDao().getAll()
-                    .subscribe(airports -> {
-                                Timber.d("Airports in db = %d", airports.size());
-                            },
-                            throwable -> {
-                                Timber.e("Error getting airports 2");
-                            });
-
-
-            mDataManager.findAirports("Chinita")
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.newThread())
-                    .subscribe(originList -> {
-
-                        Airport origin = originList.get(0);
-
-                        mDataManager.findAirports("Tocumen")
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribeOn(Schedulers.newThread())
-                                .subscribe(destinationList -> {
-
-                                    Airport destination = destinationList.get(0);
-
-                                    mDataManager.findFlightsByRoute(origin, destination, Calendar.getInstance())
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribeOn(Schedulers.newThread())
-                                            .subscribe(flights -> {
-                                                for (Flight f : flights)
-                                                    Timber.d("Got a result! %s", f.toString());
-                                            });
-                                });
-
-                    }, throwable -> {
-                        Timber.e("Error fetching all airports");
-                    });
+//            mDataManager.findAirports("Chinita")
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribeOn(Schedulers.newThread())
+//                    .subscribe(originList -> {
+//
+//                        Airport origin = originList.get(0);
+//
+//                        mDataManager.findAirports("Tocumen")
+//                                .observeOn(AndroidSchedulers.mainThread())
+//                                .subscribeOn(Schedulers.newThread())
+//                                .subscribe(destinationList -> {
+//
+//                                    Airport destination = destinationList.get(0);
+//
+//                                    mDataManager.findFlightsByRoute(origin, destination, Calendar.getInstance())
+//                                            .observeOn(AndroidSchedulers.mainThread())
+//                                            .subscribeOn(Schedulers.newThread())
+//                                            .subscribe(flights -> {
+//                                                for (Flight f : flights)
+//                                                    Timber.d("Got a result! %s", f.toString());
+//                                            });
+//                                });
+//
+//                    }, throwable -> {
+//                        Timber.e("Error fetching all airports");
+//                    });
 
 
 

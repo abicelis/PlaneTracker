@@ -19,8 +19,8 @@ public class PresenterModule {
 
     public PresenterModule(Activity activity) { mActivity = activity; }
 
-    @Provides
-    Context context() { return mActivity; }
+//    @Provides
+//    Context context() { return mActivity; }
 
     @Provides
     Activity activity() { return mActivity; }
@@ -32,8 +32,8 @@ public class PresenterModule {
 
     /* Presenters */
     @Provides
-    TestPresenter testPresenter(DataManager dataManager) {
-        return new TestPresenter(dataManager);
+    TestPresenter testPresenter(Context context, DataManager dataManager) {
+        return new TestPresenter(context, dataManager);
     }
 
 }

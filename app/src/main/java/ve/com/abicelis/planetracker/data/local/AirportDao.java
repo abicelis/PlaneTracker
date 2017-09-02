@@ -7,7 +7,7 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import io.reactivex.Single;
+import io.reactivex.Maybe;
 import ve.com.abicelis.planetracker.data.model.Airport;
 
 /**
@@ -18,16 +18,16 @@ import ve.com.abicelis.planetracker.data.model.Airport;
 public interface AirportDao {
 
     @Query("SELECT * FROM airport")
-    Single<List<Airport>> getAll();
+    Maybe<List<Airport>> getAll();
 
     @Query("SELECT * FROM airport where airport_id = :airportId")
-    Single<Airport> getById(long airportId);
+    Maybe<Airport> getById(long airportId);
 
     @Query("SELECT * FROM airport where airport_id IN (:airportIds)")
-    Single<List<Airport>> getByIds(long[] airportIds);
+    Maybe<List<Airport>> getByIds(long[] airportIds);
 
     @Query("SELECT * FROM airport WHERE name LIKE :query OR iata LIKE :query OR icao LIKE :query")
-    Single<List<Airport>> find(String query);
+    Maybe<List<Airport>> find(String query);
 
     @Insert
     void insert(Airport... airports);

@@ -2,7 +2,9 @@ package ve.com.abicelis.planetracker.util;
 
 import android.support.annotation.NonNull;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -11,6 +13,16 @@ import java.util.TimeZone;
 
 public class CalendarUtil {
 
+    /**
+     * Returns a string representation of the calendar's date
+     * TAKING INTO ACCOUNT the calendar's timezone!!!!
+     */
+    public static String getStringDateFromCalendar(Calendar calendar) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm Z", Locale.getDefault());
+        df.setTimeZone(calendar.getTimeZone());
+
+        return df.format(calendar.getTime()) + " " + calendar.getTimeZone().getID();
+    }
 
     public static Calendar getZeroedCalendarFromYearMonthDay(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
@@ -26,8 +38,7 @@ public class CalendarUtil {
     }
 
     public static Calendar getNewInstanceZeroedCalendarForTimezone(TimeZone timeZone) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(timeZone);
+        Calendar cal = Calendar.getInstance(timeZone);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);

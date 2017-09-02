@@ -6,6 +6,8 @@ import android.arch.persistence.room.Ignore;
 
 import java.util.Calendar;
 
+import ve.com.abicelis.planetracker.util.CalendarUtil;
+
 /**
  * Created by abicelis on 26/8/2017.
  */
@@ -88,8 +90,8 @@ public class Flight {
                 + "\n   origin="        + (mOrigin != null ? mOrigin.toString() : "NULL")
                 + "\n   destination="   + (mDestination != null ? mDestination.toString() : "NULL")
                 + "\n   airline="       + (mAirline != null ? mAirline.toString() : "NULL")
-                + "\n   departure="     + (mDeparture != null ? mDeparture.getTime().toString() : "NULL")
-                + "\n   arrival="       + (mArrival != null ? mArrival.getTime().toString() : "NULL")
+                + "\n   departure="     + (mDeparture != null ? CalendarUtil.getStringDateFromCalendar(mDeparture) : "NULL")
+                + "\n   arrival="       + (mArrival != null ? CalendarUtil.getStringDateFromCalendar(mArrival) : "NULL")
                 + "\n   aircraftModel=" + (mAircraftModel != null ? mAircraftModel : "NULL")
                 ;
     }

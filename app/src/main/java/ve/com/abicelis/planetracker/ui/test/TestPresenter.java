@@ -1,19 +1,15 @@
 package ve.com.abicelis.planetracker.ui.test;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import ve.com.abicelis.planetracker.data.DataManager;
 import ve.com.abicelis.planetracker.data.model.Airport;
+import ve.com.abicelis.planetracker.data.model.Flight;
+import ve.com.abicelis.planetracker.data.model.exception.ErrorParsingDataException;
 import ve.com.abicelis.planetracker.ui.base.BasePresenter;
 import ve.com.abicelis.planetracker.util.CalendarUtil;
 
@@ -33,44 +29,112 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
         checkViewAttached();
         getMvpView().showWelcomeMessage("WELCOME");
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mDataManager.refreshAirportData();
-                mDataManager.refreshAirlineData();
 
-                mDataManager.findAirports("Chinita")
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.newThread())
-                        .firstElement()
-                        .subscribe(origin -> {
 
-                            mDataManager.findAirports("Tocumen")
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeOn(Schedulers.newThread())
-                                    .firstElement()
-                                    .subscribe(destination -> {
 
-                                        mDataManager.findFlightsByRoute(origin, destination, Calendar.getInstance())
-                                                .observeOn(AndroidSchedulers.mainThread())
-                                                .subscribeOn(Schedulers.newThread())
-                                                .subscribe(flight -> {
-                                                    Timber.d("Got a result! %s", flight.toString());
 
-                                                });
-                                    });
+        new Thread(() -> {
+            mDataManager.getDatabase().airportDao().getAll()
+                    .subscribe(airports -> {
+                                Timber.d("Airports in db = %d", airports.size());
 
-                        }, throwable -> {
-                            Timber.e("Error fetching all airports");
-                        });
-            }
+                                if(airports.size() == 0) {
+                                    Timber.d("No airports in db, refreshing airport and airline data");
+
+                                    try {
+                                        mDataManager.refreshAirportData();
+                                        mDataManager.refreshAirlineData();
+                                    } catch (ErrorParsingDataException e) {
+                                        Timber.e("Error refreshing airport and airline data", e);
+                                    }
+                                }
+                            },
+                            throwable -> {
+                                Timber.e("Error getting airports");
+                            });
+
+
+
+            mDataManager.getDatabase().airportDao().getAll()
+                    .subscribe(airports -> {
+                                Timber.d("Airports in db = %d", airports.size());
+                            },
+                            throwable -> {
+                                Timber.e("Error getting airports 2");
+                            });
+
+
+            mDataManager.findAirports("Chinita")
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(originList -> {
+
+                        Airport origin = originList.get(0);
+
+                        mDataManager.findAirports("Tocumen")
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.newThread())
+                                .subscribe(destinationList -> {
+
+                                    Airport destination = destinationList.get(0);
+
+                                    mDataManager.findFlightsByRoute(origin, destination, Calendar.getInstance())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribeOn(Schedulers.newThread())
+                                            .subscribe(flights -> {
+                                                for (Flight f : flights)
+                                                    Timber.d("Got a result! %s", f.toString());
+                                            });
+                                });
+
+                    }, throwable -> {
+                        Timber.e("Error fetching all airports");
+                    });
+
+
+
+
         }).start();
+
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                mDataManager.refreshAirportData();
+//                mDataManager.refreshAirlineData();
+//
+//                mDataManager.findAirports("Chinita")
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeOn(Schedulers.newThread())
+//                        .take(1)
+//                        .subscribe(origin -> {
+//
+//                            mDataManager.findAirports("Tocumen")
+//                                    .observeOn(AndroidSchedulers.mainThread())
+//                                    .subscribeOn(Schedulers.newThread())
+//                                    .take(1)
+//                                    .subscribe(destination -> {
+//
+//                                        mDataManager.findFlightsByRoute(origin, destination, Calendar.getInstance())
+//                                                .observeOn(AndroidSchedulers.mainThread())
+//                                                .subscribeOn(Schedulers.newThread())
+//                                                .subscribe(flight -> {
+//                                                    Timber.d("Got a result! %s", flight.toString());
+//
+//                                                });
+//                                    });
+//
+//                        }, throwable -> {
+//                            Timber.e("Error fetching all airports");
+//                        });
+//            }
+//        }).start();
 
 
 
 //        new Thread(() -> {
-            //mDataManager.refreshAirlineData();
-            //mDataManager.refreshAirportData();
+        //mDataManager.refreshAirlineData();
+        //mDataManager.refreshAirportData();
 
 //                mDataManager.deleteAllAirports();
 //                mDataManager.insertAirports(new Airport(1, "La Chinita", "Maracaibo", "Venezuela", "MAR", "SVMC", 10, 10, 100, "GMT-4", "S", "America / Caracas?"));
@@ -143,26 +207,6 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
 //                        Timber.e("Failure: %s", t.getMessage());
 //                    }
 //                });
-    }
-
-
-
-
-    public Observable<List<String>> getUrls() {
-        return Observable.create(new ObservableOnSubscribe<List<String>>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<List<String>> e) throws Exception {
-
-                List<String> list = new ArrayList<String>();
-                list.add("www.google.com");
-                list.add("www.facebook.com");
-                list.add("www.instagram.com");
-
-                e.onNext(list);
-                //e.onError(new Exception());
-                e.onComplete();
-            }
-        });
     }
 
 }

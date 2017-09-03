@@ -87,6 +87,18 @@ public class Airport {
     public String getTimezoneOlson() {return mTimezoneOlson;}
     public String getDst() {return mDst;}
 
+    public void setId(long mId) {this.mId = mId;}
+    public void setName(String mName) {this.mName = mName;}
+    public void setCity(String mCity) {this.mCity = mCity;}
+    public void setCountry(String mCountry) {this.mCountry = mCountry;}
+    public void setIata(String mIata) {this.mIata = mIata;}
+    public void setIcao(String mIcao) {this.mIcao = mIcao;}
+    public void setLatitude(float mLatitude) {this.mLatitude = mLatitude;}
+    public void setLongitude(float mLongitude) {this.mLongitude = mLongitude;}
+    public void setAltitude(int mAltitude) {this.mAltitude = mAltitude;}
+    public void setTimezoneOffset(String mTimezoneOffset) {this.mTimezoneOffset = mTimezoneOffset;}
+    public void setTimezoneOlson(String mTimezoneOlson) {this.mTimezoneOlson = mTimezoneOlson;}
+    public void setDst(String mDst) {this.mDst = mDst;}
 
     @Override
     public String toString() {

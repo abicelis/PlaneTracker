@@ -55,6 +55,13 @@ public class Airline {
     public String getCallsign() {return mCallsign;}
     public String getCountry() {return mCountry;}
 
+    public void setId(long mId) {this.mId = mId;}
+    public void setName(String mName) {this.mName = mName;}
+    public void setAlias(String mAlias) {this.mAlias = mAlias;}
+    public void setIata(String mIata) {this.mIata = mIata;}
+    public void setIcao(String mIcao) {this.mIcao = mIcao;}
+    public void setCallsign(String mCallsign) {this.mCallsign = mCallsign;}
+    public void setCountry(String mCountry) {this.mCountry = mCountry;}
 
     @Override
     public String toString() {

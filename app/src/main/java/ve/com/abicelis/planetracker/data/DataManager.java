@@ -24,6 +24,7 @@ import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.data.model.Airline;
 import ve.com.abicelis.planetracker.data.model.Airport;
 import ve.com.abicelis.planetracker.data.model.Flight;
+import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.data.model.exception.ErrorParsingDataException;
 import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedulesFlights;
 import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedulesResponse;
@@ -404,5 +405,34 @@ public class DataManager {
                         return null;
                     }
                 });
+    }
+
+
+    public Maybe<List<Trip>> getTrips() {
+
+        return mAppDatabase.tripDao().getAll()
+                .map(new Function<List<Trip>, List<Trip>>() {
+                    @Override
+                    public List<Trip> apply(@NonNull List<Trip> trips) throws Exception {
+
+                        for (Trip t : trips) {
+                            List<Flight> flights = mAppDatabase.flightDao().getByTripId(t.getId()).blockingGet();
+
+                            for (Flight f : flights) {
+
+                            }
+
+                        }
+                        return trips;
+                    }
+                });
+    }
+
+    public long saveFlight(Flight flight) {
+        return mAppDatabase.flightDao().insert(flight);
+    }
+
+    public Maybe<Flight> getFlight(long id) {
+        return mAppDatabase.flightDao().getById(id);
     }
 }

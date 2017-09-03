@@ -83,9 +83,19 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
 
                     mDataManager.findFlightByFlightNumber(airline, 713, Calendar.getInstance())
                             .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
+                            .observeOn(Schedulers.io())
                             .subscribe(flight -> {
                                 Timber.d("Found a flight! = %s", flight.toString());
+                                long id = mDataManager.saveFlight(flight);
+
+                                mDataManager.getFlight(id).subscribe(flight1 -> {
+                                    Timber.d("Retrieved saved flight! = %s", flight1.toString());
+
+                                }, throwable -> {
+                                    Timber.e("Error getting flight, id=%d", id);
+
+                                });
+
                             },throwable -> {
                                 Timber.e("Error getting flight", throwable);
                             });

@@ -79,7 +79,7 @@ public class DataManager {
                         String fields[] = line.split(Constants.OPENFLIGHTS_SEPARATOR);
                         if(fields.length == Constants.OPENFLIGHTS_AIRLINES_FIELDS) {
                             try {
-                                long id =           Long.parseLong(fields[0]);
+                                int id =             Integer.parseInt(fields[0]);
                                 String name =       (fields[1].equals("\\N") ? "" : fields[1].replace("\"", "").trim());
                                 String alias =      (fields[2].equals("\\N") ? "" : fields[2].replace("\"", "").trim());
                                 String iata =       (fields[3].equals("\\N") ? "" : fields[3].replace("\"", "").trim());
@@ -119,7 +119,7 @@ public class DataManager {
                         String fields[] = line.split(Constants.OPENFLIGHTS_SEPARATOR);
                         if(fields.length == Constants.OPENFLIGHTS_AIRPORTS_FIELDS) {
                             try {
-                                long id =               Long.parseLong(fields[0]);
+                                int id =                Integer.parseInt(fields[0]);
                                 String name =           (fields[1].equals("\\N") ? "" : fields[1].replace("\"", "").trim());
                                 String city =           (fields[2].equals("\\N") ? "" : fields[2].replace("\"", "").trim());
                                 String country =        (fields[3].equals("\\N") ? "" : fields[3].replace("\"", "").trim());
@@ -391,6 +391,9 @@ public class DataManager {
     }
 
 
+    /**
+     * Returns a {@code Single<Bitmap>} given a query string to search
+     */
     public Single<Bitmap> getImage(Context context, String query) {
         return mQwantApi.getImage(query)
                 .map(new Function<QwantResponse, Bitmap>() {
@@ -408,31 +411,60 @@ public class DataManager {
     }
 
 
-    public Maybe<List<Trip>> getTrips() {
+    /**
+     * This method inserts/updates a trip and its flights.
+     * It does not insert/update its flight's Airports or Airlines
+     * Since these should already be saved in the db.
+     * @return the id of the inserted/updated trip
+     */
+    //TODO test this
+    public long insertOrUpdateTrip(Trip t) {
+        long tripId = mAppDatabase.tripDao().insert(t);
+        for (Flight f : t.getFlights()) {
+            mAppDatabase.flightDao().insert(f);
+        }
+        return tripId;
+    }
 
+
+    public Maybe<List<Trip>> getTrips() {
         return mAppDatabase.tripDao().getAll()
                 .map(new Function<List<Trip>, List<Trip>>() {
                     @Override
                     public List<Trip> apply(@NonNull List<Trip> trips) throws Exception {
-
                         for (Trip t : trips) {
                             List<Flight> flights = mAppDatabase.flightDao().getByTripId(t.getId()).blockingGet();
+                            for (Flight flight : flights) {
 
-                            for (Flight f : flights) {
-
+                                flight.setOrigin(mAppDatabase.airportDao().getById(flight.getOriginId()).blockingGet());
+                                flight.setDestination(mAppDatabase.airportDao().getById(flight.getDestinationId()).blockingGet());
+                                flight.setAirline(mAppDatabase.airlineDao().getById(flight.getAirlineId()).blockingGet());
                             }
-
                         }
                         return trips;
                     }
                 });
     }
 
+
     public long saveFlight(Flight flight) {
+        //Saving a flight does not save its associated airports (origin, destination) and airline because it is understood that these are already on the db
         return mAppDatabase.flightDao().insert(flight);
+    }
+    public long deleteFlight(Flight flight) {
+        return mAppDatabase.flightDao().delete(flight);
     }
 
     public Maybe<Flight> getFlight(long id) {
-        return mAppDatabase.flightDao().getById(id);
+        return mAppDatabase.flightDao().getById(id)
+                .map(new Function<Flight, Flight>() {
+                    @Override
+                    public Flight apply(@NonNull Flight flight) throws Exception {
+                        flight.setOrigin(mAppDatabase.airportDao().getById(flight.getOriginId()).blockingGet());
+                        flight.setDestination(mAppDatabase.airportDao().getById(flight.getDestinationId()).blockingGet());
+                        flight.setAirline(mAppDatabase.airlineDao().getById(flight.getAirlineId()).blockingGet());
+                        return flight;
+                    }
+                });
     }
 }

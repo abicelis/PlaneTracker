@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">PlaneTracker</string>
     <string name="title_activity_trip_view">Map</string>
+
+
+    /* ENUM TIME FORMAT */
+    <string name="time_format_24">24h</string>
+    <string name="time_format_12">12h</string>
 </resources>

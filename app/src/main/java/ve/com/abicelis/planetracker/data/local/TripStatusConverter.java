@@ -7,6 +7,7 @@ import java.util.TimeZone;
 
 import ve.com.abicelis.planetracker.application.Constants;
 import ve.com.abicelis.planetracker.data.model.Trip;
+import ve.com.abicelis.planetracker.data.model.TripStatus;
 
 /**
  * Created by abicelis on 2/9/2017.
@@ -15,14 +16,14 @@ import ve.com.abicelis.planetracker.data.model.Trip;
 public class TripStatusConverter {
 
     @TypeConverter
-    public static Trip.TripStatus toTripStatus(String tripStatusString) {
+    public static TripStatus toTripStatus(String tripStatusString) {
         if(tripStatusString == null)
             return null;
-        return Trip.TripStatus.valueOf(tripStatusString);
+        return TripStatus.valueOf(tripStatusString);
     }
 
     @TypeConverter
-    public static String toStr(Trip.TripStatus tripStatus) {
+    public static String toStr(TripStatus tripStatus) {
         if(tripStatus == null)
             return null;
 

@@ -25,7 +25,7 @@ import ve.com.abicelis.planetracker.util.CalendarUtil;
         })
 public class Flight {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "flight_id")
     private long mId;
 
@@ -98,7 +98,7 @@ public class Flight {
 
     @Ignore
     public Flight(String flightAwareId, String callsign, Airport origin, Airport destination, Airline airline, Calendar departure, Calendar arrival, String aircraftModel) {
-        mId = -1;
+        //mId = -1;
         mOrderInTrip = -1;
 
         mFlightAwareId = flightAwareId;

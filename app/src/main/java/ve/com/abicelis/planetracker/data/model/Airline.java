@@ -14,7 +14,7 @@ import android.arch.persistence.room.PrimaryKey;
 )
 public class Airline {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "airline_id")
     private long mId;                       //Unique OpenFlights identifier for this airline
 

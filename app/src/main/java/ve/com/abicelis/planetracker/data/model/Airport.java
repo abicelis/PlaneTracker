@@ -18,7 +18,7 @@ import ve.com.abicelis.planetracker.util.TimezoneUtil;
 )
 public class Airport {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "airport_id")
     private long mId;                       //Unique OpenFlights identifier for this airport.
 

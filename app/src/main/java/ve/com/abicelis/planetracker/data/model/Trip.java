@@ -17,7 +17,7 @@ import ve.com.abicelis.planetracker.util.CalendarUtil;
 @Entity(tableName = "trip")
 public class Trip {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "trip_id")
     private long mId;
 
@@ -32,6 +32,8 @@ public class Trip {
 
     @Ignore
     private List<Flight> mFlights;
+
+    public Trip() {}    //Room complains otherwise, I wish I knew why.
 
     public Trip(long id, String name, byte[] image, TripStatus status, List<Flight> flights) {
         mId = id;
@@ -66,6 +68,4 @@ public class Trip {
         return out;
     }
 
-
-    public enum TripStatus { PAST, UPCOMING }
 }

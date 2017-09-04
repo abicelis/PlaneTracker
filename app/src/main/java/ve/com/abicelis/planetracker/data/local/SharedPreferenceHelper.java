@@ -7,7 +7,10 @@ import android.util.Log;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
 import ve.com.abicelis.planetracker.application.Constants;
+import ve.com.abicelis.planetracker.data.model.DateFormat;
+import ve.com.abicelis.planetracker.data.model.TimeFormat;
 
 /**
  * Created by abice on 1/4/2017.
@@ -22,6 +25,50 @@ public class SharedPreferenceHelper {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
     }
 
+
+    /* TIME FORMAT */
+    public TimeFormat getTimeFormat() {
+        String value = mSharedPreferences.getString(Constants.SHARED_PREFERENCE_TIME_FORMAT, null);
+        TimeFormat pref;
+        try {
+            pref = TimeFormat.valueOf(value);
+        } catch (Exception e) {
+            pref = null;
+        }
+
+        if(pref == null) {
+            Timber.d("getTimeFormat() found null, setting HOUR_24");
+            pref = TimeFormat.HOUR_24;
+            setTimeFormat(pref);
+        }
+
+        return pref;
+    }
+    public void setTimeFormat(TimeFormat value) {
+        mSharedPreferences.edit().putString(Constants.SHARED_PREFERENCE_TIME_FORMAT, value.name()).apply();
+    }
+
+    /* DATE FORMAT */
+    public DateFormat getDateFormat() {
+        String value = mSharedPreferences.getString(Constants.SHARED_PREFERENCE_DATE_FORMAT, null);
+        DateFormat pref;
+        try {
+            pref = DateFormat.valueOf(value);
+        } catch (Exception e) {
+            pref = null;
+        }
+
+        if(pref == null) {
+            Timber.d("getDateFormat() found null, setting PRETTY_DATE");
+            pref = DateFormat.PRETTY_DATE;
+            setDateFormat(pref);
+        }
+
+        return pref;
+    }
+    public void setDateFormat(DateFormat value) {
+        mSharedPreferences.edit().putString(Constants.SHARED_PREFERENCE_DATE_FORMAT, value.name()).apply();
+    }
 
     /* RECENT AIRPORTS */
     public long[] getRecentAirportIds() {

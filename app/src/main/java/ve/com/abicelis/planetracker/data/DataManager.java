@@ -8,6 +8,7 @@ import com.squareup.picasso.Picasso;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -412,13 +413,13 @@ public class DataManager {
 
 
     /**
-     * This method inserts/updates a trip and its flights.
-     * It does not insert/update its flight's Airports or Airlines
+     * This method inserts or replaces an existing a trip and its flights.
+     * It does not insert Airports or Airlines
      * Since these should already be saved in the db.
-     * @return the id of the inserted/updated trip
+     * @return the id of the trip
      */
     //TODO test this
-    public long insertOrUpdateTrip(Trip t) {
+    public long saveTrip(Trip t) {
         long tripId = mAppDatabase.tripDao().insert(t);
         for (Flight f : t.getFlights()) {
             mAppDatabase.flightDao().insert(f);
@@ -435,16 +436,21 @@ public class DataManager {
                         for (Trip t : trips) {
                             List<Flight> flights = mAppDatabase.flightDao().getByTripId(t.getId()).blockingGet();
                             for (Flight flight : flights) {
-
                                 flight.setOrigin(mAppDatabase.airportDao().getById(flight.getOriginId()).blockingGet());
                                 flight.setDestination(mAppDatabase.airportDao().getById(flight.getDestinationId()).blockingGet());
                                 flight.setAirline(mAppDatabase.airlineDao().getById(flight.getAirlineId()).blockingGet());
                             }
                         }
+
+                        //Order trips by start of first flight, using internal compareTo() implementations of Comparable in Trip and Flight models
+                        Collections.sort(trips);
+                        
                         return trips;
                     }
                 });
     }
+
+
 
 
     public long saveFlight(Flight flight) {

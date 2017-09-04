@@ -6,6 +6,7 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import java.util.Calendar;
 import java.util.List;
@@ -23,7 +24,7 @@ import ve.com.abicelis.planetracker.util.CalendarUtil;
                 @ForeignKey(entity = Airport.class, parentColumns = "airport_id", childColumns = "destination_fk"),
                 @ForeignKey(entity = Airline.class, parentColumns = "airline_id", childColumns = "airline_fk")
         })
-public class Flight {
+public class Flight implements Comparable<Flight>{
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "flight_id")
@@ -158,5 +159,14 @@ public class Flight {
                 + "\n   arrival="       + (mArrival != null ? CalendarUtil.getStringDateFromCalendar(mArrival) : "NULL")
                 + "\n   aircraftModel=" + (mAircraftModel != null ? mAircraftModel : "NULL")
                 ;
+    }
+
+    @Override
+    public int compareTo(@NonNull Flight flight) {
+        if (this.mDeparture == null)
+            return 1;
+        if (flight.getDeparture() == null)
+            return -1;
+        return this.mDeparture.compareTo(flight.getDeparture());
     }
 }

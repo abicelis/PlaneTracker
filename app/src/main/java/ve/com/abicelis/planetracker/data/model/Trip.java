@@ -5,7 +5,9 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 
+import java.util.Calendar;
 import java.util.List;
 
 import ve.com.abicelis.planetracker.util.CalendarUtil;
@@ -15,7 +17,7 @@ import ve.com.abicelis.planetracker.util.CalendarUtil;
  */
 
 @Entity(tableName = "trip")
-public class Trip {
+public class Trip implements Comparable<Trip>{
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "trip_id")
@@ -27,7 +29,7 @@ public class Trip {
     @ColumnInfo(name = "image")
     private byte[] mImage;
 
-    @ColumnInfo(name = "status")
+    @Ignore
     private TripStatus mStatus;
 
     @Ignore
@@ -46,7 +48,17 @@ public class Trip {
     public long getId() {return mId;}
     public String getName() {return mName;}
     public byte[] getImage() {return mImage;}
-    public TripStatus getStatus() {return mStatus;}
+    public TripStatus getStatus() {
+        if(mFlights.size() == 0)
+            return TripStatus.UPCOMING;
+
+        //TODO check if this comparison takes Timestamps into account
+        Calendar lastArrival = mFlights.get(mFlights.size()-1).getArrival();
+        if(lastArrival.compareTo(Calendar.getInstance()) >= 0)
+            return TripStatus.UPCOMING;
+        else
+            return TripStatus.PAST;
+    }
     public List<Flight> getFlights() {return mFlights;}
 
     public void setId(long mId) {this.mId = mId;}
@@ -68,4 +80,12 @@ public class Trip {
         return out;
     }
 
+    @Override
+    public int compareTo(@NonNull Trip trip) {
+        if (this.mFlights.size() == 0)
+            return 1;
+        if (trip.mFlights.size() == 0)
+            return -1;
+        return this.mFlights.get(0).compareTo(trip.mFlights.get(0));
+    }
 }

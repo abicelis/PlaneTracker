@@ -3,6 +3,7 @@ package ve.com.abicelis.planetracker.data.local;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
@@ -27,14 +28,13 @@ public interface TripDao {
     @Query("SELECT * FROM trip where trip_id IN (:tripIds)")
     Maybe<List<Trip>> getByIds(long[] tripIds);
 
-
-    @Insert
-    void insert(Trip... trips);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long insert(Trip trip);
 
     @Update
-    void update(Trip... trips);
+    int update(Trip trip);
 
     @Delete
-    void delete(Trip... trips);
+    int delete(Trip trip);
 
 }

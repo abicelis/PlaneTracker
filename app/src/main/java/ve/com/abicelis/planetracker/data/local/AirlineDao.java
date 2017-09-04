@@ -36,12 +36,12 @@ public interface AirlineDao {
     Maybe<List<Airline>> find(String query);
 
     @Insert
-    void insert(Airline... airlines);
+    long[] insert(Airline ... airlines);
 
     @Update
-    void update(Airline... airlines);
+    int update(Airline airline);
 
     @Query("DELETE FROM airline")
-    void deleteAll();
+    int deleteAll();
 
 }

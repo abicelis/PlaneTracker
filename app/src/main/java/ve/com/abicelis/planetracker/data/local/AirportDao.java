@@ -1,6 +1,7 @@
 package ve.com.abicelis.planetracker.data.local;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
@@ -36,12 +37,15 @@ public interface AirportDao {
     Maybe<List<Airport>> find(String query);
 
     @Insert
-    void insert(Airport... airports);
+    long[] insert(Airport ... airports);
 
     @Update
-    void update(Airport... airports);
+    int update(Airport airport);
+
+    @Delete
+    void delete(Airport airport);
 
     @Query("DELETE FROM airport")
-    void deleteAll();
+    int deleteAll();
 
 }

@@ -1,6 +1,5 @@
 package ve.com.abicelis.planetracker.data;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.squareup.picasso.Picasso;
@@ -19,13 +18,17 @@ import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 import ve.com.abicelis.planetracker.application.Constants;
+import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
 import ve.com.abicelis.planetracker.data.local.AppDatabase;
 import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.data.model.Airline;
 import ve.com.abicelis.planetracker.data.model.Airport;
 import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.data.model.Trip;
+import ve.com.abicelis.planetracker.data.model.TripViewModel;
 import ve.com.abicelis.planetracker.data.model.exception.ErrorParsingDataException;
 import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedulesFlights;
 import ve.com.abicelis.planetracker.data.model.flightaware.AirlineFlightSchedulesResponse;
@@ -34,6 +37,7 @@ import ve.com.abicelis.planetracker.data.remote.FlightawareApi;
 import ve.com.abicelis.planetracker.data.remote.OpenFlightsApi;
 import ve.com.abicelis.planetracker.data.remote.QwantApi;
 import ve.com.abicelis.planetracker.util.CalendarUtil;
+import ve.com.abicelis.planetracker.util.ImageUtil;
 
 /**
  * Created by abicelis on 29/8/2017.
@@ -395,7 +399,7 @@ public class DataManager {
     /**
      * Returns a {@code Single<Bitmap>} given a query string to search
      */
-    public Single<Bitmap> getImage(Context context, String query) {
+    public Single<Bitmap> getImage(String query) {
         return mQwantApi.getImage(query)
                 .map(new Function<QwantResponse, Bitmap>() {
                     @Override
@@ -404,7 +408,7 @@ public class DataManager {
                             String url = qwantResponse.getData().getResult().getItems().get(0).getMedia();
 
                             //TODO: maybe resize the image if too large? Use an ImageUtil for that or something.
-                            return Picasso.with(context).load(url).get();
+                            return Picasso.with(PlaneTrackerApplication.getAppContext()).load(url).get();
                         }
                         return null;
                     }
@@ -420,32 +424,71 @@ public class DataManager {
      */
     //TODO test this
     public long saveTrip(Trip t) {
+        Timber.d("Saving trip: %s", t.toString());
         long tripId = mAppDatabase.tripDao().insert(t);
         for (Flight f : t.getFlights()) {
+            f.setTripId(tripId);
             mAppDatabase.flightDao().insert(f);
         }
         return tripId;
     }
 
 
-    public Maybe<List<Trip>> getTrips() {
+    public Maybe<List<TripViewModel>> getTrips() {
         return mAppDatabase.tripDao().getAll()
-                .map(new Function<List<Trip>, List<Trip>>() {
+                .map(new Function<List<Trip>, List<TripViewModel>>() {
                     @Override
-                    public List<Trip> apply(@NonNull List<Trip> trips) throws Exception {
+                    public List<TripViewModel> apply(@NonNull List<Trip> trips) throws Exception {
+                        List<Trip> pastTrips = new ArrayList<>();
+                        List<Trip> currentTrips = new ArrayList<>();
+                        List<Trip> upcomingTrips = new ArrayList<>();
+
+
+                        //Add origin, destination and airline for each trip's flight.
                         for (Trip t : trips) {
-                            List<Flight> flights = mAppDatabase.flightDao().getByTripId(t.getId()).blockingGet();
-                            for (Flight flight : flights) {
+                            t.setFlights(mAppDatabase.flightDao().getByTripId(t.getId()).blockingGet());
+
+                            for (Flight flight : t.getFlights()) {
                                 flight.setOrigin(mAppDatabase.airportDao().getById(flight.getOriginId()).blockingGet());
                                 flight.setDestination(mAppDatabase.airportDao().getById(flight.getDestinationId()).blockingGet());
                                 flight.setAirline(mAppDatabase.airlineDao().getById(flight.getAirlineId()).blockingGet());
                             }
+
+                            switch (t.getStatus()) {
+                                case PAST:
+                                    pastTrips.add(t);
+                                    break;
+                                case CURRENT:
+                                    currentTrips.add(t);
+                                    break;
+                                case UPCOMING:
+                                    upcomingTrips.add(t);
+                                    break;
+                            }
                         }
 
+
                         //Order trips by start of first flight, using internal compareTo() implementations of Comparable in Trip and Flight models
-                        Collections.sort(trips);
-                        
-                        return trips;
+                        Collections.sort(pastTrips);
+                        Collections.sort(currentTrips);
+                        Collections.sort(upcomingTrips);
+
+                        //Add to final tripsViewModel list, with headers
+                        List<TripViewModel> tripVM = new ArrayList<>();
+
+                        if(currentTrips.size() > 0)
+                            tripVM.add(new TripViewModel(TripViewModel.TripViewModelType.HEADER_CURRENT));
+                        for (Trip t : currentTrips) tripVM.add(new TripViewModel(t));
+
+                        if(upcomingTrips.size() > 0)
+                            tripVM.add(new TripViewModel(TripViewModel.TripViewModelType.HEADER_UPCOMING));
+                        for (Trip t : upcomingTrips) tripVM.add(new TripViewModel(t));
+
+                        if(pastTrips.size() > 0)
+                            tripVM.add(new TripViewModel(TripViewModel.TripViewModelType.HEADER_PAST));
+                        for (Trip t : pastTrips) tripVM.add(new TripViewModel(t));
+
+                        return tripVM;
                     }
                 });
     }
@@ -473,4 +516,124 @@ public class DataManager {
                     }
                 });
     }
+
+    public void insertFakeTrips() {
+        Timber.d("Inserting fake trips");
+
+        mAppDatabase.tripDao().getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(trips -> {
+                    List<Airport> airports = getDatabase().airportDao().getAll().blockingGet();
+                    if(airports == null || airports.size() == 0) {
+                        Timber.d("No airports in db, refreshing airport and airline data");
+                        try {
+                            refreshAirportData();
+                            refreshAirlineData();
+
+                            airports = getDatabase().airportDao().getAll().blockingGet();
+                            if(airports == null || airports.size() == 0)
+                                Timber.e("Error getting airports");
+                            else
+                                Timber.d("Airports in db = %d", airports.size());
+                        } catch (ErrorParsingDataException e) {
+                            Timber.e("Error refreshing airport and airline data", e);
+                        }
+                    }
+
+
+
+
+                    Timber.d("Building Past Trip to Maracaibo");
+                    List<Trip> fakeTrips = new ArrayList<>();
+                    List<Flight> flightsMar = new ArrayList<>();
+                    Calendar pastDate = Calendar.getInstance();
+                    pastDate.add(Calendar.MONTH, 1);
+
+                    Airline copaAirline = findAirlines("Copa").blockingGet().get(0);
+                    try {
+                        Flight flightToMar = findFlightByFlightNumber(copaAirline, 717, pastDate).blockingGet();
+                        flightToMar.setOrderInTrip(1);
+                        flightsMar.add(flightToMar);
+
+                        Flight flightToPty = findFlightByFlightNumber(copaAirline, 713, pastDate).blockingGet();
+                        flightToPty.setOrderInTrip(2);
+                        flightsMar.add(flightToPty);
+                        fakeTrips.add(new Trip("Trip to Maracaibo", null,  flightsMar));
+                    } catch (Exception e ) {
+                        Timber.e("Error finding flights for trip to Maracaibo. Could not add trip", e);
+                    }
+
+                    Timber.d("Getting image for Trip to Maracaibo");
+                    Bitmap image = getImage("Maracaibo").blockingGet();
+                    image = ImageUtil.scaleBitmap(image, 500);
+                    fakeTrips.get(0).setImage(ImageUtil.toByteArray(image));
+
+
+
+
+                    Timber.d("Building Upcoming Trip to Panama");
+                    List<Flight> flightsPty = new ArrayList<>();
+                    Calendar upcomingDate = Calendar.getInstance();
+                    upcomingDate.add(Calendar.MONTH, 2);
+
+                    try {
+                        Flight flightToPty = findFlightByFlightNumber(copaAirline, 872, upcomingDate).blockingGet();
+                        flightToPty.setOrderInTrip(1);
+                        flightsPty.add(flightToPty);
+
+                        Flight flightToGig = findFlightByFlightNumber(copaAirline, 873, upcomingDate).blockingGet();
+                        flightToGig.setOrderInTrip(2);
+                        flightsPty.add(flightToGig);
+                        fakeTrips.add(new Trip("Trip to Panama", null,  flightsPty));
+                    } catch (Exception e ) {
+                        Timber.e("Error finding flights for trip to Panama. Could not add trip", e);
+                    }
+
+                    Timber.d("Getting image for Trip to Panama");
+                    image = getImage("Panama").blockingGet();
+                    image = ImageUtil.scaleBitmap(image, 500);
+                    fakeTrips.get(1).setImage(ImageUtil.toByteArray(image));
+
+
+
+
+
+
+                    Timber.d("Building Current Trip to Toronto");
+                    List<Flight> flightsYyz = new ArrayList<>();
+                    Calendar currentDate = Calendar.getInstance();
+
+                    Airline airCanadaAirline = findAirlines("AIr Canada").blockingGet().get(0);
+                    try {
+                        Flight flightToYyz = findFlightByFlightNumber(airCanadaAirline, 1949, currentDate).blockingGet();
+                        flightToYyz.setOrderInTrip(1);
+                        flightsYyz.add(flightToYyz);
+
+                        Flight flightToPty = findFlightByFlightNumber(airCanadaAirline, 1948, currentDate).blockingGet();
+                        flightToPty.setOrderInTrip(2);
+                        flightsYyz.add(flightToPty);
+                        fakeTrips.add(new Trip("Trip to Toronto", null,  flightsYyz));
+                    } catch (Exception e ) {
+                        Timber.e("Error finding flights for trip to Toronto. Could not add trip", e);
+                    }
+
+                    Timber.d("Getting image for Trip to Toronto");
+                    image = getImage("Toronto").blockingGet();
+                    image = ImageUtil.scaleBitmap(image, 500);
+                    fakeTrips.get(2).setImage(ImageUtil.toByteArray(image));
+
+
+
+
+
+                    for (Trip ft : fakeTrips)
+                        saveTrip(ft);
+
+                }, throwable -> {
+                    Timber.e("Error getting trips");
+                });
+
+    }
+
 }

@@ -1,9 +1,30 @@
 <resources>
-    <string name="app_name">PlaneTracker</string>
-    <string name="title_activity_trip_view">Map</string>
 
 
-    /* ENUM TIME FORMAT */
+    <!--Home activity-->
+    <string name="activity_home_search_hint">Search&#8230;</string>
+    <string name="activity_home_trip_item_current">Current</string>
+    <string name="activity_home_trip_item_upcoming">Upcoming</string>
+    <string name="activity_home_trip_item_past">Past</string>
+    <string name="activity_home_trip_item_invalid_info">No Info</string>
+    <string name="activity_home_trip_item_current_info">Ends %1$s</string>          //Ends October 10
+    <string name="activity_home_trip_item_upcoming_info">Starts %1$s</string>       //Starts October 10
+    <string name="activity_home_trip_item_past_info">%1$s - %2$s</string>           //August 2016 - September 2016
+    <string name="activity_home_menu_search">Search</string>
+    <string name="activity_home_menu_settings">Settings</string>
+    <string name="activity_home_menu_about">About</string>
+
+    <!--MESSAGES-->
+    <string name="error_loading_trips">Sorry, could not load trips</string>
+    <string name="info_loading_trips">Refreshing trips</string>
+
+
+    <!--ENUM TIME FORMAT-->
     <string name="time_format_24">24h</string>
     <string name="time_format_12">12h</string>
+
+
+    <!--MISC-->
+    <string name="loading">Loading&#8230;</string>
+    <string name="app_name">PlaneTracker</string>
 </resources>

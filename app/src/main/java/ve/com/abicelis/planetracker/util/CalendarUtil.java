@@ -24,6 +24,16 @@ public class CalendarUtil {
         return df.format(calendar.getTime()) + " " + calendar.getTimeZone().getID();
     }
 
+    /**
+     * Returns a cute string like "October 10", "January 25"
+     */
+    public static String getCuteStringDateFromCalendar(Calendar calendar) {
+        SimpleDateFormat df = new SimpleDateFormat("MMM dd", Locale.getDefault());
+        df.setTimeZone(calendar.getTimeZone());
+
+        return df.format(calendar.getTime());
+    }
+
     public static Calendar getZeroedCalendarFromYearMonthDay(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);

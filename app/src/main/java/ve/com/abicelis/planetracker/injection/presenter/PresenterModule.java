@@ -6,6 +6,7 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import ve.com.abicelis.planetracker.data.DataManager;
+import ve.com.abicelis.planetracker.ui.home.HomePresenter;
 import ve.com.abicelis.planetracker.ui.test.TestPresenter;
 
 /**
@@ -26,14 +27,16 @@ public class PresenterModule {
     Activity activity() { return mActivity; }
 
 
-    /* Provide other activity scoped objects here */
-
-
 
     /* Presenters */
     @Provides
     TestPresenter testPresenter(Context context, DataManager dataManager) {
         return new TestPresenter(context, dataManager);
+    }
+
+    @Provides
+    HomePresenter homePresenter(DataManager dataManager) {
+        return new HomePresenter(dataManager);
     }
 
 }

@@ -46,4 +46,6 @@ ext {
     playServicesVersion = '11.0.4'
     supportLibVersion = '26.0.0'
     picassoVersion = '2.5.2'
+    materialSearchViewVersion = '1.4.0'
+    preferenceFixVersion = '26.0.0.0'
 }

@@ -77,4 +77,11 @@ dependencies {
 
     //Picasso
     compile 'com.squareup.picasso:picasso:' + rootProject.picassoVersion;
+
+    //MaterialSearchView
+    compile 'com.miguelcatalan:materialsearchview:' + rootProject.materialSearchViewVersion;
+
+    //Preferences (Settings)
+    compile 'com.takisoft.fix:preference-v7:' + rootProject.preferenceFixVersion;
+
 }

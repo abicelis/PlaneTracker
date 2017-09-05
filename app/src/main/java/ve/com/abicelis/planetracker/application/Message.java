@@ -15,7 +15,8 @@ import ve.com.abicelis.planetracker.R;
  */
 
 public enum Message {
-    //ERROR_LOADING_SOMETHING(R.string.error_loading_something, MessageType.ERROR),
+    INFO_LOADING_TRIPS(R.string.info_loading_trips, MessageType.INFO),
+    ERROR_LOADING_TRIPS(R.string.error_loading_trips, MessageType.ERROR),
 
     ;
 
@@ -39,5 +40,5 @@ public enum Message {
         return PlaneTrackerApplication.getAppContext().getString(friendlyName);
     }
 
-    public enum MessageType {SUCCESS, ERROR, NOTICE}
+    public enum MessageType {SUCCESS, ERROR, INFO}
 }

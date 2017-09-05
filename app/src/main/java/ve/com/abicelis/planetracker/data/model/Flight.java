@@ -9,7 +9,6 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.util.Calendar;
-import java.util.List;
 
 import ve.com.abicelis.planetracker.util.CalendarUtil;
 
@@ -31,7 +30,7 @@ public class Flight implements Comparable<Flight>{
     private long mId;
 
     @ColumnInfo(name="trip_fk")
-    public String tripId;
+    public long mTripId;
 
     @ColumnInfo(name = "flight_aware_id")
     private String mFlightAwareId;
@@ -116,6 +115,7 @@ public class Flight implements Comparable<Flight>{
     }
 
     public long getId() {return mId;}
+    public long getTripId() {return mTripId;}
     public String getFlightAwareId() {return mFlightAwareId;}
     public int getOrderInTrip() {return mOrderInTrip;}
     public String getCallsign() {return mCallsign;}
@@ -130,6 +130,7 @@ public class Flight implements Comparable<Flight>{
     public String getAircraftModel() {return mAircraftModel;}
 
     public void setId(long mId) {this.mId = mId;}
+    public void setTripId(long tripId) {this.mTripId = tripId;}
     public void setFlightAwareId(String mFlightAwareId) {this.mFlightAwareId = mFlightAwareId;}
     public void setOrderInTrip(int mOrderInTrip) {this.mOrderInTrip = mOrderInTrip;}
     public void setCallsign(String mCallsign) {this.mCallsign = mCallsign;}
@@ -140,12 +141,13 @@ public class Flight implements Comparable<Flight>{
     public void setAirlineId(long mAirlineId) {this.mAirlineId = mAirlineId;}
     public void setAirline(Airline mAirline) {this.mAirline = mAirline;}
     public void setDeparture(Calendar mDeparture) {this.mDeparture = mDeparture;}
-    public void setmArrival(Calendar mArrival) {this.mArrival = mArrival;}
+    public void setArrival(Calendar mArrival) {this.mArrival = mArrival;}
     public void setmAircraftModel(String mAircraftModel) {this.mAircraftModel = mAircraftModel;}
 
     @Override
     public String toString() {
         return    "Flight ID="          + mId
+                + "\n   tripID="        + mTripId
                 + "\n   flightAwareID=" + (mFlightAwareId != null ? mFlightAwareId : "NULL")
                 + "\n   orderInTrip="   + mOrderInTrip
                 + "\n   callsign="      + (mCallsign != null ? mCallsign : "NULL")

@@ -13,6 +13,8 @@ public enum DateFormat {
             @Override
             public String formatCalendar(Calendar calendar) {
                 SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
+                formatter.setTimeZone(calendar.getTimeZone());
+
                 String str = formatter.format(calendar.getTime());
 
                 if(Locale.getDefault().equals(Locale.ENGLISH) || Locale.getDefault().equals(Locale.US) || Locale.getDefault().equals(Locale.UK) || Locale.getDefault().equals(Locale.CANADA))
@@ -25,6 +27,7 @@ public enum DateFormat {
             @Override
             public String formatCalendar(Calendar calendar) {
                 SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+                formatter.setTimeZone(calendar.getTimeZone());
                 return formatter.format(calendar.getTime());
             }
         },
@@ -32,6 +35,7 @@ public enum DateFormat {
             @Override
             public String formatCalendar(Calendar calendar) {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                formatter.setTimeZone(calendar.getTimeZone());
                 return formatter.format(calendar.getTime());
             }
         },

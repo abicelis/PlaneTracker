@@ -28,7 +28,7 @@ Please check out the prototype by clicking [right here!](https://abicelis.github
 - Java lambdas (retrolambda)
 - Retrofit
 - Dagger 2
-- Realm database
+- Room database
 
 
 ## Code dependencies

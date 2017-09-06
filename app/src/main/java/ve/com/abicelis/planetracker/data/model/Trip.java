@@ -48,7 +48,7 @@ public class Trip implements Comparable<Trip>{
     public String getName() {return mName;}
     public byte[] getImage() {return mImage;}
     public TripStatus getStatus() {
-        if(mFlights.size() == 0)
+        if(mFlights == null || mFlights.size() == 0)
             return TripStatus.UPCOMING;
 
         //TODO check if this comparison takes Timestamps into account

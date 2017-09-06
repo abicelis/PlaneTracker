@@ -54,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white_text"
                 android:textSize="22sp"
+                android:fontFamily="sans-serif-light"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:text="Placeholder name of trip"/>
@@ -64,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white_text"
                 android:textSize="14sp"
+                android:fontFamily="sans-serif-light"
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:text="Starts October 10"/>

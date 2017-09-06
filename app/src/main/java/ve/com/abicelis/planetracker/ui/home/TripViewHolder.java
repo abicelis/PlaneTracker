@@ -2,23 +2,22 @@ package ve.com.abicelis.planetracker.ui.home;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Constants;
 import ve.com.abicelis.planetracker.data.model.Trip;
+import ve.com.abicelis.planetracker.ui.changeimage.ChangeImageActivity;
 import ve.com.abicelis.planetracker.util.ImageUtil;
 
 /**
@@ -80,8 +79,29 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 //                mActivity.startActivity(viewRecipeDetailIntent);
                 break;
             case R.id.list_item_trip_menu:
-                Toast.makeText(mActivity, "Menu clicked!", Toast.LENGTH_SHORT).show();
+                PopupMenu popupMenu = new PopupMenu(mActivity, mMenu, Gravity.END);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_list_item_trip, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu_list_item_delete:
+                                Toast.makeText(mActivity, "delete", Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.menu_list_item_change_image:
+                                Intent intent = new Intent(mActivity, ChangeImageActivity.class);
+                                intent.putExtra(Constants.EXTRA_ACTIVITY_CHANGE_IMAGE_TRIP_NAME, mCurrent.getName());
+                                intent.putExtra(Constants.EXTRA_ACTIVITY_CHANGE_IMAGE_TRIP_ID, mCurrent.getId());
+                                mActivity.startActivity(intent);
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
                 break;
+
+
         }
     }
 }

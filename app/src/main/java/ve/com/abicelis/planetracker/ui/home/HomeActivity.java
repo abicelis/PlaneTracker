@@ -2,17 +2,18 @@ package ve.com.abicelis.planetracker.ui.home;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -25,7 +26,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Message;
-import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
 import ve.com.abicelis.planetracker.data.model.TripViewModel;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
 import ve.com.abicelis.planetracker.util.SnackbarUtil;
@@ -48,6 +48,10 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
     @BindView(R.id.activity_home_search_view)
     MaterialSearchView mSearchView;
 
+    @BindView(R.id.activity_home_no_items_container)
+    RelativeLayout mNoItemsContainer;
+    @BindView(R.id.activity_home_swipe_refresh)
+    SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.activity_home_recyclerview)
     RecyclerView mRecycler;
     private LinearLayoutManager mLayoutManager;
@@ -87,7 +91,7 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_home, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_home, menu);
         return true;
     }
 
@@ -129,20 +133,44 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
 
         mRecycler.setLayoutManager(mLayoutManager);
         mRecycler.setAdapter(mTripAdapter);
+
+        mSwipeRefresh.setColorSchemeResources(R.color.swipe_refresh_green, R.color.swipe_refresh_red, R.color.swipe_refresh_yellow);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                                                     @Override
+                                                     public void onRefresh() {
+                                                         mHomePresenter.refreshTripList();
+                                                     }
+                                                 }
+        );
     }
 
 
     /* HomeMvpView implementation */
 
     @Override
-    public void showErrorMessage(Message message) {
-        SnackbarUtil.showSnackbar(mContainer, SnackbarUtil.SnackbarType.ERROR, message.getFriendlyNameRes(), SnackbarUtil.SnackbarDuration.SHORT, null);
+    public void showLoading() {
+        mSwipeRefresh.setRefreshing(true);
+    }
+
+
+    @Override
+    public void showMessage(Message message, @Nullable BaseTransientBottomBar.BaseCallback<Snackbar> callback) {
+        SnackbarUtil.showSnackbar(mContainer, message.getMessageType(), message.getFriendlyNameRes(), SnackbarUtil.SnackbarDuration.SHORT, callback);
     }
 
     @Override
     public void showTrips(List<TripViewModel> trips) {
+        mSwipeRefresh.setRefreshing(false);
         mTripAdapter.getItems().clear();
         mTripAdapter.getItems().addAll(trips);
         mTripAdapter.notifyDataSetChanged();
+
+        if(mTripAdapter.getItems().size() == 0) {
+            mNoItemsContainer.setVisibility(View.VISIBLE);
+            mRecycler.setVisibility(View.GONE);
+        } else {
+            mNoItemsContainer.setVisibility(View.GONE);
+            mRecycler.setVisibility(View.VISIBLE);
+        }
     }
 }

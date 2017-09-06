@@ -11,5 +11,6 @@ import ve.com.abicelis.planetracker.ui.base.MvpView;
 
 public interface HomeMvpView extends MvpView {
 
+   void showLoading();
    void showTrips(List<TripViewModel> trips);
 }

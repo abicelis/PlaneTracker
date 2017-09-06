@@ -28,9 +28,13 @@ public class CalendarUtil {
      * Returns a cute string like "October 10", "January 25"
      */
     public static String getCuteStringDateFromCalendar(Calendar calendar) {
-        SimpleDateFormat df = new SimpleDateFormat("MMM dd", Locale.getDefault());
-        df.setTimeZone(calendar.getTimeZone());
+        SimpleDateFormat df;
+        if(calendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR))
+            df = new SimpleDateFormat("MMM dd", Locale.getDefault());
+        else
+            df = new SimpleDateFormat("MMM dd, YYYY", Locale.getDefault());
 
+        df.setTimeZone(calendar.getTimeZone());
         return df.format(calendar.getTime());
     }
 

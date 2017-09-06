@@ -1,5 +1,9 @@
 package ve.com.abicelis.planetracker.ui.base;
 
+import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
+
 import ve.com.abicelis.planetracker.application.Message;
 
 /**
@@ -10,5 +14,5 @@ import ve.com.abicelis.planetracker.application.Message;
  * implemented by an Activity or Fragment.
  */
 public interface MvpView {
-    void showErrorMessage(Message message);
+    void showMessage(Message message, @Nullable BaseTransientBottomBar.BaseCallback<Snackbar> callback);
 }

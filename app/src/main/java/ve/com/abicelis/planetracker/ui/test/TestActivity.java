@@ -1,6 +1,9 @@
 package ve.com.abicelis.planetracker.ui.test;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -77,7 +80,7 @@ public class TestActivity extends BaseActivity implements TestMvpView, OnMapRead
     }
 
     @Override
-    public void showErrorMessage(Message message) {
-        SnackbarUtil.showSnackbar(container, SnackbarUtil.SnackbarType.ERROR, message.getFriendlyNameRes(), SnackbarUtil.SnackbarDuration.SHORT, null);
+    public void showMessage(Message message, @Nullable BaseTransientBottomBar.BaseCallback<Snackbar> callback) {
+        SnackbarUtil.showSnackbar(container, message.getMessageType(), message.getFriendlyNameRes(), SnackbarUtil.SnackbarDuration.SHORT, null);
     }
 }

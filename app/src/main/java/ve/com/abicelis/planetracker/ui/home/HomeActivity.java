@@ -71,7 +71,8 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
 
         setUpToolbar();
         setUpRecyclerView();
-        mHomePresenter.refreshTripList();
+        setupSearchView();
+        mHomePresenter.refreshTripList(null);
 
         mAddTrip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,12 +87,15 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
     @Override
     protected void onResume() {
         super.onResume();
-        mHomePresenter.refreshTripList();
+        mHomePresenter.refreshTripList(null);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_home, menu);
+
+        MenuItem item = menu.findItem(R.id.menu_home_search);
+        mSearchView.setMenuItem(item);
         return true;
     }
 
@@ -99,14 +103,9 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.menu_home_search:
+            case R.id.menu_home_settings:
                 mHomePresenter.insertFakeTrip();
                 Toast.makeText(this, "Inserting fake trips", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.menu_home_settings:
-                mHomePresenter.refreshTripList();
-                Toast.makeText(this, "Refreshing", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.menu_home_about:
@@ -138,10 +137,43 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                                                      @Override
                                                      public void onRefresh() {
-                                                         mHomePresenter.refreshTripList();
+                                                         mHomePresenter.refreshTripList(null);
                                                      }
                                                  }
         );
+    }
+
+    private void setupSearchView() {
+        mSearchView.setVoiceSearch(true);
+        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mHomePresenter.refreshTripList(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.length() > 0)
+                    mHomePresenter.refreshTripList(newText);
+                if(newText.length() == 0)
+                    mHomePresenter.refreshTripList(null);
+                return true;
+            }
+        });
+
+        mSearchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                mAddTrip.hide();
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                mAddTrip.show();
+                mHomePresenter.refreshTripList(null);
+            }
+        });
     }
 
 

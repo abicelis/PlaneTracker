@@ -1,6 +1,7 @@
 package ve.com.abicelis.planetracker.ui.home;
 
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,10 +26,10 @@ public class HomePresenter extends BasePresenter<HomeMvpView> {
     }
 
 
-    public void refreshTripList() {
+    public void refreshTripList(@Nullable String filter) {
         getMvpView().showLoading();
-        mDataManager.getTrips()
-                .delay(1500, TimeUnit.MILLISECONDS)
+        mDataManager.getTrips(filter)
+                .delay(700, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(trips -> {
@@ -59,7 +60,7 @@ public class HomePresenter extends BasePresenter<HomeMvpView> {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            refreshTripList();
+            refreshTripList(null);
         }
     }
 

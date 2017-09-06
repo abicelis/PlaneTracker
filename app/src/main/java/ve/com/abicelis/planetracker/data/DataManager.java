@@ -1,6 +1,7 @@
 package ve.com.abicelis.planetracker.data;
 
 import android.graphics.Bitmap;
+import android.support.annotation.Nullable;
 
 import com.squareup.picasso.Picasso;
 
@@ -464,8 +465,14 @@ public class DataManager {
         return mAppDatabase.tripDao().getById(tripId);
     }
 
-    public Maybe<List<TripViewModel>> getTrips() {
-        return mAppDatabase.tripDao().getAll()
+
+    public Maybe<List<TripViewModel>> getTrips(@Nullable String filter) {
+        if(filter == null || filter.isEmpty())
+            filter = "%";
+        else
+            filter = "%"+filter+"%";
+
+        return mAppDatabase.tripDao().getFilteredByName(filter)
                 .map(new Function<List<Trip>, List<TripViewModel>>() {
                     @Override
                     public List<TripViewModel> apply(@NonNull List<Trip> trips) throws Exception {

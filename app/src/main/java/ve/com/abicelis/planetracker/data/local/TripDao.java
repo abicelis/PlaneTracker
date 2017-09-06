@@ -22,6 +22,9 @@ public interface TripDao {
     @Query("SELECT * FROM trip")
     Maybe<List<Trip>> getAll();
 
+    @Query("SELECT * FROM trip WHERE name LIKE :name")
+    Maybe<List<Trip>> getFilteredByName(String name);
+
     @Query("SELECT * FROM trip where trip_id = :tripId")
     Maybe<Trip> getById(long tripId);
 

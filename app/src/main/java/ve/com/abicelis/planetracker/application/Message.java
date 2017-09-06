@@ -4,27 +4,37 @@ import android.content.Context;
 import android.support.annotation.StringRes;
 
 import ve.com.abicelis.planetracker.R;
+import ve.com.abicelis.planetracker.util.SnackbarUtil;
 
 /**
  * Created by abicelis on 29/8/2017.
  * App-wide Messages
  * ERROR_
- * INFO_
+ * NOTICE_
  * SUCCESS_
  *
  */
 
 public enum Message {
-    INFO_LOADING_TRIPS(R.string.info_loading_trips, MessageType.INFO),
-    ERROR_LOADING_TRIPS(R.string.error_loading_trips, MessageType.ERROR),
+    ERROR_UNEXPECTED(R.string.error_unexpected, SnackbarUtil.SnackbarType.ERROR),
+
+
+    NOTICE_LOADING_TRIPS(R.string.info_loading_trips, SnackbarUtil.SnackbarType.NOTICE),
+    ERROR_LOADING_TRIPS(R.string.error_loading_trips, SnackbarUtil.SnackbarType.ERROR),
+
+    ERROR_LOADING_IMAGES(R.string.error_loading_images, SnackbarUtil.SnackbarType.ERROR),
+    ERROR_LOADING_IMAGE(R.string.error_loading_image, SnackbarUtil.SnackbarType.ERROR),
+    ERROR_SAVING_IMAGE(R.string.error_saving_image, SnackbarUtil.SnackbarType.ERROR),
+    SUCCESS_SAVING_IMAGE(R.string.success_saving_image, SnackbarUtil.SnackbarType.SUCCESS),
+
 
     ;
 
     @StringRes
     int friendlyName;
-    MessageType messageType;
+    SnackbarUtil.SnackbarType messageType;
 
-    Message(@StringRes int friendlyName, MessageType messageType) {
+    Message(@StringRes int friendlyName, SnackbarUtil.SnackbarType messageType) {
         this.friendlyName = friendlyName;
         this.messageType = messageType;
     }
@@ -33,12 +43,11 @@ public enum Message {
     public @StringRes int getFriendlyNameRes() {
         return friendlyName;
     }
-    public MessageType getMessageType() {
+    public SnackbarUtil.SnackbarType getMessageType() {
         return messageType;
     }
     public String getFriendlyName(Context context) {
         return PlaneTrackerApplication.getAppContext().getString(friendlyName);
     }
 
-    public enum MessageType {SUCCESS, ERROR, INFO}
 }

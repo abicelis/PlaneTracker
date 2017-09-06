@@ -8,7 +8,9 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
@@ -417,6 +419,25 @@ public class DataManager {
 
 
     /**
+     * Returns a {@code Single<List<String>>} containing urls of images,
+     * given a query string to search
+     */
+    public Single<List<String>> getImages(String query, int amount) {
+        return mQwantApi.getImages(query, amount)
+                .map(new Function<QwantResponse, List<String>>() {
+                    @Override
+                    public List<String> apply(@NonNull QwantResponse qwantResponse) throws Exception {
+                        List<String> urls = new ArrayList<>();
+                        if(qwantResponse.getData().getResult().getItems().size() > 0)
+                            for (QwantResponse.QwantItems i : qwantResponse.getData().getResult().getItems())
+                                urls.add(i.getMedia());
+                        return urls;
+                    }
+                });
+    }
+
+
+    /**
      * This method inserts or replaces an existing a trip and its flights.
      * It does not insert Airports or Airlines
      * Since these should already be saved in the db.
@@ -426,13 +447,22 @@ public class DataManager {
     public long saveTrip(Trip t) {
         Timber.d("Saving trip: %s", t.toString());
         long tripId = mAppDatabase.tripDao().insert(t);
-        for (Flight f : t.getFlights()) {
-            f.setTripId(tripId);
-            mAppDatabase.flightDao().insert(f);
+        if(t.getFlights() != null) {
+            for (Flight f : t.getFlights()) {
+                f.setTripId(tripId);
+                mAppDatabase.flightDao().insert(f);
+            }
         }
         return tripId;
     }
 
+
+    /**
+     * Returns a Trip WITHOUT ITS FLIGHTS
+     */
+    public Maybe<Trip> getTrip(long tripId) {
+        return mAppDatabase.tripDao().getById(tripId);
+    }
 
     public Maybe<List<TripViewModel>> getTrips() {
         return mAppDatabase.tripDao().getAll()
@@ -548,7 +578,7 @@ public class DataManager {
                     List<Trip> fakeTrips = new ArrayList<>();
                     List<Flight> flightsMar = new ArrayList<>();
                     Calendar pastDate = Calendar.getInstance();
-                    pastDate.add(Calendar.MONTH, 1);
+                    pastDate.add(Calendar.MONTH, -1);
 
                     Airline copaAirline = findAirlines("Copa").blockingGet().get(0);
                     try {
@@ -600,28 +630,30 @@ public class DataManager {
 
 
 
-                    Timber.d("Building Current Trip to Toronto");
-                    List<Flight> flightsYyz = new ArrayList<>();
-                    Calendar currentDate = Calendar.getInstance();
-
-                    Airline airCanadaAirline = findAirlines("AIr Canada").blockingGet().get(0);
-                    try {
-                        Flight flightToYyz = findFlightByFlightNumber(airCanadaAirline, 1949, currentDate).blockingGet();
-                        flightToYyz.setOrderInTrip(1);
-                        flightsYyz.add(flightToYyz);
-
-                        Flight flightToPty = findFlightByFlightNumber(airCanadaAirline, 1948, currentDate).blockingGet();
-                        flightToPty.setOrderInTrip(2);
-                        flightsYyz.add(flightToPty);
-                        fakeTrips.add(new Trip("Trip to Toronto", null,  flightsYyz));
-                    } catch (Exception e ) {
-                        Timber.e("Error finding flights for trip to Toronto. Could not add trip", e);
-                    }
-
-                    Timber.d("Getting image for Trip to Toronto");
-                    image = getImage("Toronto").blockingGet();
-                    image = ImageUtil.scaleBitmap(image, 500);
-                    fakeTrips.get(2).setImage(ImageUtil.toByteArray(image));
+//                    Timber.d("Building Current Trip to Toronto");
+//                    List<Flight> flightsYyz = new ArrayList<>();
+//                    Calendar currentDate = Calendar.getInstance();
+//                    currentDate.set(Calendar.DATE, 11);
+//                    currentDate.add(Calendar.MONTH, 11);//Octubre
+//
+//                    Airline airCanadaAirline = findAirlines("Air Canada").blockingGet().get(0);
+//                    try {
+//                        Flight flightToYyz = findFlightByFlightNumber(airCanadaAirline, 471, currentDate).blockingGet();
+//                        flightToYyz.setOrderInTrip(1);
+//                        flightsYyz.add(flightToYyz);
+//
+//                        Flight flightToYow = findFlightByFlightNumber(airCanadaAirline, 470, currentDate).blockingGet();
+//                        flightToYow.setOrderInTrip(2);
+//                        flightsYyz.add(flightToYow);
+//                        fakeTrips.add(new Trip("Trip to Toronto", null,  flightsYyz));
+//                    } catch (Exception e ) {
+//                        Timber.e("Error finding flights for trip to Toronto. Could not add trip", e);
+//                    }
+//
+//                    Timber.d("Getting image for Trip to Toronto");
+//                    image = getImage("Toronto").blockingGet();
+//                    image = ImageUtil.scaleBitmap(image, 500);
+//                    fakeTrips.get(2).setImage(ImageUtil.toByteArray(image));
 
 
 

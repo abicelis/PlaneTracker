@@ -14,4 +14,7 @@ public interface QwantApi {
     @GET("images?count=1")
     Single<QwantResponse> getImage(@Query("q") String query);
 
+    @GET("images")
+    Single<QwantResponse> getImages(@Query("q") String query, @Query("count") int amount);
+
 }

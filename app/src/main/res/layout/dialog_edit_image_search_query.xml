@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/gray_background">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="26sp"
+            android:textColor="@color/primary"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/dialog_edit_image_search_query_title"
+            />
+
+
+
+        <EditText
+            android:id="@+id/dialog_edit_image_search_query_text"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:textColor="@color/secondary_text"
+            android:textColorHint="@color/hint_text"
+            android:hint="@string/dialog_edit_image_search_query_hint">
+
+        </EditText>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingBottom="8dp"
+        android:paddingEnd="8dp"
+        >
+        <Button
+            android:id="@+id/dialog_edit_image_search_query_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_cancel"
+            android:layout_alignParentEnd="true"
+            style="?attr/borderlessButtonStyle"/>
+        <Button
+            android:id="@+id/dialog_edit_image_search_query_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_search"
+            android:layout_toStartOf="@id/dialog_edit_image_search_query_cancel"
+            style="?attr/borderlessButtonStyle"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

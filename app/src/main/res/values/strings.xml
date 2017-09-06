@@ -21,9 +21,14 @@
 
 
     <!--ChangeImage activity-->
-    <string name="activity_change_image_title">Select an image</string>
+    <string name="activity_change_image_title">Image for \'%1$s\'</string>
     <string name="activity_change_image_no_items">No images found</string>
     <string name="activity_change_image_menu_edit">Edit search</string>
+
+        <!--Edit Image Search Query Dialog-->
+        <string name="dialog_edit_image_search_query_title">Edit search query</string>
+        <string name="dialog_edit_image_search_query_hint">Search keywords&#8230;</string>
+        <string name="dialog_edit_image_search_query_empty_query">Please enter a valid search query</string>
 
 
 
@@ -44,6 +49,18 @@
     <string name="time_format_24">24h</string>
     <string name="time_format_12">12h</string>
 
+    <!-- DIALOG -->
+    <string name="dialog_cancel">CANCEL</string>
+    <string name="dialog_search">SEARCH</string>
+    <string name="dialog_done">DONE</string>
+    <string name="dialog_set">SET</string>
+    <string name="dialog_agree">AGREE</string>
+    <string name="dialog_skip">SKIP</string>
+    <string name="dialog_yes">YES</string>
+    <string name="dialog_no">NO</string>
+    <string name="dialog_discard">DISCARD</string>
+    <string name="dialog_delete">DELETE</string>
+    <string name="dialog_save">SAVE</string>
 
 
     <!--MISC-->

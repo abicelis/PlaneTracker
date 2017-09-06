@@ -1,5 +1,6 @@
 package ve.com.abicelis.planetracker.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
@@ -27,6 +28,7 @@ import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Message;
 import ve.com.abicelis.planetracker.data.model.TripViewModel;
+import ve.com.abicelis.planetracker.ui.about.AboutActivity;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
 import ve.com.abicelis.planetracker.util.SnackbarUtil;
 
@@ -109,8 +111,8 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
                 break;
 
             case R.id.menu_home_about:
-                Toast.makeText(this, "TODO: About", Toast.LENGTH_SHORT).show();
-
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
                 break;
         }
 

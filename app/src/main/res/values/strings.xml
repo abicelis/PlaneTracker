@@ -20,6 +20,8 @@
     <string name="activity_home_menu_list_item_change_image">Change image</string>
 
 
+
+
     <!--ChangeImage activity-->
     <string name="activity_change_image_title">Image for \'%1$s\'</string>
     <string name="activity_change_image_no_items">No images found</string>
@@ -29,6 +31,24 @@
         <string name="dialog_edit_image_search_query_title">Edit search query</string>
         <string name="dialog_edit_image_search_query_hint">Search keywords&#8230;</string>
         <string name="dialog_edit_image_search_query_empty_query">Please enter a valid search query</string>
+
+
+
+
+    <!-- About Activity -->
+    <string name="activity_about_toolbar_title">About</string>
+    <string name="activity_about_version">Version %1$s</string>
+    <string name="activity_about_author" translatable="false">Alejandro Bicelis %1$d</string>
+    <string name="activity_about_market_link">Rate app</string>
+    <string name="activity_about_github_link">View GitHub Project</string>
+    <string name="activity_about_website_link" translatable="false">www.alejandrobicelis.com.ve</string>
+    <!-- Links -->
+    <string name="url_market" translatable="false">market://details?id=ve.com.abicelis.planetracker</string>
+    <string name="url_github" translatable="false">github.com/abicelis/</string>
+    <string name="url_website" translatable="false">www.alejandrobicelis.com.ve</string>
+    <string name="address_email" translatable="false">alejandro@alejandrobicelis.com.ve</string>
+
+
 
 
 

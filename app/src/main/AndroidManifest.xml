@@ -31,6 +31,7 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".ui.test.TestActivity"/>
+        <activity android:name=".ui.about.AboutActivity"/>
         <activity android:name=".ui.changeimage.ChangeImageActivity"/>
         <activity
             android:name=".ui.home.HomeActivity">

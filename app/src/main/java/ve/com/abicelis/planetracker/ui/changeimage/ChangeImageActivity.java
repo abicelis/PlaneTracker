@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -65,13 +66,13 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
         getPresenterComponent().inject(this);
         mPresenter.attachView(this);
 
-        setUpToolbar();
         setUpRecyclerView();
 
         if(getIntent().hasExtra(Constants.EXTRA_ACTIVITY_CHANGE_IMAGE_TRIP_ID) && getIntent().hasExtra(Constants.EXTRA_ACTIVITY_CHANGE_IMAGE_TRIP_NAME)) {
             mPresenter.setTripData(
                     getIntent().getLongExtra(Constants.EXTRA_ACTIVITY_CHANGE_IMAGE_TRIP_ID, -1),
                     getIntent().getStringExtra(Constants.EXTRA_ACTIVITY_CHANGE_IMAGE_TRIP_NAME));
+            setUpToolbar();
             mPresenter.loadImages();
         } else {
             BaseTransientBottomBar.BaseCallback<Snackbar> callback = new BaseTransientBottomBar.BaseCallback<Snackbar>() {
@@ -90,13 +91,8 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
 
     private void setUpToolbar() {
         //Setup toolbar
-        mToolbar.setNavigationIcon(ContextCompat.getDrawable(this, R.drawable.ic_arrow_back));
-        mToolbar.setNavigationOnClickListener(v -> {
-            onBackPressed();
-        });
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(R.string.activity_change_image_title);
-        getSupportActionBar().setLogo(R.drawable.ic_plane);
+        getSupportActionBar().setTitle(String.format(getString(R.string.activity_change_image_title), mPresenter.getTripName()));
     }
 
     private void setUpRecyclerView() {
@@ -135,10 +131,25 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
         int id = item.getItemId();
         switch (id) {
             case R.id.menu_change_image_edit:
-                Toast.makeText(this, "editing search", Toast.LENGTH_SHORT).show();
+                showEditImageSearchQueryDialog();
                 return true;
         }
         return false;
+    }
+
+    private void showEditImageSearchQueryDialog() {
+        FragmentManager fm = this.getSupportFragmentManager();
+
+        EditImageSearchQueryDialogFragment dialog = EditImageSearchQueryDialogFragment.newInstance(mPresenter.getTripName());
+
+        dialog.setListener(new EditImageSearchQueryDialogFragment.SearchQuerySetListener() {
+            @Override
+            public void onSearchQuerySet(String query) {
+                mPresenter.setTripName(query);
+                mPresenter.loadImages();
+            }
+        });
+        dialog.show(fm, "EditImageSearchQueryDialogFragment");
     }
 
 

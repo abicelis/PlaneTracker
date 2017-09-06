@@ -40,6 +40,13 @@ public class ChangeImagePresenter extends BasePresenter<ChangeImageMvpView> {
         mTripName = tripName;
     }
 
+    public void setTripName(String tripName) {
+        mTripName = tripName;
+    }
+    public String getTripName(){
+        return mTripName;
+    }
+
 
     public void loadImages(){
         getMvpView().showLoading(true);

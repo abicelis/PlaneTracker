@@ -77,6 +77,7 @@
             android:paddingTop="14dp"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
+            android:paddingBottom="14dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_more_vert"
             />

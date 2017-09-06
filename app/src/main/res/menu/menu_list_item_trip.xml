@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_list_item_delete"
+        android:title="@string/activity_home_menu_list_item_delete"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_list_item_change_image"
+        android:title="@string/activity_home_menu_list_item_change_image"
+        app:showAsAction="never"/>
+</menu>

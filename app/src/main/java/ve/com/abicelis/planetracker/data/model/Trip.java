@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -34,7 +35,7 @@ public class Trip implements Comparable<Trip>{
 
 
     @Ignore
-    private List<Flight> mFlights;
+    private List<Flight> mFlights = new ArrayList<>();
 
     public Trip() {}    //Room complains otherwise, I wish I knew why.
 
@@ -97,8 +98,11 @@ public class Trip implements Comparable<Trip>{
                 + "\n   status="        + getStatus().name()
                 + "\n   flights=";
 
-        for (Flight f : mFlights)
-            out += "\n   Flight="  + f.toString();
+        if(mFlights != null) {
+            for (Flight f : mFlights)
+                out += "\n   Flight=" + f.toString();
+        } else
+            out = " NULL";
 
         return out;
     }

@@ -53,6 +53,13 @@ This Project uses external dependencies and SDK's
 * [Google Maps API](https://developers.google.com/maps/) - Google Maps API
 
 
+## Drawable sizes
+
+- Regular icons. Size 24dp, padding 2dp.
+- Large icons. Size 48dp, padding 2dp.
+
+
+
 ## Software used
 
 * [Android Studio 2.3.3 IDE](https://developer.android.com/studio/index.html) - Android IDE

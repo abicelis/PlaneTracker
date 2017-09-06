@@ -16,7 +16,10 @@
     <color name="gradient_start_color">#AA000000</color>
     <color name="gradient_end_color">#00000000</color>
 
-
+    <!--Swipe refresh loading icon colors-->
+    <color name="swipe_refresh_green">#7cb342</color>
+    <color name="swipe_refresh_red">#e53935</color>
+    <color name="swipe_refresh_yellow">#fdd835</color>
 
 
     <!--Snackbar Util colors-->

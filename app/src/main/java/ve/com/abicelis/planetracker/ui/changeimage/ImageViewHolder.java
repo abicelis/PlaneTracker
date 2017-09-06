@@ -11,7 +11,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 import ve.com.abicelis.planetracker.R;
-import ve.com.abicelis.planetracker.data.model.ImageThumbnailUrl;
 
 /**
  * Created by abicelis on 4/9/2017.
@@ -22,7 +21,7 @@ public class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnC
     //DATA
     private ImageAdapter mAdapter;
     private Activity mActivity;
-    private ImageThumbnailUrl mCurrent;
+    private String mCurrent;
     private int mPosition;
 
     //UI
@@ -35,14 +34,14 @@ public class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnC
         ButterKnife.bind(this, itemView);
     }
 
-    public void setData(ImageAdapter adapter, Activity activity, ImageThumbnailUrl current, int position) {
+    public void setData(ImageAdapter adapter, Activity activity, String current, int position) {
         mAdapter = adapter;
         mActivity = activity;
         mCurrent = current;
         mPosition = position;
 
         Picasso.with(activity)
-                .load(current.getImageUrl())
+                .load(mCurrent)
                 .error(R.drawable.error)
                 .fit().centerCrop()
                 .into(mImage);

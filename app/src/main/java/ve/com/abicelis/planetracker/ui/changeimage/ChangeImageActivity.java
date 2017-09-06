@@ -27,7 +27,6 @@ import timber.log.Timber;
 import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Constants;
 import ve.com.abicelis.planetracker.application.Message;
-import ve.com.abicelis.planetracker.data.model.ImageThumbnailUrl;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
 import ve.com.abicelis.planetracker.util.SnackbarUtil;
 
@@ -106,8 +105,8 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
         mImageAdapter = new ImageAdapter(this);
         mImageAdapter.setImageSelectedListener(new ImageAdapter.ImageSelectedListener() {
             @Override
-            public void onImageSelected(ImageThumbnailUrl item) {
-                mPresenter.imageSelected(item);
+            public void onImageSelected(String imageUrl) {
+                mPresenter.imageSelected(imageUrl);
             }
         });
 
@@ -146,8 +145,8 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
     /* ChangeImageMvpView implementation */
 
     @Override
-    public void showLoading() {
-        mSwipeRefresh.setRefreshing(true);
+    public void showLoading(boolean loading) {
+        mSwipeRefresh.setRefreshing(loading);
     }
 
     @Override
@@ -156,10 +155,10 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
     }
 
     @Override
-    public void showImages(List<ImageThumbnailUrl> images) {
+    public void showImages(List<String> imageUrls) {
         mSwipeRefresh.setRefreshing(false);
         mImageAdapter.getItems().clear();
-        mImageAdapter.getItems().addAll(images);
+        mImageAdapter.getItems().addAll(imageUrls);
         mImageAdapter.notifyDataSetChanged();
 
         if(mImageAdapter.getItems().size() == 0) {
@@ -169,5 +168,10 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
             mNoItemsContainer.setVisibility(View.GONE);
             mRecycler.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void imageSavedSoFinish() {
+        finish();
     }
 }

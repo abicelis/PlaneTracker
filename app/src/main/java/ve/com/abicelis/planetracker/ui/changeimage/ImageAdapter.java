@@ -5,17 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ve.com.abicelis.planetracker.R;
-import ve.com.abicelis.planetracker.data.model.ImageThumbnailUrl;
-import ve.com.abicelis.planetracker.data.model.TripViewModel;
-import ve.com.abicelis.planetracker.ui.home.TripHeaderViewHolder;
-import ve.com.abicelis.planetracker.ui.home.TripViewHolder;
 
 /**
  * Created by abicelis on 4/9/2017.
@@ -25,7 +18,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageViewHolder> {
 
     //DATA
     private ImageSelectedListener mListener;
-    private List<ImageThumbnailUrl> mImageUrls = new ArrayList<>();
+    private List<String> mImageUrls = new ArrayList<>();
     private LayoutInflater mInflater;
     private Activity mActivity;
 
@@ -47,7 +40,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageViewHolder> {
         holder.setListeners();
     }
 
-    public List<ImageThumbnailUrl> getItems() {
+    public List<String> getItems() {
         return mImageUrls;
     }
 
@@ -57,9 +50,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageViewHolder> {
     }
 
 
-    public void triggerImageSelected(ImageThumbnailUrl item) {
+    public void triggerImageSelected(String imageUrl) {
         if(mListener != null)
-            mListener.onImageSelected(item);
+            mListener.onImageSelected(imageUrl);
     }
 
     public void setImageSelectedListener(ImageSelectedListener mListener) {
@@ -67,6 +60,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageViewHolder> {
     }
 
     interface ImageSelectedListener{
-        void onImageSelected(ImageThumbnailUrl item);
+        void onImageSelected(String imageUrl);
     }
 }

@@ -21,6 +21,8 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
 
 
@@ -30,48 +32,46 @@ import ve.com.abicelis.planetracker.R;
 
 public class AboutActivity extends AppCompatActivity {
 
+    @BindView(R.id.activity_about_toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.activity_about_version)
+    TextView mVersion;
+    @BindView(R.id.activity_about_author)
+    TextView mAuthor;
+    @BindView(R.id.activity_about_website_link)
+    TextView mWebsiteLink;
+    @BindView(R.id.activity_about_market_link)
+    TextView mMarketLink;
+    @BindView(R.id.activity_about_github_link)
+    TextView mGithubLink;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_about_toolbar);
-        toolbar.setTitle(R.string.activity_about_toolbar_title);
-        toolbar.setNavigationIcon(ContextCompat.getDrawable(this, R.drawable.ic_arrow_back));
-        setSupportActionBar(toolbar);
+        mToolbar.setTitle(R.string.activity_about_toolbar_title);
+        mToolbar.setNavigationIcon(ContextCompat.getDrawable(this, R.drawable.ic_arrow_back));
+        setSupportActionBar(mToolbar);
 
 
-        TextView version = (TextView) findViewById(R.id.activity_about_version);
-        TextView author = (TextView) findViewById(R.id.activity_about_author);
-        TextView websiteLink = (TextView) findViewById(R.id.activity_about_website_link);
-        TextView marketLink = (TextView) findViewById(R.id.activity_about_market_link);
-        TextView githubLink = (TextView) findViewById(R.id.activity_about_github_link);
+        mVersion.setText(String.format(Locale.getDefault(), getResources().getString(R.string.activity_about_version), getAppVersionAndBuild(this).first));
+        mAuthor.setText(String.format(Locale.getDefault(), getResources().getString(R.string.activity_about_author), Calendar.getInstance().get(Calendar.YEAR)));
 
-        version.setText(String.format(Locale.getDefault(), getResources().getString(R.string.activity_about_version), getAppVersionAndBuild(this).first));
-        author.setText(String.format(Locale.getDefault(), getResources().getString(R.string.activity_about_author), Calendar.getInstance().get(Calendar.YEAR)));
 
-        marketLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
+        mMarketLink.setOnClickListener(v -> {
                 Intent playStoreIntent = new Intent(Intent.ACTION_VIEW);
                 playStoreIntent.setData(Uri.parse(getResources().getString(R.string.url_market)));
                 startActivity(playStoreIntent);
-            }
         });
-        githubLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mGithubLink.setOnClickListener(v -> {
                 launchWebBrowser(AboutActivity.this, getResources().getString(R.string.url_github));
-            }
         });
-        websiteLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mWebsiteLink.setOnClickListener(v -> {
                 launchWebBrowser(AboutActivity.this, getResources().getString(R.string.url_website));
-            }
         });
-
     }
 
     @Override

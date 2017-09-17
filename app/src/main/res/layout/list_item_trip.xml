@@ -21,8 +21,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:textSize="20sp"
-            android:text="@string/loading"
-            android:background="@color/gray_background"/>
+            android:text="@string/loading"/>
         <ImageView
             android:id="@+id/list_item_trip_image"
             android:layout_width="match_parent"

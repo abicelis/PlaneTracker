@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--COLORS FOR THEMES-->
+    <attr name="primary" format="reference|color" />
+    <attr name="primary_dark" format="reference|color" />
+    <attr name="primary_light" format="reference|color" />
+    <attr name="accent" format="reference|color" />
+    <attr name="primary_text" format="reference|color" />
+    <attr name="secondary_text" format="reference|color" />
+    <attr name="hint_text" format="reference|color" />
+    <attr name="icons" format="reference|color" />
+    <attr name="horizontal_divider" format="reference|color" />
+
+</resources>

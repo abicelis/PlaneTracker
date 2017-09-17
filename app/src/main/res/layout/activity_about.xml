@@ -8,10 +8,8 @@
         android:id="@+id/activity_about_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="?primary"
         app:theme="@style/ToolbarTheme"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:layout_scrollFlags="scroll|enterAlways|snap"
         />
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -43,8 +41,7 @@
                 android:layout_below="@id/activity_about_app_icon"
                 android:layout_centerHorizontal="true"
                 android:text="@string/app_name"
-                android:textSize="22sp"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textSize="22sp" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/activity_about_github_link"
@@ -53,7 +50,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                app:backgroundTint="@color/primary"
+                app:backgroundTint="?primary"
                 android:textColor="@color/white_text"
                 android:text="@string/activity_about_github_link"
                 />
@@ -62,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                app:backgroundTint="@color/primary"
+                app:backgroundTint="?primary"
                 android:textColor="@color/white_text"
                 android:text="@string/activity_about_market_link"
                 />

@@ -40,7 +40,7 @@
             android:id="@+id/activity_change_image_no_items_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="visible">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 <ImageView
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:tint="@color/divider"
+                    android:tint="?hint_text"
                     android:src="@drawable/ic_image_large"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
                     android:layout_marginTop="12dp"
                     android:gravity="center"
                     android:textSize="20sp"
-                    android:textColor="@color/secondary_text"
+                    android:textColor="?secondary_text"
                     android:text="@string/activity_change_image_no_items"/>
             </LinearLayout>
         </RelativeLayout>

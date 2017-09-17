@@ -32,7 +32,7 @@ public class CalendarUtil {
         if(calendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR))
             df = new SimpleDateFormat("MMM dd", Locale.getDefault());
         else
-            df = new SimpleDateFormat("MMM dd, YYYY", Locale.getDefault());
+            df = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
 
         df.setTimeZone(calendar.getTimeZone());
         return df.format(calendar.getTime());

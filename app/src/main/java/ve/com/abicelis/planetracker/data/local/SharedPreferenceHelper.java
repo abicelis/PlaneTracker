@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 import ve.com.abicelis.planetracker.application.Constants;
+import ve.com.abicelis.planetracker.data.model.AppThemeType;
 import ve.com.abicelis.planetracker.data.model.DateFormat;
 import ve.com.abicelis.planetracker.data.model.TimeFormat;
 
@@ -141,5 +142,39 @@ public class SharedPreferenceHelper {
             recentAirlinesStr += Constants.SHARED_PREFERENCE_RECENT_AIRPORTS_AIRLINES_SEPARATOR + String.valueOf(id);
             mSharedPreferences.edit().putString(Constants.SHARED_PREFERENCE_RECENT_AIRLINES, recentAirlinesStr).apply();
         }
+    }
+
+
+
+
+
+
+
+    /* APP THEME TYPE */
+    public AppThemeType getAppThemeType() {
+        String value = mSharedPreferences.getString(Constants.SHARED_PREFERENCE_APP_THEME_TYPE, null);
+        AppThemeType pref;
+        try {
+            pref = AppThemeType.valueOf(value);
+        } catch (Exception e) {
+            pref = null;
+        }
+
+        if(pref == null) {
+            Timber.d("getAppThemeType() found null, setting DARK");
+            pref = AppThemeType.DARK;
+            setAppThemeType(pref);
+        }
+
+        return pref;
+    }
+    public AppThemeType toggleAppThemeType() {
+        AppThemeType appTheme = getAppThemeType();
+        appTheme = (appTheme==AppThemeType.DARK ? AppThemeType.LIGHT : AppThemeType.DARK);
+        mSharedPreferences.edit().putString(Constants.SHARED_PREFERENCE_APP_THEME_TYPE, appTheme.name()).apply();
+        return appTheme;
+    }
+    public void setAppThemeType(AppThemeType value) {
+        mSharedPreferences.edit().putString(Constants.SHARED_PREFERENCE_APP_THEME_TYPE, value.name()).apply();
     }
 }

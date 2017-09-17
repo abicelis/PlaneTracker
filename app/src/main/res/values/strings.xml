@@ -63,7 +63,9 @@
     <string name="error_saving_image">Sorry, could not save image</string>
     <string name="success_saving_image">Image saved successfully</string>
 
-
+    <!--ENUM APP THEME TYPE-->
+    <string name="app_theme_type_light">Light</string>
+    <string name="app_theme_type_dark">Dark</string>
 
     <!--ENUM TIME FORMAT-->
     <string name="time_format_24">24h</string>

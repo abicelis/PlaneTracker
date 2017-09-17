@@ -24,6 +24,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
+import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 
 
 /**
@@ -48,6 +49,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(new SharedPreferenceHelper(this).getAppThemeType().getTheme());
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
 

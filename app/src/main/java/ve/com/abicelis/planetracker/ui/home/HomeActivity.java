@@ -150,12 +150,13 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
         mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mHomePresenter.refreshTripList(query);
+                mHomePresenter.refreshTripList(query.trim());
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                newText = newText.trim();
                 if(newText.length() > 0)
                     mHomePresenter.refreshTripList(newText);
                 if(newText.length() == 0)

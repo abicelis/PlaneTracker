@@ -13,6 +13,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
+import ve.com.abicelis.planetracker.ui.base.BaseDialogFragment;
 import ve.com.abicelis.planetracker.util.ViewUtil;
 
 
@@ -20,7 +21,7 @@ import ve.com.abicelis.planetracker.util.ViewUtil;
  * Created by abice on 16/3/2017.
  */
 
-public class EditImageSearchQueryDialogFragment extends DialogFragment implements View.OnClickListener {
+public class EditImageSearchQueryDialogFragment extends BaseDialogFragment implements View.OnClickListener {
 
     //DATA
     private static final String ARGUMENT_QUERY= "ARGUMENT_QUERY";

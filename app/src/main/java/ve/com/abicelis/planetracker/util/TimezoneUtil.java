@@ -41,7 +41,7 @@ public class TimezoneUtil {
      *
      * If {@code timezoneOffset} cannot be recognized, this method returns null
      */
-    private static String getTimezoneStringFromTimezoneOffset(String timezoneOffset) {
+    public static String getTimezoneStringFromTimezoneOffset(String timezoneOffset) {
 
         if(timezoneOffset.trim().equals("0"))
             return "GMT";

@@ -91,6 +91,8 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
 
     private void setUpToolbar() {
         //Setup toolbar
+        mToolbar.setNavigationIcon(ContextCompat.getDrawable(this, R.drawable.ic_arrow_back));
+
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(String.format(getString(R.string.activity_change_image_title), mPresenter.getTripName()));
     }
@@ -130,6 +132,9 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.id.menu_change_image_edit:
                 showEditImageSearchQueryDialog();
                 return true;
@@ -183,6 +188,7 @@ public class ChangeImageActivity extends BaseActivity implements ChangeImageMvpV
 
     @Override
     public void imageSavedSoFinish() {
+        setResult(RESULT_OK);
         finish();
     }
 }

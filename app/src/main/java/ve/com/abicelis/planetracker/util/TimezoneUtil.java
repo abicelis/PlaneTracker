@@ -46,15 +46,19 @@ public class TimezoneUtil {
         if(timezoneOffset.trim().equals("0"))
             return "GMT";
 
-        Pattern pattern = Pattern.compile("^\\d{1,2}(\\.5)?$");
+        Pattern pattern = Pattern.compile("^-?\\d{1,2}(\\.5)?$");
 
         if(pattern.matcher(timezoneOffset).matches()) {
 
             boolean negative = timezoneOffset.contains("-");
             boolean halfHour = timezoneOffset.contains(".5");
 
-            String[] parts = timezoneOffset.split("\\.");
-                return "GMT" + (negative? "-" : "+") + parts[0] + (halfHour ? ":30" : "");
+            String digit = timezoneOffset.split("\\.")[0].replaceAll("-"," ");
+            digit = digit.replaceAll(" ","");
+            digit = digit.replaceAll("-","");
+            digit = digit.replaceAll("\\+","");
+
+            return "GMT" + " " + (negative? "-" : "+") + digit + (halfHour ? ":30" : "");
         }
 
         return null;

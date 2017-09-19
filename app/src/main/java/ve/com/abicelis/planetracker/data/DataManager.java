@@ -3,17 +3,13 @@ package ve.com.abicelis.planetracker.data;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
@@ -25,7 +21,6 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Constants;
 import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
 import ve.com.abicelis.planetracker.data.local.AppDatabase;
@@ -483,6 +478,17 @@ public class DataManager {
                         }
                         return t;
                     });
+    }
+
+
+    /**
+     * Returns a Maybe of the image of a trip given its ID
+     */
+    public Maybe<byte[]> getTripImage(long tripId) {
+        return mAppDatabase.tripDao().getById(tripId)
+                .map((trip) -> {
+                    return trip.getImage();
+                });
     }
 
 

@@ -11,5 +11,6 @@
     <attr name="hint_text" format="reference|color" />
     <attr name="icons" format="reference|color" />
     <attr name="horizontal_divider" format="reference|color" />
+    <attr name="custom_background" format="reference|color" />
 
 </resources>

@@ -8,14 +8,28 @@
     <!--Trip Detail activity-->
     <string name="activity_trip_detail_no_items">No flights in this trip</string>
 
-    <string name="activity_trip_detail_share">Share</string>
-    <string name="activity_trip_detail_edit">Edit</string>
-    <string name="activity_trip_detail_delete">Delete</string>
+    <string name="activity_trip_detail_share">Share trip</string>
+    <string name="activity_trip_detail_edit">Edit flights</string>
+    <string name="activity_trip_detail_change_image">Change image</string>
+    <string name="activity_trip_detail_change_name">Change trip name</string>
+    <string name="activity_trip_detail_delete">Delete trip</string>
+    <string name="menu_trip_detail_edit_save">Save changes</string>
+    <string name="menu_trip_detail_edit_discard">Discard changes</string>
+
+        <!--Edit trip name Dialog-->
+        <string name="dialog_edit_trip_name_title">Edit Trip name</string>
+        <string name="dialog_edit_trip_name_title_hint">Trip name&#8230;</string>
+        <string name="dialog_edit_trip_name_title_empty">Please enter a valid name</string>
+
+        <!--Discard edit trip changes dialog-->
+        <string name="dialog_trip_detail_activity_discard_title">Discard changes</string>
+        <string name="dialog_trip_detail_activity_discard_message">Are you sure you want to discard the changes?</string>
 
         <!--List item flight-->
         <string name="list_item_flight_depart">Depart</string>
         <string name="list_item_flight_arrive">Arrive</string>
         <string name="list_item_flight_terminal">Terminal</string>
+        <string name="list_item_flight_header_add_flight_here">Add a flight here</string>
 
 
 

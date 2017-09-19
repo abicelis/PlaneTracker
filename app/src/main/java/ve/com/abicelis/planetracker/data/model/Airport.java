@@ -60,7 +60,7 @@ public class Airport {
     public Airport(long id, String name, String city, String country, String iata, String icao, float latitude,
                    float longitude, int altitude, String timezoneOffset, String timezoneOlson, String dst) {
         mId = id;
-        mName = name;
+        setName(name);
         mCity = city;
         mCountry = country;
         mIata = iata;
@@ -88,7 +88,12 @@ public class Airport {
     public String getDst() {return mDst;}
 
     public void setId(long mId) {this.mId = mId;}
-    public void setName(String mName) {this.mName = mName;}
+    public void setName(String mName) {
+        this.mName = mName;
+
+        this.mName = mName.replaceAll("International","");
+        this.mName = mName.replaceAll("Airport","");
+    }
     public void setCity(String mCity) {this.mCity = mCity;}
     public void setCountry(String mCountry) {this.mCountry = mCountry;}
     public void setIata(String mIata) {this.mIata = mIata;}
@@ -99,6 +104,15 @@ public class Airport {
     public void setTimezoneOffset(String mTimezoneOffset) {this.mTimezoneOffset = mTimezoneOffset;}
     public void setTimezoneOlson(String mTimezoneOlson) {this.mTimezoneOlson = mTimezoneOlson;}
     public void setDst(String mDst) {this.mDst = mDst;}
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Airport) {
+            return (this.getId() == ((Airport)obj).getId());
+        }
+        return false;
+    }
 
     @Override
     public String toString() {

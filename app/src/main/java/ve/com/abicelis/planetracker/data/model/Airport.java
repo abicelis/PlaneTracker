@@ -6,6 +6,7 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import ve.com.abicelis.planetracker.util.TimezoneUtil;
 
@@ -91,8 +92,8 @@ public class Airport {
     public void setName(String mName) {
         this.mName = mName;
 
-        this.mName = mName.replaceAll("International","");
-        this.mName = mName.replaceAll("Airport","");
+        this.mName = mName.replaceAll("(?i)"+ Pattern.quote("international"), "");
+        this.mName = mName.replaceAll("(?i)"+ Pattern.quote("airport"), "");
     }
     public void setCity(String mCity) {this.mCity = mCity;}
     public void setCountry(String mCountry) {this.mCountry = mCountry;}

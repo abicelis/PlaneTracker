@@ -1,5 +1,8 @@
 package ve.com.abicelis.planetracker.ui.tripdetail;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -14,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,7 +34,9 @@ import ve.com.abicelis.planetracker.application.Message;
 import ve.com.abicelis.planetracker.data.model.FlightViewModel;
 import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
+import ve.com.abicelis.planetracker.ui.changeimage.ChangeImageActivity;
 import ve.com.abicelis.planetracker.ui.common.FlightAdapter;
+import ve.com.abicelis.planetracker.util.AnimationUtil;
 import ve.com.abicelis.planetracker.util.ImageUtil;
 import ve.com.abicelis.planetracker.util.SnackbarUtil;
 
@@ -45,7 +49,6 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
     //DATA
     private static final float PERCENTAGE_TO_SHOW_BOTTOM_FAB = 0.6f;
     private static final float PERCENTAGE_TO_SHOW_SUBTITLE = 0.05f;
-    private static final int ALPHA_ANIMATIONS_DURATION = 200;
     private boolean mIsTheSubtitleVisible = true;
 
 
@@ -73,8 +76,10 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
 
     @BindView(R.id.activity_trip_detail_fab_map)
     FloatingActionButton mFabMap;
+    FloatingActionButton.Behavior mFabMapBehavior;
     @BindView(R.id.activity_trip_detail_fab_map_bottom)
     FloatingActionButton mFabMapBottom;
+    private boolean mFabMapBottomEnabled = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,6 +113,10 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         //Hook into appbar movement to hide/show views
         mAppBar.addOnOffsetChangedListener(this);
 
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)mFabMap.getLayoutParams();
+        mFabMapBehavior = new FloatingActionButton.Behavior();
+        params.setBehavior(mFabMapBehavior);
+
         mFabMap.setOnClickListener(view -> {
             handleGoToMap();
         });
@@ -137,10 +146,16 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_activity_trip_detail, menu);
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        if(mPresenter.isInEditMode())
+            getMenuInflater().inflate(R.menu.menu_activity_trip_detail_edit, menu);
+        else
+            getMenuInflater().inflate(R.menu.menu_activity_trip_detail, menu);
+
         return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -156,15 +171,70 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
                 break;
 
             case R.id.menu_trip_detail_edit:
-                Toast.makeText(this, "edit", Toast.LENGTH_SHORT).show();
+                mPresenter.editModeToggled();
+                break;
+
+            case R.id.menu_trip_detail_change_image:
+                Intent intent = new Intent(this, ChangeImageActivity.class);
+                intent.putExtra(Constants.EXTRA_ACTIVITY_CHANGE_IMAGE_TRIP_NAME, mPresenter.getLoadedTrip().getName());
+                intent.putExtra(Constants.EXTRA_ACTIVITY_CHANGE_IMAGE_TRIP_ID, mPresenter.getLoadedTrip().getId());
+                startActivityForResult(intent, Constants.RESULT_ACTIVITY_CHANGE_IMAGE_TRIP);
+                break;
+
+            case R.id.menu_trip_detail_change_name:
+                EditTripNameDialogFragment dialog = EditTripNameDialogFragment.newInstance(mPresenter.getLoadedTrip().getName());
+                dialog.setListener(tripName -> {
+                    mPresenter.changeTripName(tripName);
+                });
+                dialog.show(getSupportFragmentManager(), "EditTripNameDialogFragment");
                 break;
 
             case R.id.menu_trip_detail_delete:
                 Toast.makeText(this, "delete", Toast.LENGTH_SHORT).show();
                 break;
 
+
+            // Used in edit mode
+            case R.id.menu_trip_detail_edit_save:
+                Toast.makeText(this, "save", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.menu_trip_detail_edit_discard:
+                handleEditModeDiscard(false);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mPresenter.isInEditMode())
+            handleEditModeDiscard(true);
+        else
+            finish();
+    }
+
+    private void handleEditModeDiscard(boolean finish) {
+        AlertDialog dialog = new AlertDialog.Builder(TripDetailActivity.this)
+                .setTitle(getResources().getString(R.string.dialog_trip_detail_activity_discard_title))
+                .setMessage(getResources().getString(R.string.dialog_trip_detail_activity_discard_message))
+                .setPositiveButton(getResources().getString(R.string.dialog_discard),  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(finish)
+                            finish();
+                        else
+                            mPresenter.discardEditModeChanges();
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        dialog.show();
     }
 
 
@@ -173,38 +243,43 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         int maxScroll = appBarLayout.getTotalScrollRange();
         float percentage = (float) Math.abs(verticalOffset) / (float) maxScroll;
 
-        if (percentage >= PERCENTAGE_TO_SHOW_BOTTOM_FAB)
-            mFabMapBottom.show();
-        else
-            mFabMapBottom.hide();
+        if(mFabMapBottomEnabled) {
+            if (percentage >= PERCENTAGE_TO_SHOW_BOTTOM_FAB)
+                mFabMapBottom.show();
+            else
+                mFabMapBottom.hide();
+        }
 
         if (percentage <= PERCENTAGE_TO_SHOW_SUBTITLE) {
             if(!mIsTheSubtitleVisible) {
-                startAlphaAnimation(mSubtitle, ALPHA_ANIMATIONS_DURATION, View.VISIBLE);
+                AnimationUtil.startAlphaAnimation(mSubtitle, Constants.ALPHA_ANIMATIONS_DURATION, View.VISIBLE);
                 mIsTheSubtitleVisible = true;
             }
 
         } else {
             if (mIsTheSubtitleVisible) {
-                startAlphaAnimation(mSubtitle, ALPHA_ANIMATIONS_DURATION, View.GONE);
+                AnimationUtil.startAlphaAnimation(mSubtitle, Constants.ALPHA_ANIMATIONS_DURATION, View.GONE);
                 mIsTheSubtitleVisible = false;
             }
         }
 
     }
 
-    public static void startAlphaAnimation(View v, long duration, int visibility) {
-        AlphaAnimation alphaAnimation = (visibility == View.VISIBLE) ? new AlphaAnimation(0f, 1f) : new AlphaAnimation(1f, 0f);
-
-        alphaAnimation.setDuration(duration);
-        alphaAnimation.setFillAfter(true);
-        v.startAnimation(alphaAnimation);
-    }
-
-
     private void handleGoToMap(){
         Toast.makeText(this, "GOING TO MAP", Toast.LENGTH_SHORT).show();
         //Intent goToMapIntent = new Intent();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == Constants.RESULT_ACTIVITY_CHANGE_IMAGE_TRIP){
+            if (resultCode == RESULT_OK) {
+                //Reload the image
+                mPresenter.reloadTripImage();
+            }
+        }
     }
 
 
@@ -215,12 +290,13 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         mToolbar.setTitle(trip.getName());
         mSubtitle.setText(trip.getInfo(this));
 
-        if(trip.getImage() != null)
-            mImage.setImageBitmap(ImageUtil.getBitmap(trip.getImage()));
-        else
-            mImage.setImageResource(R.drawable.error);
+        reloadTripImage(trip.getImage());
 
         mFlightAdapter.getItems().clear();
+        mFlightAdapter.getItems().addAll(flights);
+        mFlightAdapter.getItems().addAll(flights);
+        mFlightAdapter.getItems().addAll(flights);
+        mFlightAdapter.getItems().addAll(flights);
         mFlightAdapter.getItems().addAll(flights);
         mFlightAdapter.notifyDataSetChanged();
 
@@ -228,10 +304,51 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         mRecycler.setVisibility(View.VISIBLE);
     }
 
+
+
     @Override
     public void showNoFlights() {
         mNoItemsContainer.setVisibility(View.VISIBLE);
         mRecycler.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void reloadTripImage(byte[] image) {
+        if(image != null)
+            mImage.setImageBitmap(ImageUtil.getBitmap(image));
+        else
+            mImage.setImageResource(R.drawable.error);
+    }
+
+    @Override
+    public void reloadTripName(String tripName) {
+        mToolbar.setTitle(tripName);
+    }
+
+    @Override
+    public void activateEditMode() {
+        mFlightAdapter.toggleEditMode(true);
+        invalidateOptionsMenu();
+
+        //Handle fabs
+        mFabMapBehavior.setAutoHideEnabled(false);
+        mFabMap.hide();
+        mFabMapBottomEnabled = false;
+        mFabMapBottom.hide();
+    }
+
+    @Override
+    public void deactivateEditMode() {
+        mFlightAdapter.toggleEditMode(false);
+        invalidateOptionsMenu();
+
+
+        //Handle fabs
+        mFabMapBehavior.setAutoHideEnabled(true);
+        mFabMap.show();
+        mFabMapBottomEnabled = true;
+        mFabMapBottom.show();
+
     }
 
     @Override

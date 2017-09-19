@@ -13,4 +13,10 @@ import ve.com.abicelis.planetracker.ui.base.MvpView;
 public interface TripDetailMvpView extends MvpView {
     void showTrip(Trip trip, List<FlightViewModel> flights);
     void showNoFlights();
+
+    void reloadTripImage(byte[] image);
+    void reloadTripName(String tripName);
+
+    void activateEditMode();
+    void deactivateEditMode();
 }

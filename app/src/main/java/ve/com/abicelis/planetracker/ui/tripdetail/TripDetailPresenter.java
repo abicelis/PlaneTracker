@@ -24,6 +24,7 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
     //DATA
     private DataManager mDataManager;
     private Trip mTrip;
+    private boolean mIsInEditMode;
 
     public TripDetailPresenter(DataManager dataManager) {
         mDataManager = dataManager;
@@ -47,13 +48,68 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
                 });
     }
 
+    public void discardEditModeChanges() {
+        editModeToggled();
+        getTrip(mTrip.getId());
+    }
 
 
 
+    public void editModeToggled() {
+        mIsInEditMode = !mIsInEditMode;
+
+        if(mIsInEditMode) {
+            getMvpView().activateEditMode();
+        } else {
+            getMvpView().deactivateEditMode();
+        }
+    }
+    public boolean isInEditMode(){
+        return mIsInEditMode;
+    }
+
+    public Trip getLoadedTrip() {
+        return mTrip;
+    }
+
+    public void changeTripName(String tripName) {
+        mTrip.setName(tripName);
+        new SaveTripTask().execute(mTrip);
+    }
+
+    public void reloadTripImage() {
+        mDataManager.getTripImage(mTrip.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(image -> {
+                    mTrip.setImage(image);
+                    getMvpView().reloadTripImage(image);
+                }, throwable -> {
+                    Timber.e(throwable, "Error getting image of trip from DB, ID=%d", mTrip.getId());
+                    getMvpView().showMessage(Message.ERROR_LOADING_IMAGE, null);
+                });
+    }
+
+
+    private class SaveTripTask extends AsyncTask<Trip, Void, Void> {
+        @Override
+        protected Void doInBackground(Trip... trips) {
+            mDataManager.saveTrip(trips[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            getMvpView().reloadTripName(mTrip.getName());
+        }
+    }
     private class GenerateFlightHeadersTask extends AsyncTask<Flight, Void, List<FlightViewModel>> {
         @Override
         protected List<FlightViewModel> doInBackground(Flight... flights) {
             List<FlightViewModel> flightVM = new ArrayList<>();
+
+            if (flights.length > 0)                     //If at least one flight
+                flightVM.add(new FlightViewModel());    //Add start header, which will show only when edit mode is active
 
             Flight lastFlight = null;
             for (Flight f : flights) {
@@ -65,6 +121,10 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
                 flightVM.add(new FlightViewModel(f));
                 lastFlight = f;
             }
+
+            if (flights.length > 0)                     //If at least one flight
+                flightVM.add(new FlightViewModel());    //Add end header, which will show only when edit mode is active
+
             return flightVM;
         }
 
@@ -74,5 +134,4 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
             getMvpView().showTrip(mTrip, list);
         }
     }
-
 }

@@ -7,6 +7,7 @@ import dagger.Module;
 import dagger.Provides;
 import ve.com.abicelis.planetracker.data.DataManager;
 import ve.com.abicelis.planetracker.ui.changeimage.ChangeImagePresenter;
+import ve.com.abicelis.planetracker.ui.tripdetail.TripDetailPresenter;
 import ve.com.abicelis.planetracker.ui.home.HomePresenter;
 import ve.com.abicelis.planetracker.ui.test.TestPresenter;
 
@@ -41,6 +42,8 @@ public class PresenterModule {
     }
 
     @Provides
-    ChangeImagePresenter changeImagePresenter(DataManager dataManager) {return new ChangeImagePresenter(dataManager);}
+    ChangeImagePresenter changeImagePresenter(DataManager dataManager) {return new ChangeImagePresenter(dataManager); }
 
+    @Provides
+    TripDetailPresenter tripDetailPresenter(DataManager dataManager) {return new TripDetailPresenter(dataManager); }
 }

@@ -15,9 +15,19 @@
         app:showAsAction="ifRoom"/>
 
     <item
+        android:id="@+id/menu_trip_detail_change_image"
+        android:title="@string/activity_trip_detail_change_image"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_trip_detail_change_name"
+        android:title="@string/activity_trip_detail_change_name"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/menu_trip_detail_delete"
-        android:icon="@drawable/ic_delete"
         android:title="@string/activity_trip_detail_delete"
         app:showAsAction="never"/>
+
 
 </menu>

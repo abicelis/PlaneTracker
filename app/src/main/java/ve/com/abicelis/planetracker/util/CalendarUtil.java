@@ -79,4 +79,19 @@ public class CalendarUtil {
         copyTo.setTimeInMillis(copyFrom.getTimeInMillis());
     }
 
+    public static String getCuteTimeStringBetweenCalendars(@NonNull Calendar start, @NonNull Calendar end) {
+        long startMillis = start.getTimeInMillis();
+        long endMillis = end.getTimeInMillis();
+
+        long seconds = Math.abs(endMillis - startMillis)/1000;
+        int hoursBetween = (int) (seconds / 3600);
+        int minutesBetween = (int) ((seconds % 3600) / 60);
+
+        String out = (hoursBetween > 0 ? hoursBetween + "h" : "");
+        out += (minutesBetween > 0 ? minutesBetween + "m" : "");
+
+        return out;
+    }
+
+
 }

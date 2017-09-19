@@ -1,5 +1,25 @@
 <resources>
 
+
+
+
+
+
+    <!--Trip Detail activity-->
+    <string name="activity_trip_detail_no_items">No flights in this trip</string>
+
+    <string name="activity_trip_detail_share">Share</string>
+    <string name="activity_trip_detail_edit">Edit</string>
+    <string name="activity_trip_detail_delete">Delete</string>
+
+        <!--List item flight-->
+        <string name="list_item_flight_depart">Depart</string>
+        <string name="list_item_flight_arrive">Arrive</string>
+        <string name="list_item_flight_terminal">Terminal</string>
+
+
+
+
     <!--Home activity-->
     <string name="activity_home_search_hint">Search&#8230;</string>
     <string name="activity_home_trip_item_current">Current</string>
@@ -57,11 +77,15 @@
     <!--MESSAGES-->
     <string name="error_unexpected">Unexpected error, please report this error</string>
     <string name="error_loading_trips">Sorry, could not load trips</string>
+    <string name="error_loading_trip">Sorry, could not load trip</string>
     <string name="info_loading_trips">Refreshing trips</string>
     <string name="error_loading_images">Sorry, could not load images</string>
     <string name="error_loading_image">Sorry, could not load image</string>
     <string name="error_saving_image">Sorry, could not save image</string>
     <string name="success_saving_image">Image saved successfully</string>
+
+    <!--FLIGHT VIEW MODEL-->
+    <string name="flight_view_model_layover_format">%1$s layover</string>
 
     <!--ENUM APP THEME TYPE-->
     <string name="app_theme_type_light">Light</string>

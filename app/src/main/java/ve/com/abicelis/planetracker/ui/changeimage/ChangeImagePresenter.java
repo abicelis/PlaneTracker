@@ -69,7 +69,7 @@ public class ChangeImagePresenter extends BasePresenter<ChangeImageMvpView> {
                     Bitmap bitmap = Picasso.with(PlaneTrackerApplication.getAppContext()).load(url[0]).get();
                     bitmap = ImageUtil.scaleBitmap(bitmap, 500);
                     byte[] bitmapBytes = ImageUtil.toCompressedByteArray(bitmap, Constants.IMAGE_JPEG_COMPRESSION_PERCENTAGE);
-                    Trip trip = mDataManager.getTrip(mTripId).blockingGet();
+                    Trip trip = mDataManager.getTrip(mTripId, false).blockingGet();
 
                     if(trip != null) {
                         trip.setImage(bitmapBytes);

@@ -21,6 +21,7 @@ public enum Message {
 
     NOTICE_LOADING_TRIPS(R.string.info_loading_trips, SnackbarUtil.SnackbarType.NOTICE),
     ERROR_LOADING_TRIPS(R.string.error_loading_trips, SnackbarUtil.SnackbarType.ERROR),
+    ERROR_LOADING_TRIP(R.string.error_loading_trip, SnackbarUtil.SnackbarType.ERROR),
 
     ERROR_LOADING_IMAGES(R.string.error_loading_images, SnackbarUtil.SnackbarType.ERROR),
     ERROR_SAVING_IMAGE(R.string.error_saving_image, SnackbarUtil.SnackbarType.ERROR),

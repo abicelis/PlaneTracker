@@ -1,37 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout     xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="54dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="10dp"
-    android:padding="16dp"
-    android:orientation="horizontal">
-    <TextView
-        android:id="@+id/list_item_flight_header_title"
-        android:layout_width="wrap_content"
+    android:layout_marginEnd="16dp"
+    android:layout_marginStart="16dp"
+    android:gravity="center"
+    >
+
+
+    <LinearLayout
+        android:id="@+id/list_item_flight_header_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:textColor="?primary_text"
-        android:fontFamily="sans-serif-light"
-        android:textSize="14sp"/>
+        android:layout_centerVertical="true"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/list_item_flight_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="?primary_text"
+            android:fontFamily="sans-serif-light"
+            android:textSize="14sp"/>
 
-    <View
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="1dp"
-        android:background="?divider"
-        android:layout_gravity="center_vertical"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="1dp"
+            android:background="?divider"
+            android:layout_gravity="center_vertical"/>
 
-    <TextView
-        android:id="@+id/list_item_flight_header_layover"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:textColor="?primary_text"
-        android:fontFamily="sans-serif-light"
-        android:textSize="14sp"/>
+        <TextView
+            android:id="@+id/list_item_flight_header_layover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="?primary_text"
+            android:fontFamily="sans-serif-light"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/list_item_flight_header_add_flight_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:colorBackground"
+        android:visibility="invisible">
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/list_item_flight_header_add_flight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:backgroundTint="?primary"
+            android:textColor="@color/white_text"
+            android:drawableStart="@drawable/ic_plane"
+            android:drawablePadding="4dp"
+            android:text="@string/list_item_flight_header_add_flight_here"
+            />
+    </FrameLayout>
 
 
 
-</LinearLayout>
+</RelativeLayout>
 
 

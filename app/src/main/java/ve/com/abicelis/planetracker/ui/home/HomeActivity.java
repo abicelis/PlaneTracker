@@ -27,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Message;
+import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.data.model.TripViewModel;
 import ve.com.abicelis.planetracker.ui.about.AboutActivity;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
@@ -108,6 +109,11 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
             case R.id.menu_home_settings:
                 mHomePresenter.insertFakeTrip();
                 Toast.makeText(this, "Inserting fake trips", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.menu_home_theme:
+                new SharedPreferenceHelper().toggleAppThemeType();
+                recreate();
                 break;
 
             case R.id.menu_home_about:

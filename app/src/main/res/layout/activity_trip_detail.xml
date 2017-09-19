@@ -121,6 +121,7 @@
         app:fabSize="normal"
         app:backgroundTint="?primary"
         app:elevation="1dp"
+        android:visibility="gone"
         android:layout_gravity="bottom|end"
         android:src="@drawable/ic_fab_plane_90"
         />

@@ -1,12 +1,6 @@
 package ve.com.abicelis.planetracker.data.model;
 
-import android.content.Context;
-
 import java.util.Calendar;
-import java.util.Locale;
-
-import ve.com.abicelis.planetracker.R;
-import ve.com.abicelis.planetracker.util.CalendarUtil;
 
 /**
  * Created by abicelis on 17/9/2017.
@@ -16,12 +10,8 @@ import ve.com.abicelis.planetracker.util.CalendarUtil;
 public class FlightViewModel {
 
     private Flight mFlight;
-
-    private String mTitle;
-    private String mLayover;
-
+    private FlightHeader mHeader;
     private FlightViewModelType mFlightViewModelType;
-
 
 
     public FlightViewModel(Flight flight) {
@@ -31,15 +21,18 @@ public class FlightViewModel {
 
     public FlightViewModel(String title, Calendar start, Calendar end) {
         mFlightViewModelType = FlightViewModelType.HEADER_LAYOVER;
-        mTitle = title;
-        mLayover = CalendarUtil.getCuteTimeStringBetweenCalendars(start, end);
+        mHeader = new FlightHeader(title, start, end);
+    }
+
+    public FlightViewModel() {
+        mFlightViewModelType = FlightViewModelType.HEADER_EDIT_ONLY;
+        mHeader = new FlightHeader();
     }
 
 
     public Flight getFlight() {return mFlight;}
-    public String getHeaderTitle() {return mTitle;}
-    public String getHeaderLayover() {return mLayover;}
+    public FlightHeader getHeader() {return mHeader;}
     public FlightViewModelType getFlightViewModelType() {return mFlightViewModelType;}
 
-    public enum FlightViewModelType { HEADER_LAYOVER, FLIGHT }
+    public enum FlightViewModelType { HEADER_EDIT_ONLY, HEADER_LAYOVER, FLIGHT }
 }

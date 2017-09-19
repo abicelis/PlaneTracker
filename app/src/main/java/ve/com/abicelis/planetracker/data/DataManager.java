@@ -3,6 +3,8 @@ package ve.com.abicelis.planetracker.data;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import java.security.InvalidParameterException;
@@ -23,6 +25,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
+import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Constants;
 import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
 import ve.com.abicelis.planetracker.data.local.AppDatabase;
@@ -411,9 +414,13 @@ public class DataManager {
                             String url = qwantResponse.getData().getResult().getItems().get(0).getMedia();
 
                             //TODO: maybe resize the image if too large? Use an ImageUtil for that or something.
-                            return Picasso.with(PlaneTrackerApplication.getAppContext()).load(url).get();
+                            try {
+                                return Picasso.with(PlaneTrackerApplication.getAppContext()).load(url).get();
+                            } catch (Exception e) {
+                                throw new Exception();
+                            }
                         }
-                        return null;
+                        throw new Exception();
                     }
                 });
     }
@@ -459,11 +466,26 @@ public class DataManager {
 
 
     /**
-     * Returns a Trip WITHOUT ITS FLIGHTS
+     * Returns a Trip with or without its flights, airlines, airports depending on {@code includeExtras}
      */
-    public Maybe<Trip> getTrip(long tripId) {
-        return mAppDatabase.tripDao().getById(tripId);
+    public Maybe<Trip> getTrip(long tripId, boolean includeExtras) {
+        if(!includeExtras)
+            return mAppDatabase.tripDao().getById(tripId);
+        else
+            return mAppDatabase.tripDao().getById(tripId)
+                    .map(t -> {
+                        t.setFlights(mAppDatabase.flightDao().getByTripId(t.getId()).blockingGet());
+
+                        for (Flight flight : t.getFlights()) {
+                            flight.setOrigin(mAppDatabase.airportDao().getById(flight.getOriginId()).blockingGet());
+                            flight.setDestination(mAppDatabase.airportDao().getById(flight.getDestinationId()).blockingGet());
+                            flight.setAirline(mAppDatabase.airlineDao().getById(flight.getAirlineId()).blockingGet());
+                        }
+                        return t;
+                    });
     }
+
+
 
 
     public Maybe<List<TripViewModel>> getTrips(@Nullable String filter) {
@@ -602,9 +624,14 @@ public class DataManager {
                     }
 
                     Timber.d("Getting image for Trip to Maracaibo");
-                    Bitmap image = getImage("Maracaibo").blockingGet();
-                    image = ImageUtil.scaleBitmap(image, 500);
-                    fakeTrips.get(0).setImage(ImageUtil.toByteArray(image));
+                    try {
+                        Bitmap image = getImage("Maracaibo").blockingGet();
+                        image = ImageUtil.scaleBitmap(image, 500);
+                        fakeTrips.get(0).setImage(ImageUtil.toByteArray(image));
+                    } catch (Exception e) {
+                        /*Do nothing*/
+                    }
+
 
 
 
@@ -628,9 +655,13 @@ public class DataManager {
                     }
 
                     Timber.d("Getting image for Trip to Panama");
-                    image = getImage("Panama").blockingGet();
-                    image = ImageUtil.scaleBitmap(image, 500);
-                    fakeTrips.get(1).setImage(ImageUtil.toByteArray(image));
+                    try {
+                        Bitmap image = getImage("Panama").blockingGet();
+                        image = ImageUtil.scaleBitmap(image, 500);
+                        fakeTrips.get(1).setImage(ImageUtil.toByteArray(image));
+                    } catch (Exception e) {
+                        /*Do nothing*/
+                    }
 
 
 

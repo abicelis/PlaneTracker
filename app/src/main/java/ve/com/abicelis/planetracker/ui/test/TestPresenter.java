@@ -272,8 +272,8 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
 //
 //                        if(response.body() != null
 //                                && response.body().getResult() != null
-//                                && response.body().getResult().getFlights() != null)
-//                            for(AirlineFlightSchedulesFlights f : response.body().getResult().getFlights())
+//                                && response.body().getResult().getTrip() != null)
+//                            for(AirlineFlightSchedulesFlights f : response.body().getResult().getTrip())
 //                                Timber.d("Got a flight: %s", f.toString());
 //                        else
 //                            Timber.d("Got an empty response, no flights.");

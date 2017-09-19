@@ -2,8 +2,11 @@ package ve.com.abicelis.planetracker.data.model;
 
 import android.support.annotation.StringRes;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
@@ -13,12 +16,29 @@ import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
  */
 
 public enum TimeFormat {
-    HOUR_24(R.string.time_format_24),
-    HOUR_12(R.string.time_format_12)
+    HOUR_24(R.string.time_format_24) {
+        @Override
+        public String formatCalendar(Calendar calendar) {
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:ss a", Locale.getDefault());
+            formatter.setTimeZone(calendar.getTimeZone());
+
+            return formatter.format(calendar.getTime());
+        }
+    },
+    HOUR_12(R.string.time_format_12) {
+        @Override
+        public String formatCalendar(Calendar calendar) {
+            SimpleDateFormat formatter = new SimpleDateFormat("hh:ss a", Locale.getDefault());
+            formatter.setTimeZone(calendar.getTimeZone());
+
+            return formatter.format(calendar.getTime());
+        }
+    }
     ;
 
 
     private @StringRes int friendlyName;
+    public abstract String formatCalendar(Calendar calendar);
 
 
     TimeFormat(@StringRes int friendlyName){

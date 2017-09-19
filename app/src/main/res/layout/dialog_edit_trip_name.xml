@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="26sp"
+            android:textColor="?primary"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/dialog_edit_trip_name_title"
+            />
+
+
+
+        <EditText
+            android:id="@+id/dialog_edit_trip_name_text"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:textColor="?secondary_text"
+            android:textColorHint="?hint_text"
+            android:hint="@string/dialog_edit_trip_name_title_hint">
+
+        </EditText>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingBottom="8dp"
+        android:paddingEnd="8dp"
+        >
+        <Button
+            android:id="@+id/dialog_edit_trip_name_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_cancel"
+            android:layout_alignParentEnd="true"
+            style="?attr/borderlessButtonStyle"/>
+        <Button
+            android:id="@+id/dialog_edit_trip_name_set"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_set"
+            android:layout_toStartOf="@id/dialog_edit_trip_name_cancel"
+            style="?attr/borderlessButtonStyle"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

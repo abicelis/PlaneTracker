@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 import ve.com.abicelis.planetracker.application.Constants;
+import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
 import ve.com.abicelis.planetracker.data.model.AppThemeType;
 import ve.com.abicelis.planetracker.data.model.DateFormat;
 import ve.com.abicelis.planetracker.data.model.TimeFormat;
@@ -21,9 +22,8 @@ public class SharedPreferenceHelper {
 
     private SharedPreferences mSharedPreferences;
 
-    @Inject
-    public SharedPreferenceHelper(Context applicationContext) {
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+    public SharedPreferenceHelper() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(PlaneTrackerApplication.getAppContext());
     }
 
 

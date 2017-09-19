@@ -31,7 +31,7 @@ public interface ApplicationComponent {
     // A service to be injected into Application object
     // Services required by more than one sub-component of ApplicationComponent
     DataManager dataManager();
-    SharedPreferenceHelper sharedPreferenceHelper();
+
 
 
 

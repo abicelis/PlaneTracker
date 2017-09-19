@@ -30,6 +30,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void setSavedAppTheme(){
-        setTheme(new SharedPreferenceHelper(this).getAppThemeType().getTheme());
+        setTheme(new SharedPreferenceHelper().getAppThemeType().getTheme());
     }
 }

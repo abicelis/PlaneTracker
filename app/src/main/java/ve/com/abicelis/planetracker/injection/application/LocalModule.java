@@ -9,6 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import ve.com.abicelis.planetracker.application.Constants;
 import ve.com.abicelis.planetracker.data.local.AppDatabase;
+import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 
 /**
  * Created by abicelis on 28/8/2017.
@@ -34,5 +35,9 @@ public class LocalModule {
                 AppDatabase.class, databaseName).fallbackToDestructiveMigration().build();
         //TODO remember to kill fallbackToDestructiveMigration() and provide a proper migration plan on prod!
     }
+
+    @Provides
+    @ApplicationScope
+    SharedPreferenceHelper provideSharedPreferenceHelper() {return new SharedPreferenceHelper(); }
 
 }

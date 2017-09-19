@@ -49,7 +49,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(new SharedPreferenceHelper(this).getAppThemeType().getTheme());
+        setTheme(new SharedPreferenceHelper().getAppThemeType().getTheme());
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
 

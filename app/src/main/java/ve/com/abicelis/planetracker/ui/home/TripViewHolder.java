@@ -18,6 +18,7 @@ import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Constants;
 import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.ui.changeimage.ChangeImageActivity;
+import ve.com.abicelis.planetracker.ui.tripdetail.TripDetailActivity;
 import ve.com.abicelis.planetracker.util.ImageUtil;
 
 /**
@@ -58,6 +59,9 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
         if(mCurrent.getImage() != null && mCurrent.getImage().length != 0)
             mImage.setImageBitmap(ImageUtil.getBitmap(mCurrent.getImage()));
+        else
+            mImage.setImageResource(R.drawable.error);
+
         mName.setText(mCurrent.getName());
         mInfo.setText(mCurrent.getInfo(activity));
     }
@@ -72,12 +76,11 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         int id = v.getId();
         switch (id) {
             case R.id.list_item_trip_container:
-                Toast.makeText(mActivity, "Trip clicked! "+ mCurrent.getName(), Toast.LENGTH_SHORT).show();
-
-//                Intent viewRecipeDetailIntent = new Intent(mActivity, TripDetailActivity.class);
-//                viewRecipeDetailIntent.putExtra(Constants.SOMECONSTANT, mCurrent);
-//                mActivity.startActivity(viewRecipeDetailIntent);
+                Intent tripDetailIntent = new Intent(mActivity, TripDetailActivity.class);
+                tripDetailIntent.putExtra(Constants.EXTRA_ACTIVITY_TRIP_DETAIL_TRIP_ID, mCurrent.getId());
+                mActivity.startActivity(tripDetailIntent);
                 break;
+
             case R.id.list_item_trip_menu:
                 PopupMenu popupMenu = new PopupMenu(mActivity, mMenu, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_list_item_trip, popupMenu.getMenu());

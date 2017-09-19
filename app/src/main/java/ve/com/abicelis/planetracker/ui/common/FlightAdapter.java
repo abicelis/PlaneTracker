@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ve.com.abicelis.planetracker.R;
+import ve.com.abicelis.planetracker.data.model.FlightHeader;
 import ve.com.abicelis.planetracker.data.model.FlightViewModel;
 
 /**
@@ -23,6 +24,7 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private LayoutInflater mInflater;
     private Activity mActivity;
     private String mLayoverFormat;
+    private boolean mIsInEditMode;
 
 
     public FlightAdapter(Activity activity) {
@@ -41,6 +43,8 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         FlightViewModel.FlightViewModelType type = FlightViewModel.FlightViewModelType.values()[viewType];
 
         switch (type) {
+            case HEADER_EDIT_ONLY:
+                return new FlightHeaderEditOnlyViewHolder(mInflater.inflate(R.layout.list_item_flight_header_edit_only, parent, false));
             case HEADER_LAYOVER:
                 return new FlightHeaderViewHolder(mInflater.inflate(R.layout.list_item_flight_header, parent, false));
             case FLIGHT:
@@ -53,16 +57,47 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         FlightViewModel current = mFlights.get(position);
         switch (current.getFlightViewModelType()) {
+            case  HEADER_EDIT_ONLY:
+                FlightHeaderEditOnlyViewHolder fe = (FlightHeaderEditOnlyViewHolder)holder;
+                fe.setData(mActivity, this, current.getHeader(), position);
+                fe.setListeners();
+                break;
+
             case HEADER_LAYOVER:
                 FlightHeaderViewHolder fh = (FlightHeaderViewHolder)holder;
-                fh.setData(current.getHeaderTitle(), mLayoverFormat, current.getHeaderLayover());
+                fh.setData(mActivity, this, current.getHeader(), mLayoverFormat, position);
+                fh.setListeners();
                 break;
+
             case FLIGHT:
                 FlightViewHolder f = (FlightViewHolder)holder;
                 f.setData(this, mActivity, current.getFlight(), position);
                 break;
         }
 
+    }
+
+    public boolean isInEditMode() {
+        return mIsInEditMode;
+    }
+    public void toggleEditMode(boolean toggle) {
+        if(toggle) {
+            mIsInEditMode = true;
+            doToggleItems(FlightHeader.State.EDIT);
+        } else {
+            mIsInEditMode = false;
+            doToggleItems(FlightHeader.State.HEADER);
+        }
+    }
+
+    private void doToggleItems(FlightHeader.State state) {
+        for (int i=0; i<getItemCount(); i++) {
+            FlightViewModel f = mFlights.get(i);
+            if (f.getFlightViewModelType() != FlightViewModel.FlightViewModelType.FLIGHT) {
+                f.getHeader().setState(state);
+                notifyItemChanged(i);
+            }
+        }
     }
 
     public List<FlightViewModel> getItems() {

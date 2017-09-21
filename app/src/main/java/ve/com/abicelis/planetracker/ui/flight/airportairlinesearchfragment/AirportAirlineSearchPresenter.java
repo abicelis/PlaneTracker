@@ -35,7 +35,7 @@ public class AirportAirlineSearchPresenter extends BasePresenter<AirportAirlineS
         getMvpView().showLoading();
         switch (type) {
             case BOTH:
-                mDataManager.findAirportsOrAirlines(query, null)
+                mDataManager.findAirportsOrAirlines(query, Constants.ROOM_DATABASE_MAX_SEARCH_RESULTS)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(airportAirlineItems -> {

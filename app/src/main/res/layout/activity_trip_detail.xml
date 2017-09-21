@@ -13,13 +13,12 @@
         android:layout_height="200dp"
         android:theme="@style/AppTheme.AppBarOverlay"
         >
-
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/activity_trip_detail_collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            android:background="?divider"
+            android:background="?horizontal_divider"
             app:expandedTitleMarginBottom="36dp"
             >
 
@@ -65,7 +64,6 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 />
-
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>

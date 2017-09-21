@@ -2,6 +2,7 @@ package ve.com.abicelis.planetracker.ui.flight.airportairlinesearchfragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -32,7 +33,7 @@ public class AirportAirlineSearchPresenter extends BasePresenter<AirportAirlineS
 
 
     void search(String query, AirportAirlineSearchType type) {
-        getMvpView().showLoading();
+        //getMvpView().showLoading();
         switch (type) {
             case BOTH:
                 mDataManager.findAirportsOrAirlines(query, Constants.ROOM_DATABASE_MAX_SEARCH_RESULTS)

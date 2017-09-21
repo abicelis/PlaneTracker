@@ -13,6 +13,7 @@ import ve.com.abicelis.planetracker.ui.base.MvpView;
 public interface AirportAirlineSearchMvpView extends MvpView {
     void showLoading();
     void hideLoading();
+    void clearItems();
     void showItems(List<AirportAirlineItem> items, AirportAirlineSearchType type);
 
 }

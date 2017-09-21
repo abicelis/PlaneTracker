@@ -31,6 +31,7 @@ import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.data.model.TripViewModel;
 import ve.com.abicelis.planetracker.ui.about.AboutActivity;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
+import ve.com.abicelis.planetracker.ui.flight.FlightActivity;
 import ve.com.abicelis.planetracker.util.SnackbarUtil;
 
 /**
@@ -77,12 +78,12 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
         setupSearchView();
         mHomePresenter.refreshTripList(null);
 
-        mAddTrip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(HomeActivity.this, "Inserting fake trip", Toast.LENGTH_SHORT).show();
-                mHomePresenter.insertFakeTrip();
-            }
+        mAddTrip.setOnClickListener((view) -> {
+            Intent createNewTripIntent = new Intent(this, FlightActivity.class);
+            startActivity(createNewTripIntent);
+
+//                Toast.makeText(HomeActivity.this, "Inserting fake trip", Toast.LENGTH_SHORT).show();
+//                mHomePresenter.insertFakeTrip();
         });
 
     }

@@ -2,7 +2,13 @@
 
 
 
-    <!--Airport Airline Search Fragment-->
+    <!--Flight Activity-->
+    <string name="activity_flight_toolbar_title">Add a Flight</string>
+    <string name="activity_flight_query_airport_airline">Airport or Airline&#8230;</string>
+    <string name="activity_flight_by_route_origin">Origin&#8230;</string>
+    <string name="activity_flight_by_route_destination">Destination&#8230;</string>
+
+        <!--Airport Airline Search Fragment-->
 
 
     <!--Trip Detail activity-->

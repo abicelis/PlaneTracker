@@ -12,7 +12,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(tableName = "airline",
         indices = {@Index("name"), @Index("iata"), @Index("icao"), @Index("callsign")}
 )
-public class Airline implements AirportAirlineItem {
+public class Airline {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "airline_id")

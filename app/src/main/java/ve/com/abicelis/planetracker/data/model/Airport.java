@@ -2,6 +2,7 @@ package ve.com.abicelis.planetracker.data.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -17,7 +18,7 @@ import ve.com.abicelis.planetracker.util.TimezoneUtil;
 @Entity(tableName = "airport",
         indices = {@Index("name"), @Index("iata"), @Index("icao")}
 )
-public class Airport implements AirportAirlineItem {
+public class Airport {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "airport_id")
@@ -55,7 +56,6 @@ public class Airport implements AirportAirlineItem {
 
     @ColumnInfo(name = "dst")               //Daylight savings time. One of E (Europe), A (US/Canada), S (South America), O (Australia), Z (New Zealand), N (None) or U (Unknown)
     private String mDst;                    //See also https://openflights.org/help/time.html
-
 
 
     public Airport(long id, String name, String city, String country, String iata, String icao, float latitude,
@@ -105,7 +105,6 @@ public class Airport implements AirportAirlineItem {
     public void setTimezoneOffset(String mTimezoneOffset) {this.mTimezoneOffset = mTimezoneOffset;}
     public void setTimezoneOlson(String mTimezoneOlson) {this.mTimezoneOlson = mTimezoneOlson;}
     public void setDst(String mDst) {this.mDst = mDst;}
-
 
     @Override
     public boolean equals(Object obj) {

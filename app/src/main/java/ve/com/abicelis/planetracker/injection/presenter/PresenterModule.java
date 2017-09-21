@@ -7,6 +7,8 @@ import dagger.Module;
 import dagger.Provides;
 import ve.com.abicelis.planetracker.data.DataManager;
 import ve.com.abicelis.planetracker.ui.changeimage.ChangeImagePresenter;
+import ve.com.abicelis.planetracker.ui.flight.FlightPresenter;
+import ve.com.abicelis.planetracker.ui.flight.airportairlinesearchfragment.AirportAirlineSearchPresenter;
 import ve.com.abicelis.planetracker.ui.tripdetail.TripDetailPresenter;
 import ve.com.abicelis.planetracker.ui.home.HomePresenter;
 import ve.com.abicelis.planetracker.ui.test.TestPresenter;
@@ -46,4 +48,10 @@ public class PresenterModule {
 
     @Provides
     TripDetailPresenter tripDetailPresenter(DataManager dataManager) {return new TripDetailPresenter(dataManager); }
+
+    @Provides
+    FlightPresenter flightPresenter(DataManager dataManager) {return new FlightPresenter(dataManager); }
+
+    @Provides
+    AirportAirlineSearchPresenter airportAirlineSearchPresenter(DataManager dataManager) {return new AirportAirlineSearchPresenter(dataManager); }
 }

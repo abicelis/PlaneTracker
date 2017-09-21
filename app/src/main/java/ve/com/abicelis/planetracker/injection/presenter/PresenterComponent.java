@@ -2,6 +2,8 @@ package ve.com.abicelis.planetracker.injection.presenter;
 
 import dagger.Subcomponent;
 import ve.com.abicelis.planetracker.ui.changeimage.ChangeImageActivity;
+import ve.com.abicelis.planetracker.ui.flight.FlightActivity;
+import ve.com.abicelis.planetracker.ui.flight.airportairlinesearchfragment.AirportAirlineSearchFragment;
 import ve.com.abicelis.planetracker.ui.tripdetail.TripDetailActivity;
 import ve.com.abicelis.planetracker.ui.home.HomeActivity;
 import ve.com.abicelis.planetracker.ui.test.TestActivity;
@@ -20,4 +22,6 @@ public interface PresenterComponent {
     void inject(HomeActivity target);
     void inject(ChangeImageActivity target);
     void inject(TripDetailActivity target);
+    void inject(FlightActivity target);
+    void inject(AirportAirlineSearchFragment target);
 }

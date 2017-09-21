@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
@@ -27,6 +28,7 @@ import ve.com.abicelis.planetracker.data.local.AppDatabase;
 import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.data.model.Airline;
 import ve.com.abicelis.planetracker.data.model.Airport;
+import ve.com.abicelis.planetracker.data.model.AirportAirlineItem;
 import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.data.model.TripViewModel;
@@ -236,33 +238,80 @@ public class DataManager {
 //    }
 
     /**
-     * Returns an Observable of {@link Airline}, which can return a list of
+     * Returns a Maybe of {@link Airline}, which can return a list of
      * Airlines, this search queries the local db.
      * @param query A string with which Airlines will be searched for. This method will
-     *              query the db by Airport name, IATA and ICAO.
+     *              query the db by Airline name, IATA, ICAO and callsign.
      */
-    public Maybe<List<Airline>> findAirlines(@NonNull String query) {
+    public Maybe<List<Airline>> findAirlines(@NonNull String query, @Nullable Integer limit) {
         if(query.isEmpty())
             return Maybe.error(InvalidParameterException::new);
 
         query = "%"+query+"%";
-        return mAppDatabase.airlineDao().find(query);
+
+        if (limit != null)
+            return mAppDatabase.airlineDao().find(query, limit);
+        else
+            return mAppDatabase.airlineDao().find(query);
     }
 
 
     /**
-     * Returns an Observable of {@link Airport}, which can return a list of
+     * Returns a Maybe of {@link Airport}, which can return a list of
      * Airports, this search queries the local db.
      * @param query A string with which Airports will be searched for. This method will
      *              query the db by Airport name, IATA and ICAO.
      */
-    public Maybe<List<Airport>> findAirports(@NonNull String query) {
+    public Maybe<List<Airport>> findAirports(@NonNull String query, @Nullable Integer limit) {
         if(query.isEmpty())
             return Maybe.error(InvalidParameterException::new);
 
         query = "%"+query+"%";
-        return mAppDatabase.airportDao().find(query);
+
+        if (limit != null)
+            return mAppDatabase.airportDao().find(query, limit);
+        else
+            return mAppDatabase.airportDao().find(query);
     }
+
+
+    /**
+     * Returns a Flowable of {@link AirportAirlineItem}, which can return a list of
+     * Airports or Airlines, this search queries the local db.
+     * @param query A string with which Airports or Airlines will be searched for. This method will
+     *              query the db by Airline/Airport name, IATA, ICAO and callsign.
+     */
+    public Maybe<List<AirportAirlineItem>> findAirportsOrAirlines(@NonNull String query, @Nullable Integer limit) {
+        if(query.isEmpty())
+            return Maybe.error(InvalidParameterException::new);
+
+        query = "%"+query+"%";
+
+        return Maybe.zip(findAirports(query, limit), findAirlines(query, limit), new BiFunction<List<Airport>, List<Airline>, List<AirportAirlineItem>>() {
+            @Override
+            public List<AirportAirlineItem> apply(@NonNull List<Airport> airports, @NonNull List<Airline> airlines) throws Exception {
+                List<AirportAirlineItem> items = new ArrayList<>();
+
+                int limit = Math.min(airports.size(), airlines.size());
+                int i = 0;
+                for (; i < limit; i++) {
+                    items.add(airports.get(i));
+                    items.add(airlines.get(i));
+                }
+
+                if(i < airports.size()-1 )
+                    for (int j = i; j < airports.size(); j++)
+                        items.add(airports.get(j));
+
+                if(i < airlines.size()-1 )
+                    for (int j = i; j < airlines.size(); j++)
+                        items.add(airlines.get(j));
+
+                return items;
+            }
+        });
+    }
+
 
 
 
@@ -615,7 +664,7 @@ public class DataManager {
                     Calendar pastDate = Calendar.getInstance();
                     pastDate.add(Calendar.MONTH, -1);
 
-                    Airline copaAirline = findAirlines("Copa").blockingGet().get(0);
+                    Airline copaAirline = findAirlines("Copa", 1).blockingGet().get(0);
                     try {
                         Flight flightToMar = findFlightByFlightNumber(copaAirline, 717, pastDate).blockingGet();
                         flightToMar.setOrderInTrip(1);

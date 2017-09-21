@@ -1,4 +1,4 @@
-package ve.com.abicelis.planetracker.ui.common;
+package ve.com.abicelis.planetracker.ui.common.flight;
 
 import android.app.Activity;
 import android.support.v7.widget.CardView;

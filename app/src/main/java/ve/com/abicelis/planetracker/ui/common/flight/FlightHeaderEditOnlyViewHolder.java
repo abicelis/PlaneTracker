@@ -1,16 +1,11 @@
-package ve.com.abicelis.planetracker.ui.common;
+package ve.com.abicelis.planetracker.ui.common.flight;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

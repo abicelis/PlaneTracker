@@ -10,6 +10,7 @@ import java.util.List;
 
 import io.reactivex.Maybe;
 import ve.com.abicelis.planetracker.data.model.Airport;
+import ve.com.abicelis.planetracker.data.model.AirportRelevance;
 
 /**
  * Created by abicelis on 30/8/2017.
@@ -33,8 +34,36 @@ public interface AirportDao {
     @Query("SELECT * FROM airport where icao = :icao")
     Maybe<Airport> getByIcao(String icao);
 
-    @Query("SELECT * FROM airport WHERE name LIKE :query OR iata LIKE :query OR icao LIKE :query")
-    Maybe<List<Airport>> find(String query);
+//    @Query("SELECT * FROM airport WHERE name LIKE :query OR city LIKE :query OR iata LIKE :query OR icao LIKE :query")
+//    Maybe<List<Airport>> find(String query);
+//    @Query("SELECT * FROM airport WHERE name LIKE :query OR city LIKE :query OR iata LIKE :query OR icao LIKE :query LIMIT :limit")
+//    Maybe<List<Airport>> find(String query, int limit);
+
+
+    @Query("SELECT *" +
+            ",(name LIKE :query) +" +
+            " (city LIKE :query) +" +
+            " (country LIKE :query) +" +
+            " (CASE WHEN iata LIKE :query THEN 3 ELSE 0 END) +" +
+            " (CASE WHEN icao LIKE :query THEN 3 ELSE 0 END)" +
+            " AS relevance" +
+            " FROM AIRPORT" +
+            " WHERE name LIKE :query OR city LIKE :query OR country LIKE :query OR iata LIKE :query OR icao LIKE :query" +
+            " ORDER BY [relevance] desc")
+    Maybe<List<AirportRelevance>> find(String query);
+
+    @Query("SELECT *" +
+            ",(name LIKE :query) +" +
+            " (city LIKE :query) +" +
+            " (country LIKE :query) +" +
+            " (CASE WHEN iata LIKE :query THEN 3 ELSE 0 END) +" +
+            " (CASE WHEN icao LIKE :query THEN 3 ELSE 0 END)" +
+            " AS relevance" +
+            " FROM AIRPORT" +
+            " WHERE name LIKE :query OR city LIKE :query OR country LIKE :query OR iata LIKE :query OR icao LIKE :query" +
+            " ORDER BY [relevance] desc " +
+            " LIMIT :limit")
+    Maybe<List<AirportRelevance>> find(String query, int limit);
 
     @Insert
     long[] insert(Airport ... airports);

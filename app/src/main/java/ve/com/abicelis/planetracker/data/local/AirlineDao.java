@@ -9,6 +9,7 @@ import java.util.List;
 
 import io.reactivex.Maybe;
 import ve.com.abicelis.planetracker.data.model.Airline;
+import ve.com.abicelis.planetracker.data.model.AirlineRelevance;
 
 /**
  * Created by abicelis on 30/8/2017.
@@ -32,8 +33,27 @@ public interface AirlineDao {
     @Query("SELECT * FROM airline where icao = :icao")
     Maybe<Airline> getByIcao(String icao);
 
-    @Query("SELECT * FROM airline WHERE name LIKE :query OR iata LIKE :query OR icao LIKE :query OR callsign LIKE :query")
-    Maybe<List<Airline>> find(String query);
+    @Query("SELECT *" +
+            ",(name LIKE :query) +" +
+            " (CASE WHEN iata LIKE :query THEN 3 ELSE 0 END) +" +
+            " (CASE WHEN icao LIKE :query THEN 3 ELSE 0 END) +" +
+            " (callsign LIKE :query)" +
+            " AS relevance" +
+            " FROM airline" +
+            " WHERE name LIKE :query OR iata LIKE :query OR icao LIKE :query OR callsign LIKE :query" +
+            " ORDER BY [relevance] desc ")
+    Maybe<List<AirlineRelevance>> find(String query);
+    @Query("SELECT *" +
+            ",(name LIKE :query) +" +
+            " (CASE WHEN iata LIKE :query THEN 3 ELSE 0 END) +" +
+            " (CASE WHEN icao LIKE :query THEN 3 ELSE 0 END) +" +
+            " (callsign LIKE :query)" +
+            " AS relevance" +
+            " FROM airline" +
+            " WHERE name LIKE :query OR iata LIKE :query OR icao LIKE :query OR callsign LIKE :query" +
+            " ORDER BY [relevance] desc " +
+            " LIMIT :limit")
+    Maybe<List<AirlineRelevance>> find(String query, int limit);
 
     @Insert
     long[] insert(Airline ... airlines);

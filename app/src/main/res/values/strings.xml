@@ -2,7 +2,7 @@
 
 
 
-
+    <!--Airport Airline Search Fragment-->
 
 
     <!--Trip Detail activity-->
@@ -97,6 +97,13 @@
     <string name="error_loading_image">Sorry, could not load image</string>
     <string name="error_saving_image">Sorry, could not save image</string>
     <string name="success_saving_image">Image saved successfully</string>
+
+    <string name="error_getting_airports_or_airlines">Sorry, could not get airports or airlines</string>
+    <string name="error_getting_airports">Sorry, could not get airports</string>
+    <string name="error_getting_airlines">Sorry, could not get airlines</string>
+    <string name="notice_no_airports_or_airlines_found">No airports or airlines found</string>
+    <string name="notice_no_airports_found">No airports found</string>
+    <string name="notice_no_airlines_found">No airlines found</string>
 
     <!--FLIGHT VIEW MODEL-->
     <string name="flight_view_model_layover_format">%1$s layover</string>

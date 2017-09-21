@@ -28,6 +28,12 @@ public enum Message {
     ERROR_SAVING_IMAGE(R.string.error_saving_image, SnackbarUtil.SnackbarType.ERROR),
     SUCCESS_SAVING_IMAGE(R.string.success_saving_image, SnackbarUtil.SnackbarType.SUCCESS),
 
+    ERROR_GETTING_AIRPORTS_OR_AIRLINES(R.string.error_getting_airports_or_airlines, SnackbarUtil.SnackbarType.ERROR),
+    ERROR_GETTING_AIRPORTS(R.string.error_getting_airports, SnackbarUtil.SnackbarType.ERROR),
+    ERROR_GETTING_AIRLINES(R.string.error_getting_airlines, SnackbarUtil.SnackbarType.ERROR),
+    NOTICE_NO_AIRPORTS_OR_AIRLINES_FOUND(R.string.notice_no_airports_or_airlines_found, SnackbarUtil.SnackbarType.NOTICE),
+    NOTICE_NO_AIRPORTS_FOUND(R.string.notice_no_airports_found, SnackbarUtil.SnackbarType.NOTICE),
+    NOTICE_NO_AIRLINES_FOUND(R.string.notice_no_airlines_found, SnackbarUtil.SnackbarType.NOTICE),
 
     ;
 

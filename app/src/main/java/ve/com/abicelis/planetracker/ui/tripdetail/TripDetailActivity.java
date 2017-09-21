@@ -35,7 +35,7 @@ import ve.com.abicelis.planetracker.data.model.FlightViewModel;
 import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
 import ve.com.abicelis.planetracker.ui.changeimage.ChangeImageActivity;
-import ve.com.abicelis.planetracker.ui.common.FlightAdapter;
+import ve.com.abicelis.planetracker.ui.common.flight.FlightAdapter;
 import ve.com.abicelis.planetracker.util.AnimationUtil;
 import ve.com.abicelis.planetracker.util.ImageUtil;
 import ve.com.abicelis.planetracker.util.SnackbarUtil;

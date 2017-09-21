@@ -34,12 +34,6 @@ public interface AirportDao {
     @Query("SELECT * FROM airport where icao = :icao")
     Maybe<Airport> getByIcao(String icao);
 
-//    @Query("SELECT * FROM airport WHERE name LIKE :query OR city LIKE :query OR iata LIKE :query OR icao LIKE :query")
-//    Maybe<List<Airport>> find(String query);
-//    @Query("SELECT * FROM airport WHERE name LIKE :query OR city LIKE :query OR iata LIKE :query OR icao LIKE :query LIMIT :limit")
-//    Maybe<List<Airport>> find(String query, int limit);
-
-
     @Query("SELECT *" +
             ",(name LIKE :query) +" +
             " (city LIKE :query) +" +

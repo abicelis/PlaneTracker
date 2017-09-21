@@ -14,7 +14,7 @@
         <item name="hint_text">@color/hint_text</item>
         <!--<item name="white_text">@color/white_text</item>-->
         <item name="icons">@color/icons</item>
-        <item name="divider">@color/divider</item>
+        <item name="horizontal_divider">@color/divider</item>
         <item name="custom_background">@color/custom_background</item>
         <!--<item name="darky_background">@color/darky_background</item>-->
     </style>
@@ -33,7 +33,7 @@
         <item name="hint_text">@color/dark_hint_text</item>
         <!--<item name="white_text">@color/dark_white_text</item>-->
         <item name="icons">@color/dark_icons</item>
-        <item name="divider">@color/dark_divider</item>
+        <item name="horizontal_divider">@color/dark_divider</item>
         <item name="custom_background">@color/dark_custom_background</item>
         <!--<item name="darky_background">@color/dark_darky_background</item>-->
     </style>

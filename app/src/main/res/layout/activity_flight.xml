@@ -1,36 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+
+    android:id="@+id/activity_flight_container"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp">
+        android:layout_height="wrap_content">
         <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_flight_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             />
         
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            
-            <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_margin="6dp">
+
+
+            <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                android:id="@+id/activity_flight_query_airport_airline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                custom:maxlines="1"
+                custom:icon="@drawable/ic_plane"
+                android:visibility="visible"
+                custom:hint="@string/activity_flight_query_airport_airline"/>
+
+            <LinearLayout
+                android:id="@+id/activity_flight_search_by_route_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/activity_flight_text_query"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:id="@+id/activity_flight_search"
-                    android:layout_width="wrap_content"
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                    android:id="@+id/activity_flight_search_by_route_origin"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Search"/>
+                    android:layout_marginTop="8dp"
+                    custom:maxlines="1"
+                    custom:icon="@drawable/ic_plane"
+                    custom:hint="@string/activity_flight_by_route_origin"/>
+
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                    android:id="@+id/activity_flight_search_by_route_destination"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    custom:maxlines="1"
+                    custom:icon="@drawable/ic_plane"
+                    custom:hint="@string/activity_flight_by_route_destination"/>
             </LinearLayout>
-      
+
         </RelativeLayout>
     </android.support.design.widget.AppBarLayout>
 

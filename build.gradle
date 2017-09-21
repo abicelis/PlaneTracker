@@ -42,6 +42,7 @@ ext {
     retrofitVersion = '2.3.0'
     rxJavaVersion = '2.1.3'
     rxAndroidVersion = '2.0.1'
+    rxBindingVersion = '2.0.0'
     roomVersion = '1.0.0-alpha9'
     playServicesVersion = '11.0.4'
     supportLibVersion = '26.0.0'

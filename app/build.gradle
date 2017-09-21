@@ -58,6 +58,8 @@ dependencies {
     //RxJava 2
     compile 'io.reactivex.rxjava2:rxjava:' + rootProject.rxJavaVersion;
     compile 'io.reactivex.rxjava2:rxandroid:' + rootProject.rxAndroidVersion;
+    compile 'com.jakewharton.rxbinding2:rxbinding:' + rootProject.rxBindingVersion;
+
 
     //Room DB
     compile 'android.arch.persistence.room:runtime:' + rootProject.roomVersion;

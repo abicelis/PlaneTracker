@@ -27,8 +27,10 @@ import ve.com.abicelis.planetracker.application.PlaneTrackerApplication;
 import ve.com.abicelis.planetracker.data.local.AppDatabase;
 import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.data.model.Airline;
+import ve.com.abicelis.planetracker.data.model.AirlineRelevance;
 import ve.com.abicelis.planetracker.data.model.Airport;
 import ve.com.abicelis.planetracker.data.model.AirportAirlineItem;
+import ve.com.abicelis.planetracker.data.model.AirportRelevance;
 import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.data.model.TripViewModel;
@@ -243,7 +245,7 @@ public class DataManager {
      * @param query A string with which Airlines will be searched for. This method will
      *              query the db by Airline name, IATA, ICAO and callsign.
      */
-    public Maybe<List<Airline>> findAirlines(@NonNull String query, @Nullable Integer limit) {
+    public Maybe<List<AirlineRelevance>> findAirlines(@NonNull String query, @Nullable Integer limit) {
         if(query.isEmpty())
             return Maybe.error(InvalidParameterException::new);
 
@@ -262,7 +264,7 @@ public class DataManager {
      * @param query A string with which Airports will be searched for. This method will
      *              query the db by Airport name, IATA and ICAO.
      */
-    public Maybe<List<Airport>> findAirports(@NonNull String query, @Nullable Integer limit) {
+    public Maybe<List<AirportRelevance>> findAirports(@NonNull String query, @Nullable Integer limit) {
         if(query.isEmpty())
             return Maybe.error(InvalidParameterException::new);
 
@@ -287,26 +289,28 @@ public class DataManager {
 
         query = "%"+query+"%";
 
-        return Maybe.zip(findAirports(query, limit), findAirlines(query, limit), new BiFunction<List<Airport>, List<Airline>, List<AirportAirlineItem>>() {
+        return Maybe.zip(findAirports(query, limit), findAirlines(query, limit), new BiFunction<List<AirportRelevance>, List<AirlineRelevance>, List<AirportAirlineItem>>() {
             @Override
-            public List<AirportAirlineItem> apply(@NonNull List<Airport> airports, @NonNull List<Airline> airlines) throws Exception {
+            public List<AirportAirlineItem> apply(@NonNull List<AirportRelevance> airports, @NonNull List<AirlineRelevance> airlines) throws Exception {
                 List<AirportAirlineItem> items = new ArrayList<>();
 
-                int limit = Math.min(airports.size(), airlines.size());
+                int relevance = Math.max((airports.size() > 0 ? airports.get(0).getRelevance() : 0),(airlines.size() > 0 ? airlines.get(0).getRelevance() : 0) );
                 int i = 0;
-                for (; i < limit; i++) {
-                    items.add(airports.get(i));
-                    items.add(airlines.get(i));
-                }
+                int  j = 0;
+                while (relevance > 0) {
 
-                if(i < airports.size()-1 )
-                    for (int j = i; j < airports.size(); j++)
-                        items.add(airports.get(j));
+                    while (i < airports.size() && airports.get(i).getRelevance() ==  relevance) {
+                        items.add(airports.get(i));
+                        i++;
+                    }
 
-                if(i < airlines.size()-1 )
-                    for (int j = i; j < airlines.size(); j++)
+                    while (j < airlines.size() && airlines.get(j).getRelevance() ==  relevance) {
                         items.add(airlines.get(j));
+                        j++;
+                    }
 
+                    relevance--;
+                }
                 return items;
             }
         });

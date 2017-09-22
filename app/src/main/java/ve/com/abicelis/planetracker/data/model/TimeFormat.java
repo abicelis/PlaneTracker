@@ -19,8 +19,9 @@ public enum TimeFormat {
     HOUR_24(R.string.time_format_24) {
         @Override
         public String formatCalendar(Calendar calendar) {
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:ss a", Locale.getDefault());
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
             formatter.setTimeZone(calendar.getTimeZone());
+            String s = formatter.format(calendar.getTime());
 
             return formatter.format(calendar.getTime());
         }
@@ -28,7 +29,7 @@ public enum TimeFormat {
     HOUR_12(R.string.time_format_12) {
         @Override
         public String formatCalendar(Calendar calendar) {
-            SimpleDateFormat formatter = new SimpleDateFormat("hh:ss a", Locale.getDefault());
+            SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a", Locale.getDefault());
             formatter.setTimeZone(calendar.getTimeZone());
 
             return formatter.format(calendar.getTime());

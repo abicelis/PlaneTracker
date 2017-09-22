@@ -18,7 +18,7 @@ import ve.com.abicelis.planetracker.util.TimezoneUtil;
 @Entity(tableName = "airport",
         indices = {@Index("name"), @Index("iata"), @Index("icao")}
 )
-public class Airport {
+public class Airport implements AirportAirlineItem{
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "airport_id")

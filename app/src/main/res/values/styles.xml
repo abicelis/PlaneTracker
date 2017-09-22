@@ -68,4 +68,9 @@
         <item name="colorPrimaryDark">?primary_dark</item>
     </style>
 
+    <!--Material Calendar-->
+    <style name="CustomDayTextAppearance" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">?primary_text</item>
+    </style>
+
 </resources>

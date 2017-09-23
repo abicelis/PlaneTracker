@@ -16,6 +16,8 @@
 
     <!--ATTRIBUTES FOR CUSTOM VIEWS-->
     <declare-styleable name="common">
+        <attr name="hintcolor" format="reference" />
+        <attr name="textcolor" format="reference" />
         <attr name="icon" format="reference" />
         <attr name="text" format="reference" />
         <attr name="hint" format="reference" />
@@ -23,6 +25,17 @@
     </declare-styleable>
 
     <declare-styleable name="custom_edit_text" parent="common">
+        <attr name="hintcolor"/>
+        <attr name="textcolor"/>
+        <attr name="hint"/>
+        <attr name="text"/>
+        <attr name="icon"/>
+        <attr name="maxlines"/>
+    </declare-styleable>
+
+    <declare-styleable name="custom_text_view" parent="common">
+        <attr name="hintcolor"/>
+        <attr name="textcolor"/>
         <attr name="hint"/>
         <attr name="text"/>
         <attr name="icon"/>

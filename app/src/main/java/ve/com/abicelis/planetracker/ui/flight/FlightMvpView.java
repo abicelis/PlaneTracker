@@ -1,5 +1,10 @@
 package ve.com.abicelis.planetracker.ui.flight;
 
+import android.support.annotation.Nullable;
+
+import java.util.List;
+
+import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.ui.base.MvpView;
 
 /**
@@ -7,4 +12,5 @@ import ve.com.abicelis.planetracker.ui.base.MvpView;
  */
 
 public interface FlightMvpView extends MvpView {
+    void updateViews(FlightPresenter.FlightStep step, @Nullable Flight flight);
 }

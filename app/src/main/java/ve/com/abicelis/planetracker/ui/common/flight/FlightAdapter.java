@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ve.com.abicelis.planetracker.R;
+import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.data.model.FlightHeader;
 import ve.com.abicelis.planetracker.data.model.FlightViewModel;
 
@@ -21,10 +22,12 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     //DATA
     private List<FlightViewModel> mFlights = new ArrayList<>();
+    private FlightClickedListener mListener;
     private LayoutInflater mInflater;
     private Activity mActivity;
     private String mLayoverFormat;
     private boolean mIsInEditMode;
+    private boolean mUseSmallViews;
 
 
     public FlightAdapter(Activity activity) {
@@ -48,7 +51,10 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             case HEADER_LAYOVER:
                 return new FlightHeaderViewHolder(mInflater.inflate(R.layout.list_item_flight_header, parent, false));
             case FLIGHT:
-                return new FlightViewHolder(mInflater.inflate(R.layout.list_item_flight, parent, false));
+                if(mUseSmallViews)
+                    return new FlightViewHolderSmall(mInflater.inflate(R.layout.list_item_flight_small, parent, false));
+                else
+                    return new FlightViewHolder(mInflater.inflate(R.layout.list_item_flight, parent, false));
         }
         throw new InvalidParameterException("Wrong Trip Adapter viewType!");
     }
@@ -70,8 +76,15 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 break;
 
             case FLIGHT:
-                FlightViewHolder f = (FlightViewHolder)holder;
-                f.setData(this, mActivity, current.getFlight(), position);
+                if(mUseSmallViews) {
+                    FlightViewHolderSmall f = (FlightViewHolderSmall) holder;
+                    f.setData(this, mActivity, current.getFlight(), position);
+                    f.setListeners();
+                } else {
+                    FlightViewHolder f = (FlightViewHolder) holder;
+                    f.setData(this, mActivity, current.getFlight(), position);
+                    f.setListeners();
+                }
                 break;
         }
 
@@ -100,6 +113,10 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
+    public void useSmallViews(boolean useSmallViews) {
+        mUseSmallViews = useSmallViews;
+    }
+
     public List<FlightViewModel> getItems() {
         return mFlights;
     }
@@ -107,5 +124,19 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public int getItemCount() {
         return mFlights.size();
+    }
+
+
+    public void triggerFlightClicked(Flight flight) {
+        if (mListener != null)
+            mListener.onFlightClicked(flight);
+    }
+
+    public void setFlightClickedListener(FlightClickedListener listener) {
+        mListener = listener;
+    }
+
+    public interface FlightClickedListener {
+        void onFlightClicked(Flight flight);
     }
 }

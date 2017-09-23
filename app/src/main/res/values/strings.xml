@@ -4,11 +4,23 @@
 
     <!--Flight Activity-->
     <string name="activity_flight_toolbar_title">Add a Flight</string>
+    <string name="activity_flight_toolbar_title_by_route">Add a Flight by Route</string>
+    <string name="activity_flight_toolbar_title_by_number">Add a Flight by Number</string>
     <string name="activity_flight_query_airport_airline">Airport or Airline&#8230;</string>
-    <string name="activity_flight_by_route_origin">Origin&#8230;</string>
-    <string name="activity_flight_by_route_destination">Destination&#8230;</string>
+    <string name="activity_flight_by_route_origin">Origin</string>
+    <string name="activity_flight_by_route_destination">Destination</string>
+    <string name="activity_flight_date">Date</string>
+    <string name="activity_flight_by_flight_number_airline">Airline</string>
+    <string name="activity_flight_by_flight_number_number">Flight #</string>
 
         <!--Airport Airline Search Fragment-->
+    <string name="airport_airline_recents">Recents</string>
+    <string name="airport_airline_search_airports_airlines">Search for Airports or Airlines above</string>
+    <string name="airport_airline_search_airports">Search for Airports above</string>
+    <string name="airport_airline_search_airlines">Search for Airlines above</string>
+    <string name="airport_airline_searching">Searching for flights&#8230;</string>
+
+
 
 
     <!--Trip Detail activity-->
@@ -110,6 +122,7 @@
     <string name="notice_no_airports_or_airlines_found">No airports or airlines found</string>
     <string name="notice_no_airports_found">No airports found</string>
     <string name="notice_no_airlines_found">No airlines found</string>
+    <string name="notice_no_flights_found">Sorry, no flights found</string>
 
     <!--FLIGHT VIEW MODEL-->
     <string name="flight_view_model_layover_format">%1$s layover</string>

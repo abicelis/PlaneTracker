@@ -139,6 +139,10 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
     private void setUpRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mFlightAdapter = new FlightAdapter(this);
+        mFlightAdapter.setFlightClickedListener(flight -> {
+            Toast.makeText(this, "TODO maybe? flight clicked! " + flight.toString(), Toast.LENGTH_SHORT).show();
+            //TODO maybe
+        });
 
         mRecycler.setLayoutManager(mLayoutManager);
         mRecycler.setAdapter(mFlightAdapter);

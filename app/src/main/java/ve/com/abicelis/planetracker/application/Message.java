@@ -34,6 +34,7 @@ public enum Message {
     NOTICE_NO_AIRPORTS_OR_AIRLINES_FOUND(R.string.notice_no_airports_or_airlines_found, SnackbarUtil.SnackbarType.NOTICE),
     NOTICE_NO_AIRPORTS_FOUND(R.string.notice_no_airports_found, SnackbarUtil.SnackbarType.NOTICE),
     NOTICE_NO_AIRLINES_FOUND(R.string.notice_no_airlines_found, SnackbarUtil.SnackbarType.NOTICE),
+    NOTICE_NO_FLIGHTS_FOUND(R.string.notice_no_flights_found, SnackbarUtil.SnackbarType.NOTICE),
 
     ;
 

@@ -84,7 +84,7 @@ public class SharedPreferenceHelper {
             return longIds;
         }
 
-        return null;    //TODO: or maybe return new long[0]; ?
+        return new long[0];
     }
     public void setAirportAsRecent(long id) {
         String recentAirportsStr = mSharedPreferences.getString(Constants.SHARED_PREFERENCE_RECENT_AIRPORTS, null);
@@ -95,6 +95,13 @@ public class SharedPreferenceHelper {
         }
 
         String[] stringIds = recentAirportsStr.split(Constants.SHARED_PREFERENCE_RECENT_AIRPORTS_AIRLINES_SEPARATOR);
+
+        //Skip if already recent
+        for (String str : stringIds) {
+            if (Long.parseLong(str) == id)
+                return;
+        }
+
         if (stringIds.length < Constants.SHARED_PREFERENCE_MAX_RECENT_AIRPORTS_AIRLINES) {
             mSharedPreferences.edit().putString(Constants.SHARED_PREFERENCE_RECENT_AIRPORTS, recentAirportsStr
                             + Constants.SHARED_PREFERENCE_RECENT_AIRPORTS_AIRLINES_SEPARATOR
@@ -121,7 +128,7 @@ public class SharedPreferenceHelper {
             return longIds;
         }
 
-        return null;    //TODO: or maybe return new long[0]; ?
+        return new long[0];
     }
     public void setAirlineAsRecent(long id) {
         String recentAirlinesStr = mSharedPreferences.getString(Constants.SHARED_PREFERENCE_RECENT_AIRLINES, null);
@@ -132,6 +139,13 @@ public class SharedPreferenceHelper {
         }
 
         String[] stringIds = recentAirlinesStr.split(Constants.SHARED_PREFERENCE_RECENT_AIRPORTS_AIRLINES_SEPARATOR);
+
+        //Skip if already recent
+        for (String str : stringIds) {
+            if (Long.parseLong(str) == id)
+                return;
+        }
+
         if (stringIds.length < Constants.SHARED_PREFERENCE_MAX_RECENT_AIRPORTS_AIRLINES) {
             mSharedPreferences.edit().putString(Constants.SHARED_PREFERENCE_RECENT_AIRLINES, recentAirlinesStr
                             + Constants.SHARED_PREFERENCE_RECENT_AIRPORTS_AIRLINES_SEPARATOR

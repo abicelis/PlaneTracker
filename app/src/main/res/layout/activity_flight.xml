@@ -23,20 +23,20 @@
 
 
             <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
-                android:id="@+id/activity_flight_query_airport_airline"
+                android:id="@+id/activity_flight_search_airport_airline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 custom:maxlines="1"
                 custom:icon="@drawable/ic_plane"
                 android:visibility="visible"
-                custom:hint="@string/activity_flight_query_airport_airline"/>
+                custom:hint="@string/activity_flight_query_airport_airline"
+                custom:textcolor="@color/secondary_text"
+                custom:hintcolor="@color/hint_text"/>
 
             <LinearLayout
                 android:id="@+id/activity_flight_search_by_route_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
                 android:visibility="gone"
                 android:orientation="horizontal">
 
@@ -45,20 +45,91 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     custom:maxlines="1"
-                    custom:icon="@drawable/ic_plane"
-                    custom:hint="@string/activity_flight_by_route_origin"/>
+                    custom:icon="@drawable/ic_flight_takeoff"
+                    custom:hint="@string/activity_flight_by_route_origin"
+                    custom:textcolor="@color/secondary_text"
+                    custom:hintcolor="@color/hint_text"
+                    />
 
                 <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
                     android:id="@+id/activity_flight_search_by_route_destination"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:imeOptions="actionDone"
+                    android:layout_marginStart="6dp"
+                    custom:maxlines="1"
+                    custom:icon="@drawable/ic_flight_land"
+                    custom:hint="@string/activity_flight_by_route_destination"
+                    custom:textcolor="@color/secondary_text"
+                    custom:hintcolor="@color/hint_text"/>
+
+                <ve.com.abicelis.planetracker.ui.customviews.CustomTextView
+                    android:id="@+id/activity_flight_search_by_route_date"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    custom:maxlines="1"
+                    custom:icon="@drawable/ic_calendar"
+                    custom:hint="@string/activity_flight_date"
+                    custom:textcolor="@color/secondary_text"
+                    custom:hintcolor="@color/hint_text"/>
+                <ImageView
+                    android:id="@+id/activity_flight_search_by_route_search"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:visibility="gone"
+                    android:src="@drawable/ic_search"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="6dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/activity_flight_search_by_flight_number_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal">
+
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                    android:id="@+id/activity_flight_search_by_flight_number_airline"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     custom:maxlines="1"
                     custom:icon="@drawable/ic_plane"
-                    custom:hint="@string/activity_flight_by_route_destination"/>
+                    custom:hint="@string/activity_flight_by_flight_number_airline"
+                    custom:textcolor="@color/secondary_text"
+                    custom:hintcolor="@color/hint_text"
+                    />
+
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                    android:id="@+id/activity_flight_search_by_flight_number_number"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    custom:maxlines="1"
+                    custom:icon="@drawable/ic_number"
+                    custom:hint="@string/activity_flight_by_flight_number_number"
+                    custom:textcolor="@color/secondary_text"
+                    custom:hintcolor="@color/hint_text"/>
+
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                    android:id="@+id/activity_flight_search_by_flight_number_date"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    custom:maxlines="1"
+                    custom:icon="@drawable/ic_calendar"
+                    custom:hint="@string/activity_flight_date"
+                    custom:textcolor="@color/secondary_text"
+                    custom:hintcolor="@color/hint_text"/>
             </LinearLayout>
 
         </RelativeLayout>

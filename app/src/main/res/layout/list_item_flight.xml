@@ -18,181 +18,173 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            >
+            android:layout_height="20dp">
+
             <TextView
                 android:id="@+id/list_item_flight_airline"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:textColor="?primary_text"
-                android:textSize="16sp"
                 android:text="Copa Airlines"
-                />
+                android:textColor="?primary_text"
+                android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/list_item_flight_callsign"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:layout_toEndOf="@+id/list_item_flight_airline"
-                android:gravity="center_vertical"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?primary_text"
-                android:textSize="14sp"
+                android:gravity="center_vertical"
                 android:text="CM 317"
-                />
+                android:textColor="?primary_text"
+                android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/list_item_flight_date"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
-                android:gravity="center_vertical"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?primary_text"
-                android:textSize="14sp"
+                android:gravity="center_vertical"
                 android:text="Mon, 10 Oct"
-                />
+                android:textColor="?primary_text"
+                android:textSize="14sp" />
         </RelativeLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="?horizontal_divider"/>
+            android:layout_marginTop="8dp"
+            android:background="?horizontal_divider" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <!--Airport cities-->
             <LinearLayout
                 android:id="@+id/list_item_flight_city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/list_item_flight_from_city"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="32dp"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:textColor="?primary_text"
-                    android:textSize="14sp"
-                    android:maxLines="2"
+                    android:layout_marginEnd="32dp"
+                    android:layout_weight="1"
                     android:ellipsize="end"
+                    android:fontFamily="sans-serif-light"
+                    android:maxLines="2"
                     android:text="Maracaibo"
-                    />
+                    android:textColor="?primary_text"
+                    android:textSize="14sp" />
+
                 <TextView
                     android:id="@+id/list_item_flight_to_city"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="32dp"
-                    android:gravity="end"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:textColor="?primary_text"
-                    android:textSize="14sp"
-                    android:maxLines="2"
+                    android:layout_marginStart="32dp"
+                    android:layout_weight="1"
                     android:ellipsize="end"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="end"
+                    android:maxLines="2"
                     android:text="Panama City"
-                    />
+                    android:textColor="?primary_text"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <!--Departure airport code-->
             <TextView
                 android:id="@+id/list_item_flight_from_airport_code"
-                android:layout_below="@id/list_item_flight_city"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="-6dp"
-                android:layout_marginBottom="-6dp"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/list_item_flight_city"
+                android:layout_marginBottom="-6dp"
+                android:layout_marginTop="-6dp"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?primary_text"
-                android:textSize="36sp"
                 android:text="MAR"
-                />
+                android:textColor="?primary_text"
+                android:textSize="36sp" />
 
             <!--Arrival airport code-->
             <TextView
                 android:id="@+id/list_item_flight_to_airport_code"
-                android:layout_below="@id/list_item_flight_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-6dp"
-                android:layout_marginBottom="-6dp"
                 android:layout_alignParentEnd="true"
+                android:layout_below="@id/list_item_flight_city"
+                android:layout_marginBottom="-6dp"
+                android:layout_marginTop="-6dp"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?primary_text"
-                android:textSize="36sp"
                 android:text="PTY"
-                />
+                android:textColor="?primary_text"
+                android:textSize="36sp" />
 
             <!--Airport names-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/list_item_flight_from_airport_code"
-                >
+                android:layout_below="@id/list_item_flight_from_airport_code">
+
                 <TextView
                     android:id="@+id/list_item_flight_from_airport_name"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="32dp"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:textColor="?primary_text"
-                    android:textSize="14sp"
-                    android:text="La Chinita Int'l"
-                    android:maxLines="2"
+                    android:layout_marginEnd="32dp"
+                    android:layout_weight="1"
                     android:ellipsize="end"
-                    />
+                    android:fontFamily="sans-serif-light"
+                    android:maxLines="2"
+                    android:text="La Chinita Int'l"
+                    android:textColor="?primary_text"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/list_item_flight_to_airport_name"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="32dp"
-                    android:gravity="end"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:textColor="?primary_text"
-                    android:textSize="14sp"
-                    android:text="Tocumen Int'l"
-                    android:maxLines="2"
+                    android:layout_marginStart="32dp"
+                    android:layout_weight="1"
                     android:ellipsize="end"
-                    />
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="end"
+                    android:maxLines="2"
+                    android:text="Tocumen Int'l"
+                    android:textColor="?primary_text"
+                    android:textSize="14sp" />
             </LinearLayout>
-
 
 
             <!--Center flight duration and airplane icon-->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_centerInParent="true"
-                >
+                android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/list_item_flight_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
-                    android:textColor="?primary_text"
-                    android:textSize="14sp"
                     android:text="8h30m"
-                    />
+                    android:textColor="?primary_text"
+                    android:textSize="14sp" />
+
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:tint="?accent"
                     android:layout_gravity="center"
                     android:rotation="90"
-                    android:src="@drawable/ic_plane"/>
+                    android:src="@drawable/ic_plane"
+                    android:tint="?accent" />
 
             </LinearLayout>
-
-
 
 
         </RelativeLayout>
@@ -200,34 +192,33 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="?horizontal_divider"/>
+            android:layout_marginTop="8dp"
+            android:background="?horizontal_divider" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/list_item_flight_depart_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?secondary_text"
-                android:textSize="14sp"
                 android:text="@string/list_item_flight_depart"
-                />
+                android:textColor="?secondary_text"
+                android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/list_item_flight_depart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/list_item_flight_depart_title"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?primary_text"
-                android:textSize="24sp"
                 android:text="7:42 PM"
-                />
+                android:textColor="?primary_text"
+                android:textSize="24sp" />
+
             <TextView
                 android:id="@+id/list_item_flight_depart_gmt"
                 android:layout_width="wrap_content"
@@ -236,10 +227,9 @@
                 android:layout_marginStart="6dp"
                 android:layout_toEndOf="@+id/list_item_flight_depart"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?secondary_text"
-                android:textSize="12sp"
                 android:text="GMT -4"
-                />
+                android:textColor="?secondary_text"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/list_item_flight_arrive_title"
@@ -247,10 +237,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?secondary_text"
-                android:textSize="14sp"
                 android:text="@string/list_item_flight_arrive"
-                />
+                android:textColor="?secondary_text"
+                android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/list_item_flight_arrive"
                 android:layout_width="wrap_content"
@@ -258,25 +248,23 @@
                 android:layout_alignParentEnd="true"
                 android:layout_below="@+id/list_item_flight_arrive_title"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?primary_text"
-                android:textSize="24sp"
                 android:text="7:42 PM"
-                />
+                android:textColor="?primary_text"
+                android:textSize="24sp" />
+
             <TextView
                 android:id="@+id/list_item_flight_arrive_gmt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/list_item_flight_arrive_title"
-                android:layout_toStartOf="@+id/list_item_flight_arrive"
                 android:layout_marginEnd="6dp"
+                android:layout_toStartOf="@+id/list_item_flight_arrive"
                 android:fontFamily="sans-serif-light"
-                android:textColor="?secondary_text"
-                android:textSize="12sp"
                 android:text="GMT -5"
-                />
+                android:textColor="?secondary_text"
+                android:textSize="12sp" />
 
         </RelativeLayout>
-
 
 
     </LinearLayout>

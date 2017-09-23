@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:id="@+id/fragment_flight_results_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--<android.support.v4.widget.SwipeRefreshLayout-->
+        <!--android:id="@+id/fragment_flight_results_swipe_refresh"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+        <!--&gt;-->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/fragment_flight_results_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+
+
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/fragment_flight_results_no_items_container"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:visibility="gone">-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:orientation="vertical">-->
+            <!--<ImageView-->
+                <!--android:layout_width="120dp"-->
+                <!--android:layout_height="120dp"-->
+                <!--android:tint="?hint_text"-->
+                <!--android:src="@drawable/ic_plane_large"/>-->
+            <!--<TextView-->
+                <!--android:id="@+id/fragment_flight_results_no_items_message"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="12dp"-->
+                <!--android:gravity="center"-->
+                <!--android:textSize="20sp"-->
+                <!--android:textColor="?secondary_text"-->
+                <!--android:text="@string/notice_no_airports_or_airlines_found"/>-->
+        <!--</LinearLayout>-->
+    <!--</RelativeLayout>-->
+
+</FrameLayout>

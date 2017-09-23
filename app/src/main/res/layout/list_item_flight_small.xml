@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/list_item_flight_small_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="0dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    app:contentPadding="12dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            >
+            <TextView
+                android:id="@+id/list_item_flight_small_airline"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textColor="?primary_text"
+                android:textSize="16sp"
+                android:text="Copa Airlines"
+                />
+            <TextView
+                android:id="@+id/list_item_flight_small_callsign"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@+id/list_item_flight_small_airline"
+                android:gravity="center_vertical"
+                android:fontFamily="sans-serif-light"
+                android:textColor="?primary_text"
+                android:textSize="14sp"
+                android:text="CM 317"
+                />
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="?horizontal_divider"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+
+            <TextView
+                android:id="@+id/list_item_flight_small_depart_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:textColor="?secondary_text"
+                android:textSize="14sp"
+                android:text="@string/list_item_flight_depart"
+                />
+            <TextView
+                android:id="@+id/list_item_flight_small_depart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/list_item_flight_small_depart_title"
+                android:layout_marginBottom="-4dp"
+                android:layout_marginTop="-4dp"
+                android:fontFamily="sans-serif-light"
+                android:textColor="?primary_text"
+                android:textSize="24sp"
+                android:text="7:42 PM"
+                />
+            <TextView
+                android:id="@+id/list_item_flight_small_depart_gmt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/list_item_flight_small_depart"
+                android:fontFamily="sans-serif-light"
+                android:textColor="?secondary_text"
+                android:textSize="12sp"
+                android:text="GMT -4"
+                />
+
+            <TextView
+                android:id="@+id/list_item_flight_small_arrive_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:fontFamily="sans-serif-light"
+                android:textColor="?secondary_text"
+                android:textSize="14sp"
+                android:text="@string/list_item_flight_arrive"
+                />
+            <TextView
+                android:id="@+id/list_item_flight_small_arrive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-4dp"
+                android:layout_marginTop="-4dp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/list_item_flight_small_arrive_title"
+                android:fontFamily="sans-serif-light"
+                android:textColor="?primary_text"
+                android:textSize="24sp"
+                android:text="7:42 PM"
+                />
+            <TextView
+                android:id="@+id/list_item_flight_small_arrive_gmt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/list_item_flight_small_arrive"
+                android:fontFamily="sans-serif-light"
+                android:textColor="?secondary_text"
+                android:textSize="12sp"
+                android:text="GMT -5"
+                />
+
+
+
+
+            <!--Center flight duration and airplane icon-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerInParent="true"
+                >
+                <TextView
+                    android:id="@+id/list_item_flight_small_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:textColor="?primary_text"
+                    android:textSize="14sp"
+                    android:text="8h30m"
+                    />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:tint="?accent"
+                    android:layout_gravity="center"
+                    android:rotation="90"
+                    android:src="@drawable/ic_plane"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

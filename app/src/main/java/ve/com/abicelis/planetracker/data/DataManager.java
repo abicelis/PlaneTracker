@@ -168,7 +168,10 @@ public class DataManager {
      */
     public Maybe<List<Airline>> getRecentAirlines() {
         long[] recentAirlineIds = mSharedPreferenceHelper.getRecentAirlineIds();
-        return mAppDatabase.airlineDao().getByIds(recentAirlineIds);
+        if (recentAirlineIds != null && recentAirlineIds.length > 0)
+            return mAppDatabase.airlineDao().getByIds(recentAirlineIds);
+        else
+            return Maybe.just(new ArrayList<>());
     }
 
     /**
@@ -178,7 +181,19 @@ public class DataManager {
      */
     public Maybe<List<Airport>> getRecentAirports() {
         long[] recentAirportIds = mSharedPreferenceHelper.getRecentAirportIds();
-        return mAppDatabase.airportDao().getByIds(recentAirportIds);
+        if (recentAirportIds != null && recentAirportIds.length > 0)
+            return mAppDatabase.airportDao().getByIds(recentAirportIds);
+        else
+            return Maybe.just(new ArrayList<>());
+    }
+
+    public Maybe<List<AirportAirlineItem>> getRecentAirportsAndAirlines() {
+        return Maybe.zip(getRecentAirports(), getRecentAirlines(), (airports, airlines) -> {
+                List<AirportAirlineItem> items = new ArrayList<>();
+                items.addAll(airports);
+                items.addAll(airlines);
+                return items;
+        });
     }
 
 
@@ -351,23 +366,26 @@ public class DataManager {
                     @Override
                     public List<Flight> apply(@NonNull AirlineFlightSchedulesResponse airlineFlightSchedulesResponse) throws Exception {
                         List<Flight> flights = new ArrayList<>();
-                        for(AirlineFlightSchedulesFlights f : airlineFlightSchedulesResponse.getResult().getFlights()) {
-                            Calendar departure = CalendarUtil.getNewInstanceZeroedCalendar();
-                            departure.setTimeInMillis(f.getDeparturetime()*1000);
+                        if (airlineFlightSchedulesResponse.getResult() != null ) {
+                            for(AirlineFlightSchedulesFlights f : airlineFlightSchedulesResponse.getResult().getFlights()) {
+                                Calendar departure = CalendarUtil.getNewInstanceZeroedCalendar();
+                                departure.setTimeInMillis(f.getDeparturetime()*1000);
 
-                            Calendar arrival = CalendarUtil.getNewInstanceZeroedCalendar();
-                            arrival.setTimeInMillis(f.getArrivaltime()*1000);
+                                Calendar arrival = CalendarUtil.getNewInstanceZeroedCalendar();
+                                arrival.setTimeInMillis(f.getArrivaltime()*1000);
 
-                            //Extract 3-letter ICAO code from f.getIdent()
-                            Pattern icaoRegex = Pattern.compile("^[A-Za-z]{3}\\d*$");
-                            Airline airline = null;
-                            if (icaoRegex.matcher(f.getIdent()).matches()) {
-                                String icao = f.getIdent().substring(0, 3);
-                                airline = mAppDatabase.airlineDao().getByIcao(icao).blockingGet();
+                                //Extract 3-letter ICAO code from f.getIdent()
+                                Pattern icaoRegex = Pattern.compile("^[A-Za-z]{3}\\d*$");
+                                Airline airline = null;
+                                if (icaoRegex.matcher(f.getIdent()).matches()) {
+                                    String icao = f.getIdent().substring(0, 3);
+                                    airline = mAppDatabase.airlineDao().getByIcao(icao).blockingGet();
+                                }
+
+                                flights.add(new Flight(f.getFaIdent(), f.getIdent(), origin, destination, airline, departure, arrival, f.getAircraftType()));
                             }
-
-                            flights.add(new Flight(f.getFaIdent(), f.getIdent(), origin, destination, airline, departure, arrival, f.getAircraftType()));
                         }
+
                         return flights;
                     }
                 });

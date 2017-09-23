@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.util.Calendar;
@@ -42,6 +43,7 @@ public class DateSelectFragment extends Fragment {
             mListener.onDateSelected(date.getCalendar());
         });
         mCalendar.setDateTextAppearance(R.style.CustomDayTextAppearance);
+        mCalendar.setDateSelected(CalendarDay.today(), true);
         return view;
     }
 

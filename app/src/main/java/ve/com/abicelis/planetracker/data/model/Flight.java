@@ -114,6 +114,11 @@ public class Flight implements Comparable<Flight>{
         mAircraftModel = aircraftModel;
     }
 
+    @Ignore
+    public Flight() {       //Used when creating a new flight
+        mOrderInTrip = -1;
+    }
+
     public long getId() {return mId;}
     public long getTripId() {return mTripId;}
     public String getFlightAwareId() {return mFlightAwareId;}

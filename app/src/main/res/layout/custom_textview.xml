@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ImageView
-        android:id="@+id/custom_edittext_icon"
+        android:id="@+id/custom_textview_icon"
         android:layout_height="18dp"
         android:layout_width="18dp"
         android:layout_marginStart="4dp"
@@ -10,8 +10,8 @@
         android:tint="@color/custom_edit_text_icon"
         android:visibility="gone"/>
 
-    <EditText
-        android:id="@+id/custom_edittext_text"
+    <TextView
+        android:id="@+id/custom_textview_text"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_marginStart="4dp"

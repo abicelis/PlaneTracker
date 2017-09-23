@@ -110,10 +110,7 @@ public class FlightViewHolder extends RecyclerView.ViewHolder implements View.On
         int id = v.getId();
         switch (id) {
             case R.id.list_item_flight_container:
-                Toast.makeText(mActivity, "Container clicked! "+ mCurrent.getCallsign(), Toast.LENGTH_SHORT).show();
-//                Intent viewRecipeDetailIntent = new Intent(mActivity, TripDetailActivity.class);
-//                viewRecipeDetailIntent.putExtra(Constants.SOMECONSTANT, mCurrent);
-//                mActivity.startActivity(viewRecipeDetailIntent);
+                mAdapter.triggerFlightClicked(mCurrent);
                 break;
         }
     }

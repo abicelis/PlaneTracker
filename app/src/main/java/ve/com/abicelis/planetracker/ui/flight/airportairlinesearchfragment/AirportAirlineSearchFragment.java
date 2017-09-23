@@ -2,6 +2,7 @@ package ve.com.abicelis.planetracker.ui.flight.airportairlinesearchfragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
@@ -25,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Message;
+import ve.com.abicelis.planetracker.data.model.AirportAirlineHeader;
 import ve.com.abicelis.planetracker.data.model.AirportAirlineItem;
 import ve.com.abicelis.planetracker.data.model.AirportAirlineSearchType;
 import ve.com.abicelis.planetracker.ui.base.BaseDialogFragment;
@@ -40,6 +42,7 @@ public class AirportAirlineSearchFragment extends BaseDialogFragment implements 
     @Inject
     AirportAirlineSearchPresenter mPresenter;
     AirportAirlineSelectedListener mListener;
+    private static final String EXTRA_SEARCH_TYPE = "EXTRA_SEARCH_TYPE";
 
     //UI
     @BindView(R.id.fragment_airport_airline_search_container)
@@ -56,12 +59,22 @@ public class AirportAirlineSearchFragment extends BaseDialogFragment implements 
     private LinearLayoutManager mLayoutManager;
     private AirportAirlineSearchAdapter mAdapter;
 
+    public static AirportAirlineSearchFragment getInstance(@NonNull AirportAirlineSearchType searchType) {
+        AirportAirlineSearchFragment frag = new AirportAirlineSearchFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(EXTRA_SEARCH_TYPE, searchType);
+        frag.setArguments(bundle);
+        return frag;
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getPresenterComponent().inject(this);
         mPresenter.attachView(this);
+        mPresenter.setSearchType((AirportAirlineSearchType) getArguments().getSerializable(EXTRA_SEARCH_TYPE));
+        mPresenter.getRecents();
     }
 
     @Nullable
@@ -112,11 +125,11 @@ public class AirportAirlineSearchFragment extends BaseDialogFragment implements 
      * Trigger a search of AirportAirlineSearchType, with a specific string query.
      * Note: {@code query} can be null, in which case the list will be cleared.
      */
-    public void search(@Nullable String query, AirportAirlineSearchType type) {
+    public void search(@Nullable String query) {
         if (query == null)
             clearItems();
         else
-            mPresenter.search(query, type);
+            mPresenter.search(query);
     }
 
 
@@ -172,6 +185,34 @@ public class AirportAirlineSearchFragment extends BaseDialogFragment implements 
             mRecycler.setVisibility(View.GONE);
 
         } else {
+            mNoItemsContainer.setVisibility(View.GONE);
+            mRecycler.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void showRecents(List<AirportAirlineItem> items, AirportAirlineSearchType type) {
+        mSwipeRefresh.setRefreshing(false);
+
+        if(items.size() == 0) {
+            switch (type) {
+                case BOTH:
+                    mNoItemsMessage.setText(R.string.airport_airline_search_airports_airlines);
+                    break;
+                case AIRPORT:
+                    mNoItemsMessage.setText(R.string.airport_airline_search_airports);
+                    break;
+                case AIRLINE:
+                    mNoItemsMessage.setText(R.string.airport_airline_search_airlines);
+                    break;
+            }
+            mNoItemsContainer.setVisibility(View.VISIBLE);
+            mRecycler.setVisibility(View.GONE);
+        } else {
+            mAdapter.getItems().clear();
+            mAdapter.getItems().add(new AirportAirlineHeader(getString(R.string.airport_airline_recents)));
+            mAdapter.getItems().addAll(items);
+            mAdapter.notifyDataSetChanged();
             mNoItemsContainer.setVisibility(View.GONE);
             mRecycler.setVisibility(View.VISIBLE);
         }

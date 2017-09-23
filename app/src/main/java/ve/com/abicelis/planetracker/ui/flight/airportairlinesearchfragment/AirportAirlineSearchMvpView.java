@@ -15,5 +15,5 @@ public interface AirportAirlineSearchMvpView extends MvpView {
     void hideLoading();
     void clearItems();
     void showItems(List<AirportAirlineItem> items, AirportAirlineSearchType type);
-
+    void showRecents(List<AirportAirlineItem> items, AirportAirlineSearchType mSearchType);
 }

@@ -86,4 +86,6 @@ dependencies {
     //Preferences (Settings)
     compile 'com.takisoft.fix:preference-v7:' + rootProject.preferenceFixVersion;
 
+    //Material Calendar View
+    compile 'com.prolificinteractive:material-calendarview:' + rootProject.materialCalendarVersion;
 }

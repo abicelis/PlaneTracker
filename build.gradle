@@ -50,4 +50,6 @@ ext {
     materialSearchViewVersion = '1.4.0'
     preferenceFixVersion = '26.0.0.0'
     materialCalendarVersion = '1.4.3'
+    transitionsEverywhereVersion = '1.7.0'
+    betterPickersVersion = '3.1.0'
 }

@@ -88,4 +88,12 @@ dependencies {
 
     //Material Calendar View
     compile 'com.prolificinteractive:material-calendarview:' + rootProject.materialCalendarVersion;
+
+    //Transitions everywhere
+    compile 'com.andkulikov:transitionseverywhere:' + rootProject.transitionsEverywhereVersion;
+
+    //BetterPickers
+    compile 'com.code-troopers.betterpickers:library:' + rootProject.betterPickersVersion;
+
+
 }

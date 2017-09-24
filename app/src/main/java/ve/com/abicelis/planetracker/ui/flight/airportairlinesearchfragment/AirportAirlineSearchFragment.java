@@ -74,7 +74,13 @@ public class AirportAirlineSearchFragment extends BaseDialogFragment implements 
         getPresenterComponent().inject(this);
         mPresenter.attachView(this);
         mPresenter.setSearchType((AirportAirlineSearchType) getArguments().getSerializable(EXTRA_SEARCH_TYPE));
-        mPresenter.getRecents();
+        String query = mListener.getInitialQueryOrShowRecents();
+        search(query);
+//        if (query == null) {
+//            mPresenter.getRecents();
+//        } else {
+//            mPresenter.search(query);
+//        }
     }
 
     @Nullable
@@ -127,7 +133,8 @@ public class AirportAirlineSearchFragment extends BaseDialogFragment implements 
      */
     public void search(@Nullable String query) {
         if (query == null)
-            clearItems();
+            //clearItems();
+            mPresenter.getRecents();
         else
             mPresenter.search(query);
     }
@@ -221,5 +228,6 @@ public class AirportAirlineSearchFragment extends BaseDialogFragment implements 
 
     public interface AirportAirlineSelectedListener {
         void onAirportAirlineSelected(AirportAirlineItem item);
+        @Nullable String getInitialQueryOrShowRecents();
     }
 }

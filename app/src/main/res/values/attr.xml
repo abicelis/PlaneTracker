@@ -19,6 +19,7 @@
         <attr name="hintcolor" format="reference" />
         <attr name="textcolor" format="reference" />
         <attr name="icon" format="reference" />
+        <attr name="icontint" format="reference" />
         <attr name="text" format="reference" />
         <attr name="hint" format="reference" />
         <attr name="maxlines" format="integer" />
@@ -30,6 +31,7 @@
         <attr name="hint"/>
         <attr name="text"/>
         <attr name="icon"/>
+        <attr name="icontint"/>
         <attr name="maxlines"/>
     </declare-styleable>
 
@@ -39,6 +41,7 @@
         <attr name="hint"/>
         <attr name="text"/>
         <attr name="icon"/>
+        <attr name="icontint"/>
         <attr name="maxlines"/>
     </declare-styleable>
 

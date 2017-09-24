@@ -3,7 +3,7 @@
 
     <!--Main colors: AppTheme Common-->
     <color name="white_text">#FFFFFF</color>
-    <color name="transparent_loading">#77000000</color>
+    <color name="transparent_loading">#bf000000</color>
 
 
     <!--Main colors: AppTheme Light-->
@@ -32,8 +32,8 @@
     <color name="dark_custom_background">#303030</color>
 
     <!--Colors for CustomEditText-->
-    <color name="custom_edit_text_dim_background">#DDDDDD</color>
-    <color name="custom_edit_text_dim_foreground">#999999</color>
+    <color name="custom_edit_text_dim_background">#dbdddddd</color>
+    <color name="custom_edit_text_dim_foreground">#9e9e9e</color>
     <color name="custom_edit_text_background">#FFFFFF</color>       <!--Same es white_text-->
     <color name="custom_edit_text_icon">#FF9800</color>             <!--Same as primary-->
     <color name="custom_edit_text_text">#757575</color>             <!--Same as secondary_text-->

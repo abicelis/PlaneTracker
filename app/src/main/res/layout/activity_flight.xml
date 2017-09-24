@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
 
     android:id="@+id/activity_flight_container"
     android:orientation="vertical"
@@ -21,17 +22,21 @@
             android:layout_height="match_parent"
             android:layout_margin="6dp">
 
-
-            <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+            <ve.com.abicelis.planetracker.ui.customviews.CustomEditText2
                 android:id="@+id/activity_flight_search_airport_airline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:visibility="visible"
+                android:textSize="16sp"
                 custom:maxlines="1"
                 custom:icon="@drawable/ic_plane"
-                android:visibility="visible"
+                custom:icontint="@color/custom_edit_text_icon"
                 custom:hint="@string/activity_flight_query_airport_airline"
                 custom:textcolor="@color/secondary_text"
-                custom:hintcolor="@color/hint_text"/>
+                custom:hintcolor="@color/hint_text"
+                />
 
             <LinearLayout
                 android:id="@+id/activity_flight_search_by_route_container"
@@ -40,41 +45,51 @@
                 android:visibility="gone"
                 android:orientation="horizontal">
 
-                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText2
                     android:id="@+id/activity_flight_search_by_route_origin"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:textSize="16sp"
                     custom:maxlines="1"
                     custom:icon="@drawable/ic_flight_takeoff"
+                    custom:icontint="@color/custom_edit_text_icon"
                     custom:hint="@string/activity_flight_by_route_origin"
                     custom:textcolor="@color/secondary_text"
                     custom:hintcolor="@color/hint_text"
                     />
 
-                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText2
                     android:id="@+id/activity_flight_search_by_route_destination"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:imeOptions="actionDone"
                     android:layout_marginStart="6dp"
+                    android:textSize="16sp"
                     custom:maxlines="1"
                     custom:icon="@drawable/ic_flight_land"
+                    custom:icontint="@color/custom_edit_text_icon"
                     custom:hint="@string/activity_flight_by_route_destination"
                     custom:textcolor="@color/secondary_text"
                     custom:hintcolor="@color/hint_text"/>
 
-                <ve.com.abicelis.planetracker.ui.customviews.CustomTextView
+                <ve.com.abicelis.planetracker.ui.customviews.CustomTextView2
                     android:id="@+id/activity_flight_search_by_route_date"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
+                    android:layout_marginStart="6dp"
+                    android:textSize="16sp"
                     custom:maxlines="1"
                     custom:icon="@drawable/ic_calendar"
+                    custom:icontint="@color/custom_edit_text_icon"
                     custom:hint="@string/activity_flight_date"
                     custom:textcolor="@color/secondary_text"
                     custom:hintcolor="@color/hint_text"/>
@@ -95,41 +110,61 @@
                 android:visibility="gone"
                 android:orientation="horizontal">
 
-                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText2
                     android:id="@+id/activity_flight_search_by_flight_number_airline"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:textSize="16sp"
                     custom:maxlines="1"
                     custom:icon="@drawable/ic_plane"
+                    custom:icontint="@color/custom_edit_text_icon"
                     custom:hint="@string/activity_flight_by_flight_number_airline"
                     custom:textcolor="@color/secondary_text"
                     custom:hintcolor="@color/hint_text"
                     />
 
-                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText2
                     android:id="@+id/activity_flight_search_by_flight_number_number"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:textSize="16sp"
                     custom:maxlines="1"
                     custom:icon="@drawable/ic_number"
+                    custom:icontint="@color/custom_edit_text_icon"
                     custom:hint="@string/activity_flight_by_flight_number_number"
                     custom:textcolor="@color/secondary_text"
                     custom:hintcolor="@color/hint_text"/>
 
-                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText
+                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText2
                     android:id="@+id/activity_flight_search_by_flight_number_date"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:textSize="16sp"
                     custom:maxlines="1"
                     custom:icon="@drawable/ic_calendar"
+                    custom:icontint="@color/custom_edit_text_icon"
                     custom:hint="@string/activity_flight_date"
                     custom:textcolor="@color/secondary_text"
                     custom:hintcolor="@color/hint_text"/>
+                <ImageView
+                    android:id="@+id/activity_flight_search_by_flight_number_search"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:visibility="gone"
+                    android:src="@drawable/ic_search"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="6dp"/>
             </LinearLayout>
 
         </RelativeLayout>

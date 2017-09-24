@@ -1,14 +1,15 @@
 package ve.com.abicelis.planetracker.ui.flight;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -16,9 +17,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.codetroopers.betterpickers.OnDialogDismissListener;
+import com.codetroopers.betterpickers.numberpicker.NumberPickerBuilder;
+import com.codetroopers.betterpickers.numberpicker.NumberPickerDialogFragment;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.transitionseverywhere.Slide;
+import com.transitionseverywhere.TransitionManager;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +35,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -38,11 +45,12 @@ import ve.com.abicelis.planetracker.application.Message;
 import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.data.model.AirportAirlineItem;
 import ve.com.abicelis.planetracker.data.model.AirportAirlineSearchType;
+import ve.com.abicelis.planetracker.data.model.AppThemeType;
 import ve.com.abicelis.planetracker.data.model.DateFormat;
 import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
-import ve.com.abicelis.planetracker.ui.customviews.CustomEditText;
-import ve.com.abicelis.planetracker.ui.customviews.CustomTextView;
+import ve.com.abicelis.planetracker.ui.customviews.CustomEditText2;
+import ve.com.abicelis.planetracker.ui.customviews.CustomTextView2;
 import ve.com.abicelis.planetracker.ui.flight.airportairlinesearchfragment.AirportAirlineSearchFragment;
 import ve.com.abicelis.planetracker.ui.flight.dateselectfragment.DateSelectFragment;
 import ve.com.abicelis.planetracker.ui.flight.flightresultsfragment.FlightResultsFragment;
@@ -56,17 +64,30 @@ import ve.com.abicelis.planetracker.util.SnackbarUtil;
 public class FlightActivity extends BaseActivity implements FlightMvpView,
         AirportAirlineSearchFragment.AirportAirlineSelectedListener,
         DateSelectFragment.DateSelectedListener,
-        FlightResultsFragment.FlightSelectedListener {
+        FlightResultsFragment.FlightSelectedListener,
+        NumberPickerDialogFragment.NumberPickerDialogHandlerV2
+        {
 
     //DATA
     @Inject
     FlightPresenter mPresenter;
 
-    private enum ContentFrameType {AIRPORT_AIRLINE_SEARCH_FRAGMENT, DATE_SELECT_FRAGMENT, FLIGHT_RESULTS_FRAGMENT}
+    private enum ContentFrameType {AIRPORT_AIRLINE_SEARCH_FRAGMENT, DATE_SELECT_FRAGMENT, FLIGHT_RESULTS_FRAGMENT, NONE}
 
     //UI
-    Observable<CharSequence> mEditTextObservable;
-    Disposable mDisposable;
+    Disposable mAirportAirlineSearchDisposable;
+    Disposable mRouteOriginTextChangeDisposable;
+    Disposable mRouteDestinationTextChangeDisposable;
+    Disposable mRouteOriginClickDisposable;
+    Disposable mRouteDestinationClickDisposable;
+    Disposable mRouteDateClickDisposable;
+    Disposable mRouteSearchClickDisposable;
+
+    Disposable mFlightAirlineTextChangeDisposable;
+    Disposable mFlightAirlineClickDisposable;
+    Disposable mFlightNumberClickDisposable;
+    Disposable mFlightDateClickDisposable;
+    Disposable mFlightSearchClickDisposable;
 
     @BindView(R.id.activity_flight_container)
     LinearLayout mContainer;
@@ -74,17 +95,17 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
     Toolbar mToolbar;
 
     @BindView(R.id.activity_flight_search_airport_airline)
-    CustomEditText mSearchAirportAirline;
+    CustomEditText2 mSearchAirportAirline;
 
     //SEARCH BY ROUTE
     @BindView(R.id.activity_flight_search_by_route_container)
     LinearLayout mSearchByRouteContainer;
     @BindView(R.id.activity_flight_search_by_route_origin)
-    CustomEditText mSearchByRouteOrigin;
+    CustomEditText2 mSearchByRouteOrigin;
     @BindView(R.id.activity_flight_search_by_route_destination)
-    CustomEditText mSearchByRouteDestination;
+    CustomEditText2 mSearchByRouteDestination;
     @BindView(R.id.activity_flight_search_by_route_date)
-    CustomTextView mSearchByRouteDate;
+    CustomTextView2 mSearchByRouteDate;
     @BindView(R.id.activity_flight_search_by_route_search)
     ImageView mSearchByRouteSearch;
 
@@ -92,11 +113,13 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
     @BindView(R.id.activity_flight_search_by_flight_number_container)
     LinearLayout mSearchByFlightNumberContainer;
     @BindView(R.id.activity_flight_search_by_flight_number_airline)
-    CustomEditText mSearchByFlightNumberAirline;
+    CustomEditText2 mSearchByFlightNumberAirline;
     @BindView(R.id.activity_flight_search_by_flight_number_number)
-    CustomEditText mSearchByFlightNumberNumber;
+    CustomEditText2 mSearchByFlightNumberNumber;
     @BindView(R.id.activity_flight_search_by_flight_number_date)
-    CustomEditText mSearchByFlightNumberDate;
+    CustomEditText2 mSearchByFlightNumberDate;
+    @BindView(R.id.activity_flight_search_by_flight_number_search)
+    ImageView mSearchByFlightNumberSearch;
 
     AirportAirlineSearchFragment mAirportAirlineSearchFragment;
     DateSelectFragment mDateSelectFragment;
@@ -111,6 +134,7 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
         mPresenter.attachView(this);
 
         setUpToolbar();
+        initViews();
 
         long tripId = getIntent().getLongExtra(Constants.EXTRA_ACTIVITY_FLIGHT_TRIP_ID, -1);
         long flightId = getIntent().getLongExtra(Constants.EXTRA_ACTIVITY_FLIGHT_FLIGHT_ID, -1);
@@ -118,6 +142,7 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
 
         mPresenter.initialize(tripId, flightId, flightPosition);
     }
+
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -155,6 +180,154 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.activity_flight_toolbar_title));
     }
+
+    private void initViews() {
+
+        mAirportAirlineSearchDisposable = RxTextView.textChanges(mSearchAirportAirline)
+                .skip(1)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mAirportAirlineSearchFragment != null && mPresenter.getStep() == FlightPresenter.FlightStep.SEARCHING_AIRPORTS_AIRLINES) {
+                        String query = charSequence.toString().trim();
+                        Timber.d("Text changed %s", query);
+                        if (query.length() > 0) {
+                            mAirportAirlineSearchFragment.search(query);
+                        } else {
+                            mAirportAirlineSearchFragment.search(null);
+                        }
+                    }
+                });
+
+
+        /* Search by Route */
+        mRouteOriginClickDisposable = RxView.focusChanges(mSearchByRouteOrigin)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mSearchByRouteOrigin.hasFocus() && mPresenter.getStep() != FlightPresenter.FlightStep.ROUTE_SEARCH_SEARCHING_ORIGIN) {
+                        mPresenter.resetToStep(FlightPresenter.FlightStep.ROUTE_SEARCH_SEARCHING_ORIGIN);
+                        mSearchByRouteOrigin.setSelection(mSearchByRouteOrigin.getText().length());
+                    }
+                });
+        mRouteDestinationClickDisposable = RxView.focusChanges(mSearchByRouteDestination)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mSearchByRouteDestination.hasFocus() && mPresenter.getStep() != FlightPresenter.FlightStep.ROUTE_SEARCH_SEARCHING_DESTINATION) {
+                        mPresenter.resetToStep(FlightPresenter.FlightStep.ROUTE_SEARCH_SEARCHING_DESTINATION);
+                        mSearchByRouteDestination.setSelection(mSearchByRouteDestination.getText().length());
+                    }
+                });
+        mRouteDateClickDisposable = RxView.clicks(mSearchByRouteDate)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mSearchByRouteDate.hasFocus() && mPresenter.getStep() != FlightPresenter.FlightStep.ROUTE_SEARCH_SETTING_DATE)
+                        mPresenter.resetToStep(FlightPresenter.FlightStep.ROUTE_SEARCH_SETTING_DATE);
+                });
+
+
+        mRouteOriginTextChangeDisposable = RxTextView.textChanges(mSearchByRouteOrigin)
+                .skip(1)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mAirportAirlineSearchFragment != null && mPresenter.getStep() == FlightPresenter.FlightStep.ROUTE_SEARCH_SEARCHING_ORIGIN) {
+                        String query = charSequence.toString().trim();
+                        if (query.length() > 0) {
+                            mAirportAirlineSearchFragment.search(query);
+                        } else {
+                            mAirportAirlineSearchFragment.search(null);
+                        }
+                    }
+                });
+        mRouteDestinationTextChangeDisposable = RxTextView.textChanges(mSearchByRouteDestination)
+                .skip(1)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mAirportAirlineSearchFragment != null && mPresenter.getStep() == FlightPresenter.FlightStep.ROUTE_SEARCH_SEARCHING_DESTINATION) {
+                        String query = charSequence.toString().trim();
+                        if (query.length() > 0) {
+                            mAirportAirlineSearchFragment.search(query);
+                        } else {
+                            mAirportAirlineSearchFragment.search(null);
+                        }
+                    }
+                });
+
+        mRouteSearchClickDisposable = RxView.clicks(mSearchByRouteSearch)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    mPresenter.searchByRoute();
+                });
+
+
+        /* Search by Flight Number */
+        mFlightAirlineClickDisposable = RxView.focusChanges(mSearchByFlightNumberAirline)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mSearchByFlightNumberAirline.hasFocus() && mPresenter.getStep() != FlightPresenter.FlightStep.FLIGHT_SEARCH_SEARCHING_AIRLINE) {
+                        mPresenter.resetToStep(FlightPresenter.FlightStep.FLIGHT_SEARCH_SEARCHING_AIRLINE);
+                        mSearchByFlightNumberAirline.setSelection(mSearchByFlightNumberAirline.getText().length());
+                    }
+                });
+        mFlightNumberClickDisposable = RxView.focusChanges(mSearchByFlightNumberNumber)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mSearchByFlightNumberNumber.hasFocus() && mPresenter.getStep() != FlightPresenter.FlightStep.FLIGHT_SEARCH_SETTING_FLIGHT_NUMBER) {
+                        mPresenter.resetToStep(FlightPresenter.FlightStep.FLIGHT_SEARCH_SETTING_FLIGHT_NUMBER);
+                        mSearchByFlightNumberNumber.setSelection(mSearchByFlightNumberNumber.getText().length());
+                    }
+                });
+        mFlightDateClickDisposable = RxView.clicks(mSearchByFlightNumberDate)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mSearchByFlightNumberDate.hasFocus() && mPresenter.getStep() != FlightPresenter.FlightStep.FLIGHT_SEARCH_SETTING_DATE)
+                        mPresenter.resetToStep(FlightPresenter.FlightStep.FLIGHT_SEARCH_SETTING_DATE);
+                });
+
+        mFlightAirlineTextChangeDisposable = RxTextView.textChanges(mSearchByFlightNumberAirline)
+                .skip(1)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    if(mAirportAirlineSearchFragment != null && mPresenter.getStep() == FlightPresenter.FlightStep.FLIGHT_SEARCH_SEARCHING_AIRLINE) {
+                        String query = charSequence.toString().trim();
+                        if (query.length() > 0) {
+                            mAirportAirlineSearchFragment.search(query);
+                        } else {
+                            mAirportAirlineSearchFragment.search(null);
+                        }
+                    }
+                });
+
+        mFlightSearchClickDisposable = RxView.clicks(mSearchByFlightNumberSearch)
+                .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(charSequence -> {
+                    mPresenter.searchByFlightNumber();
+                });
+
+    }
+
 
 
     private void setUpContentFrame(ContentFrameType type, @Nullable AirportAirlineSearchType searchType){
@@ -199,108 +372,72 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
                 setUpContentFrame(ContentFrameType.AIRPORT_AIRLINE_SEARCH_FRAGMENT, AirportAirlineSearchType.BOTH);
 
 
-                //TODO: REMEMBER TO UNSUBSCRIBE FROM THIS SUBSCRIPTION SOME FREAKING DAY!!!!!!!
-                //TODO: REMEMBER TO UNSUBSCRIBE FROM THIS SUBSCRIPTION SOME FREAKING DAY!!!!!!!
-                mEditTextObservable = RxTextView.textChanges(mSearchAirportAirline.getInternalEditText())
-                        .skip(1)
-                        .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS);
+                break;
 
-                mDisposable = mEditTextObservable.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(charSequence -> {
-                            if(mAirportAirlineSearchFragment != null) {
-                                String query = charSequence.toString().trim();
-                                Timber.d("Text changed %s", query);
-                                if (query.length() > 0) {
-                                    mAirportAirlineSearchFragment.search(query);
-                                } else {
-                                    mAirportAirlineSearchFragment.search(null);
-                                }
-                            }
-                        });
-                //TODO: REMEMBER TO UNSUBSCRIBE FROM THIS SUBSCRIPTION SOME FREAKING DAY!!!!!!!
-                //TODO: REMEMBER TO UNSUBSCRIBE FROM THIS SUBSCRIPTION SOME FREAKING DAY!!!!!!!
+            case ROUTE_SEARCH_SEARCHING_ORIGIN:
+                //Load content frame
+                setUpContentFrame(ContentFrameType.AIRPORT_AIRLINE_SEARCH_FRAGMENT, AirportAirlineSearchType.AIRPORT);
+
+                //Highlight destination CustomEditText
+                if (!mSearchByRouteOrigin.hasFocus())
+                    mSearchByRouteOrigin.requestFocus();
+                mSearchByRouteOrigin.setSelection(mSearchByRouteOrigin.getText().length());
                 break;
 
             case ROUTE_SEARCH_SEARCHING_DESTINATION:
+                //Load content frame
+                setUpContentFrame(ContentFrameType.AIRPORT_AIRLINE_SEARCH_FRAGMENT, AirportAirlineSearchType.AIRPORT);
+
+                //Highlight destination CustomEditText
+                if (!mSearchByRouteDestination.hasFocus())
+                    mSearchByRouteDestination.requestFocus();
+                mSearchByRouteDestination.setSelection(mSearchByRouteDestination.getText().length());
+
+
                 //Change title
                 mToolbar.setTitle(R.string.activity_flight_toolbar_title_by_route);
-
 
                 //Set origin airport
                 if(!flight.getOrigin().getIata().isEmpty())
                     mSearchByRouteOrigin.setText(flight.getOrigin().getIata());
                 else if (!flight.getOrigin().getName().isEmpty())
                     mSearchByRouteOrigin.setText(flight.getOrigin().getName());
-
-                //Load content frame
-                setUpContentFrame(ContentFrameType.AIRPORT_AIRLINE_SEARCH_FRAGMENT, AirportAirlineSearchType.AIRPORT);
-
-                //Highlight destination CustomEditText
-                mSearchByRouteDestination.requestFocus();
-
-                if(mDisposable.isDisposed())
-                    mDisposable.dispose();
-
-                mEditTextObservable = RxTextView.textChanges(mSearchByRouteDestination.getInternalEditText())
-                        .skip(1)
-                        .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS);
-
-                mDisposable = mEditTextObservable
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(charSequence -> {
-                            if(mAirportAirlineSearchFragment != null) {
-                                String query = charSequence.toString().trim();
-                                Timber.d("Text changed destination %s", query);
-                                if (query.length() > 0) {
-                                    mAirportAirlineSearchFragment.search(query);
-                                } else {
-                                    mAirportAirlineSearchFragment.search(null);
-                                }
-                            }
-                        });
-
                 break;
 
             case ROUTE_SEARCH_SETTING_DATE:
+                //Load content frame
+                setUpContentFrame(ContentFrameType.DATE_SELECT_FRAGMENT, null);
 
                 //Highlight date CustomTextView
-                mSearchByRouteDate.requestFocus();
+                if (!mSearchByRouteDate.hasFocus())
+                    mSearchByRouteDate.requestFocus();
+
 
                 //Hide keyboard
-                //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mSearchByRouteDate.getWindowToken(), 0);
 
+//                //Re-enable search button
+//                mSearchByRouteSearch.setEnabled(true);
+//                mSearchByRouteSearch.setClickable(true);
 
                 //Set destination airport
                 if(!flight.getDestination().getIata().isEmpty())
                     mSearchByRouteDestination.setText(flight.getDestination().getIata());
                 else if (!flight.getDestination().getName().isEmpty())
                     mSearchByRouteDestination.setText(flight.getDestination().getName());
-
-
-                //Load content frame
-                setUpContentFrame(ContentFrameType.DATE_SELECT_FRAGMENT, null);
-
-                //Dispose last observable
-                if(mDisposable.isDisposed())
-                    mDisposable.dispose();
-
-                mDisposable = RxView.clicks(mSearchByRouteSearch)
-                        .debounce(Constants.UI_DEBOUNCE_TIME_MILLISECONDS, TimeUnit.MILLISECONDS)
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(charSequence -> {
-                            mPresenter.searchByRoute();
-                        });
-
                 break;
 
 
             case ROUTE_SEARCH_SEARCHING_FLIGHTS:
-                //Nothing to do here, check handleHeaderFieldVisibility()
+                //Set origin, destination and date customedittexts and also search button as unclickable unfocusable
+                //while searching
+
+                //Hide search button
+                mSearchByRouteSearch.setVisibility(View.GONE);
+
+                //Show searching overlay
+                mDateSelectFragment.showSearchingOverlay();
                 break;
 
 
@@ -308,22 +445,84 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
             case ROUTE_SEARCH_SELECTING_FLIGHT:
                 //Load content frame
                 setUpContentFrame(ContentFrameType.FLIGHT_RESULTS_FRAGMENT, null);
-
-                //Dispose last observable
-                if(mDisposable.isDisposed())
-                    mDisposable.dispose();
                 break;
 
 
 
 
+//            Searching by flight # workflow
+            case FLIGHT_SEARCH_SEARCHING_AIRLINE:
+                //Load content frame
+                setUpContentFrame(ContentFrameType.AIRPORT_AIRLINE_SEARCH_FRAGMENT, AirportAirlineSearchType.AIRLINE);
+
+                //Highlight flight airline CustomEditText
+                if (!mSearchByFlightNumberAirline.hasFocus())
+                    mSearchByFlightNumberAirline.requestFocus();
+                mSearchByFlightNumberAirline.setSelection(mSearchByFlightNumberAirline.getText().length());
+                break;
 
             case FLIGHT_SEARCH_SETTING_FLIGHT_NUMBER:
-                Toast.makeText(this, "TODO FLIGHT_SEARCH_SETTING_FLIGHT_NUMBER", Toast.LENGTH_SHORT).show();
+                //Load content frame
+                setUpContentFrame(ContentFrameType.NONE, null);
+
+                //Highlight flight number CustomEditText
+                if (!mSearchByFlightNumberNumber.hasFocus())
+                    mSearchByFlightNumberNumber.requestFocus();
+                mSearchByFlightNumberNumber.setSelection(mSearchByFlightNumberNumber.getText().length());
+
+
+                //Change title
+                mToolbar.setTitle(R.string.activity_flight_toolbar_title_by_number);
+
+                //Set airline
+                if(!flight.getAirline().getIcao().isEmpty())
+                    mSearchByFlightNumberAirline.setText(flight.getAirline().getIcao());
+                else if (!flight.getAirline().getName().isEmpty())
+                    mSearchByFlightNumberAirline.setText(flight.getAirline().getName());
+
+                //Launch picker
+                NumberPickerBuilder npb = new NumberPickerBuilder()
+                        .setFragmentManager(getSupportFragmentManager())
+                        .setStyleResId(R.style.BetterPickersDialogFragment)
+                        .setLabelText("Flight #");
+                npb.show();
                 break;
 
 
 
+            case FLIGHT_SEARCH_SETTING_DATE:
+                //Load content frame
+                setUpContentFrame(ContentFrameType.DATE_SELECT_FRAGMENT, null);
+
+                //Highlight date CustomTextView
+                if (!mSearchByFlightNumberDate.hasFocus())
+                    mSearchByFlightNumberDate.requestFocus();
+
+
+                //Hide keyboard
+                InputMethodManager imm2 = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm2.hideSoftInputFromWindow(mSearchByRouteDate.getWindowToken(), 0);
+
+                //Set destination airport
+                if(!flight.getCallsign().isEmpty())
+                    mSearchByFlightNumberNumber.setText(flight.getCallsign());
+                break;
+
+            case FLIGHT_SEARCH_SEARCHING_FLIGHTS:
+                //Set origin, destination and date customedittexts and also search button as unclickable unfocusable
+                //while searching
+
+                //Hide search button
+                mSearchByRouteSearch.setVisibility(View.GONE);
+
+                //Show searching overlay
+                mDateSelectFragment.showSearchingOverlay();
+                break;
+
+            case FLIGHT_SEARCH_SELECTING_FLIGHT:
+                //Load content frame
+                setUpContentFrame(ContentFrameType.FLIGHT_RESULTS_FRAGMENT, null);
+                break;
         }
     }
 
@@ -335,18 +534,26 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
                 mSearchAirportAirline.setVisibility(View.VISIBLE);
                 break;
 
+
+            case ROUTE_SEARCH_SEARCHING_ORIGIN:
+                mSearchAirportAirline.setVisibility(View.GONE);
+                mSearchByFlightNumberContainer.setVisibility(View.GONE);
+                mSearchByRouteContainer.setVisibility(View.VISIBLE);
+
+                mSearchByRouteOrigin.setDim(false);
+                mSearchByRouteDestination.setDim(true);
+                mSearchByRouteDate.setDim(true);
+                mSearchByRouteSearch.setVisibility(View.GONE);
+                break;
+
             case ROUTE_SEARCH_SEARCHING_DESTINATION:
                 mSearchAirportAirline.setVisibility(View.GONE);
                 mSearchByFlightNumberContainer.setVisibility(View.GONE);
                 mSearchByRouteContainer.setVisibility(View.VISIBLE);
 
-                mSearchByRouteOrigin.setVisibility(View.VISIBLE);
                 mSearchByRouteOrigin.setDim(true);
-
-                mSearchByRouteDestination.setVisibility(View.VISIBLE);
                 mSearchByRouteDestination.setDim(false);
-
-                mSearchByRouteDate.setVisibility(View.GONE);
+                mSearchByRouteDate.setDim(true);
                 mSearchByRouteSearch.setVisibility(View.GONE);
                 break;
 
@@ -355,16 +562,13 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
                 mSearchByFlightNumberContainer.setVisibility(View.GONE);
                 mSearchByRouteContainer.setVisibility(View.VISIBLE);
 
-                mSearchByRouteOrigin.setVisibility(View.VISIBLE);
                 mSearchByRouteOrigin.setDim(true);
-
-                mSearchByRouteDestination.setVisibility(View.VISIBLE);
                 mSearchByRouteDestination.setDim(true);
-
-                mSearchByRouteDate.setVisibility(View.VISIBLE);
                 mSearchByRouteDate.setDim(false);
-
-                mSearchByRouteSearch.setVisibility(View.GONE);
+                if(mPresenter.getFlight().getDeparture() != null)
+                    mSearchByRouteSearch.setVisibility(View.VISIBLE);
+                else
+                    mSearchByRouteSearch.setVisibility(View.GONE);
                 break;
 
             case ROUTE_SEARCH_SEARCHING_FLIGHTS:
@@ -372,30 +576,66 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
                 mSearchByFlightNumberContainer.setVisibility(View.GONE);
                 mSearchByRouteContainer.setVisibility(View.VISIBLE);
 
-                mSearchByRouteOrigin.setVisibility(View.VISIBLE);
                 mSearchByRouteOrigin.setDim(true);
-
-                mSearchByRouteDestination.setVisibility(View.VISIBLE);
                 mSearchByRouteDestination.setDim(true);
-
-                mSearchByRouteDate.setVisibility(View.VISIBLE);
                 mSearchByRouteDate.setDim(true);
-
                 mSearchByRouteSearch.setVisibility(View.VISIBLE);
-
-                //Disable search button while searching
-                mSearchByRouteSearch.setEnabled(false);
-                mSearchByRouteSearch.setClickable(false);
-
-                //Show searching overlay
-                mDateSelectFragment.showSearchingOverlay();
-
                 break;
 
             case ROUTE_SEARCH_SELECTING_FLIGHT:
-
                 break;
 
+
+            case FLIGHT_SEARCH_SEARCHING_AIRLINE:
+                mSearchAirportAirline.setVisibility(View.GONE);
+                mSearchByRouteContainer.setVisibility(View.GONE);
+                mSearchByFlightNumberContainer.setVisibility(View.VISIBLE);
+
+                mSearchByFlightNumberAirline.setDim(false);
+                mSearchByFlightNumberNumber.setDim(true);
+                mSearchByFlightNumberDate.setDim(true);
+                mSearchByFlightNumberSearch.setVisibility(View.GONE);
+                break;
+
+            case FLIGHT_SEARCH_SETTING_FLIGHT_NUMBER:
+                mSearchAirportAirline.setVisibility(View.GONE);
+                mSearchByRouteContainer.setVisibility(View.GONE);
+                mSearchByFlightNumberContainer.setVisibility(View.VISIBLE);
+
+                mSearchByFlightNumberAirline.setDim(true);
+                mSearchByFlightNumberNumber.setDim(false);
+                mSearchByFlightNumberDate.setDim(true);
+                mSearchByFlightNumberSearch.setVisibility(View.GONE);
+                break;
+
+            case FLIGHT_SEARCH_SETTING_DATE:
+                mSearchAirportAirline.setVisibility(View.GONE);
+                mSearchByRouteContainer.setVisibility(View.GONE);
+                mSearchByFlightNumberContainer.setVisibility(View.VISIBLE);
+
+                mSearchByFlightNumberAirline.setDim(true);
+                mSearchByFlightNumberNumber.setDim(true);
+                mSearchByFlightNumberDate.setDim(false);
+
+                if(mPresenter.getFlight().getCallsign() != null)
+                    mSearchByFlightNumberSearch.setVisibility(View.VISIBLE);
+                else
+                    mSearchByFlightNumberSearch.setVisibility(View.GONE);
+                break;
+
+            case FLIGHT_SEARCH_SEARCHING_FLIGHTS:
+                mSearchAirportAirline.setVisibility(View.GONE);
+                mSearchByRouteContainer.setVisibility(View.GONE);
+                mSearchByFlightNumberContainer.setVisibility(View.VISIBLE);
+
+                mSearchByFlightNumberAirline.setDim(true);
+                mSearchByFlightNumberNumber.setDim(true);
+                mSearchByFlightNumberDate.setDim(true);
+                mSearchByFlightNumberSearch.setVisibility(View.VISIBLE);
+                break;
+
+            case FLIGHT_SEARCH_SELECTING_FLIGHT:
+                break;
         }
     }
 
@@ -418,25 +658,63 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
         mPresenter.airportOrAirlineSelected(item);
     }
 
+    @Override
+    public @Nullable String getInitialQueryOrShowRecents() {
+        switch (mPresenter.getStep()) {
+            case SEARCHING_AIRPORTS_AIRLINES:
+                return null; //Show recents.
+            case ROUTE_SEARCH_SEARCHING_ORIGIN:
+                String orig = mSearchByRouteOrigin.getText().toString().trim();
+                if(!orig.isEmpty())
+                    return orig;
+                else return null;
+
+            case ROUTE_SEARCH_SEARCHING_DESTINATION:
+                String dest = mSearchByRouteDestination.getText().toString().trim();
+                if(!dest.isEmpty())
+                    return dest;
+                else return null;
+
+            case FLIGHT_SEARCH_SEARCHING_AIRLINE:
+                String airline = mSearchByFlightNumberAirline.getText().toString().trim();
+                if(!airline.isEmpty())
+                    return airline;
+                else return null;
+            default:
+                throw new IllegalStateException("getInitialQueryOrShowRecents: Step is illegal. Step=" + mPresenter.getStep().name());
+        }
+    }
 
     /* DateSelectFragment.DateSelectedListener implementation */
     @Override
     public void onDateSelected(Calendar calendar) {
-        DateFormat df = new SharedPreferenceHelper().getDateFormat();
-
         switch (mPresenter.getStep()) {
             case ROUTE_SEARCH_SETTING_DATE:
                 mSearchByRouteDate.setText(CalendarUtil.getCuteStringDateFromCalendar(calendar));
                 mSearchByRouteSearch.setVisibility(View.VISIBLE);
                 break;
             case FLIGHT_SEARCH_SETTING_DATE:
-                mSearchByFlightNumberDate.setText(df.formatCalendar(calendar));
-                //TODO mSearchByFlightNumberSearch.setVisibility(View.VISIBLE);
+                mSearchByFlightNumberDate.setText(CalendarUtil.getCuteStringDateFromCalendar(calendar));
+                mSearchByFlightNumberSearch.setVisibility(View.VISIBLE);
+                break;
+            default:
+                throw new IllegalStateException("onDateSelected: Step is illegal. Step=" + mPresenter.getStep().name());
         }
 
         mPresenter.dateSelected(calendar);
     }
 
+    @Nullable
+    @Override
+    public Calendar getInitialDateOrNone() {
+        switch (mPresenter.getStep()) {
+            case ROUTE_SEARCH_SETTING_DATE:
+            case FLIGHT_SEARCH_SETTING_DATE:
+                return mPresenter.getFlight().getDeparture();
+            default:
+                throw new IllegalStateException("getInitialDateOrNone: Step is illegal. Step=" + mPresenter.getStep().name());
+        }
+    }
 
     /* FlightResultsFragment.FlightSelectedListener implementation */
     @Override
@@ -448,6 +726,13 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
     @Override
     public List<Flight> getFlights() {
         return mPresenter.getTempFlights();
+    }
+
+
+    /* Betterpicker Numberpicker implementation */
+    @Override
+    public void onDialogNumberSet(int reference, BigInteger number, double decimal, boolean isNegative, BigDecimal fullNumber) {
+        mPresenter.flightNumberSet(number.intValue());
     }
 
 }

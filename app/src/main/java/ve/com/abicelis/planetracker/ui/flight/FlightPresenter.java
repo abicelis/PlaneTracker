@@ -1,7 +1,9 @@
 package ve.com.abicelis.planetracker.ui.flight;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -39,8 +41,8 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
 
     public enum FlightProcedure {NEW_FLIGHT_IN_NEW_TRIP, NEW_FLIGHT_IN_EXISTING_TRIP, EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP}
     public enum FlightStep {SEARCHING_AIRPORTS_AIRLINES,
-        ROUTE_SEARCH_SEARCHING_DESTINATION, ROUTE_SEARCH_SETTING_DATE, ROUTE_SEARCH_SEARCHING_FLIGHTS, ROUTE_SEARCH_SELECTING_FLIGHT,
-        FLIGHT_SEARCH_SETTING_FLIGHT_NUMBER, FLIGHT_SEARCH_SETTING_DATE, FLIGHT_SEARCH_SELECTING_FLIGHT }
+        ROUTE_SEARCH_SEARCHING_ORIGIN, ROUTE_SEARCH_SEARCHING_DESTINATION, ROUTE_SEARCH_SETTING_DATE, ROUTE_SEARCH_SEARCHING_FLIGHTS, ROUTE_SEARCH_SELECTING_FLIGHT,
+        FLIGHT_SEARCH_SEARCHING_AIRLINE, FLIGHT_SEARCH_SETTING_FLIGHT_NUMBER, FLIGHT_SEARCH_SETTING_DATE, FLIGHT_SEARCH_SEARCHING_FLIGHTS, FLIGHT_SEARCH_SELECTING_FLIGHT }
 
 
     public FlightPresenter(DataManager dataManager) {
@@ -49,6 +51,9 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
 
     public FlightStep getStep() {
         return mStep;
+    }
+    public Flight getFlight() {
+        return mFlight;
     }
 
     public List<Flight> getTempFlights() {return mTempFlights;}
@@ -98,6 +103,12 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
 
     }
 
+    public void resetToStep(FlightStep step) {
+        mStep = step;
+        getMvpView().updateViews(mStep, mFlight);
+    }
+
+
     public void airportOrAirlineSelected(@NonNull AirportAirlineItem item) {
         switch (mStep) {
             case SEARCHING_AIRPORTS_AIRLINES:
@@ -118,14 +129,34 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
                     mFlight.setAirline((Airline)item);
                     getMvpView().updateViews(mStep, mFlight);
                 } else {
-                    //TODO super error, notify user?
+                    Timber.e("airportOrAirlineSelected() SEARCHING_AIRPORTS_AIRLINES unexpected AirportAirlineItem");
+                    getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
                 }
                 break;
 
+            case ROUTE_SEARCH_SEARCHING_ORIGIN:
+                new SharedPreferenceHelper().setAirportAsRecent(((Airport) item).getId());
+                mStep = FlightStep.ROUTE_SEARCH_SEARCHING_DESTINATION;
+                mFlight.setOrigin((Airport)item);
+                getMvpView().updateViews(mStep, mFlight);
+                break;
+
             case ROUTE_SEARCH_SEARCHING_DESTINATION:
+                new SharedPreferenceHelper().setAirportAsRecent(((Airport) item).getId());
                 mStep = FlightStep.ROUTE_SEARCH_SETTING_DATE;
                 mFlight.setDestination((Airport)item);
                 getMvpView().updateViews(mStep, mFlight);
+                break;
+
+            case FLIGHT_SEARCH_SEARCHING_AIRLINE:
+                mStep = FlightStep.FLIGHT_SEARCH_SETTING_FLIGHT_NUMBER;
+                mFlight.setAirline((Airline)item);
+                getMvpView().updateViews(mStep, mFlight);
+                break;
+
+            default:
+                Timber.e("airportOrAirlineSelected() unexpected FlightStep. %s", mStep.name());
+                getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
         }
 
     }
@@ -142,12 +173,29 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
                 break;
 
             default:
-                //TODO error out!
+                getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
         }
     }
 
 
+    public void flightNumberSet(int flightNumber) {
+        if(mStep == FlightStep.FLIGHT_SEARCH_SETTING_FLIGHT_NUMBER) {
+            mFlight.setCallsign(String.valueOf(flightNumber));
+            mStep = FlightStep.FLIGHT_SEARCH_SETTING_DATE;
+            getMvpView().updateViews(mStep, mFlight);
+        } else {
+            getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
+        }
+    }
+
+
+
     public void searchByRoute() {
+
+        //TODO check if we have a valid origin, destination and date!
+        //TODO otherwise error out
+
+        //else...
         mStep = FlightStep.ROUTE_SEARCH_SEARCHING_FLIGHTS;
         getMvpView().updateViews(mStep, mFlight);
 
@@ -161,18 +209,54 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
                         mTempFlights = flights; //These will be pulled by FlightResultsFragment.FlightSelectedListener.getFlights() when the fragment is attached and ready
                         Collections.sort(mTempFlights, new FlightByDepartureTimeComparator());
 
-                        for (Flight f : flights)
-                            Timber.d("Flight %s", f);
+//                        for (Flight f : flights)
+//                            Timber.d("Flight %s", f);
 
                     } else {
-                        getMvpView().showMessage(Message.NOTICE_NO_AIRLINES_FOUND, null);
+                        getMvpView().showMessage(Message.NOTICE_NO_FLIGHTS_FOUND, null);
                         mStep = FlightStep.ROUTE_SEARCH_SETTING_DATE;
                         getMvpView().updateViews(mStep, mFlight);
                     }
                 }, throwable -> {
                     Timber.e(throwable, "Error getting flights by route");
-                    //TODO show error
+                    getMvpView().showMessage(Message.ERROR_GETTING_FLIGHTS, null);
+                    mStep = FlightStep.ROUTE_SEARCH_SETTING_DATE;
+                    getMvpView().updateViews(mStep, mFlight);
                 });
     }
+
+
+    public void searchByFlightNumber() {
+        //TODO check if we have a valid airline, flight number and date!
+        //TODO otherwise error out
+
+        //else...
+        mStep = FlightStep.FLIGHT_SEARCH_SEARCHING_FLIGHTS;
+        getMvpView().updateViews(mStep, mFlight);
+
+        mDataManager.findFlightByFlightNumber(mFlight.getAirline(), Integer.valueOf(mFlight.getCallsign()), mFlight.getDeparture())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(flight -> {
+                    if (flight != null) {
+                        mStep = FlightStep.FLIGHT_SEARCH_SELECTING_FLIGHT;
+                        getMvpView().updateViews(mStep, mFlight);
+                        List<Flight> flights = new ArrayList<>();
+                        flights.add(flight);
+                        mTempFlights = flights; //These will be pulled by FlightResultsFragment.FlightSelectedListener.getFlights() when the fragment is attached and ready
+
+                    } else {
+                        getMvpView().showMessage(Message.NOTICE_NO_FLIGHTS_FOUND, null);
+                        mStep = FlightStep.FLIGHT_SEARCH_SETTING_DATE;
+                        getMvpView().updateViews(mStep, mFlight);
+                    }
+                }, throwable -> {
+                    Timber.e(throwable, "Error getting flights by flight number");
+                    getMvpView().showMessage(Message.ERROR_GETTING_FLIGHTS, null);
+                    mStep = FlightStep.FLIGHT_SEARCH_SETTING_DATE;
+                    getMvpView().updateViews(mStep, mFlight);
+                });
+    }
+
 
 }

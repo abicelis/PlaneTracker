@@ -380,9 +380,13 @@ public class DataManager {
                                 if (icaoRegex.matcher(f.getIdent()).matches()) {
                                     String icao = f.getIdent().substring(0, 3);
                                     airline = mAppDatabase.airlineDao().getByIcao(icao).blockingGet();
+
+                                    if (airline != null)
+                                        flights.add(new Flight(f.getFaIdent(), f.getIdent(), origin, destination, airline, departure, arrival, f.getAircraftType()));
+                                    else
+                                        Timber.e("findFlightsByRoute did not find airline for %s, extracted ICAO %s", f.getIdent(), icao);
                                 }
 
-                                flights.add(new Flight(f.getFaIdent(), f.getIdent(), origin, destination, airline, departure, arrival, f.getAircraftType()));
                             }
                         }
 

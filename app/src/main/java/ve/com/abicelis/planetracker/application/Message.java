@@ -31,6 +31,7 @@ public enum Message {
     ERROR_GETTING_AIRPORTS_OR_AIRLINES(R.string.error_getting_airports_or_airlines, SnackbarUtil.SnackbarType.ERROR),
     ERROR_GETTING_AIRPORTS(R.string.error_getting_airports, SnackbarUtil.SnackbarType.ERROR),
     ERROR_GETTING_AIRLINES(R.string.error_getting_airlines, SnackbarUtil.SnackbarType.ERROR),
+    ERROR_GETTING_FLIGHTS(R.string.error_getting_flights, SnackbarUtil.SnackbarType.ERROR),
     NOTICE_NO_AIRPORTS_OR_AIRLINES_FOUND(R.string.notice_no_airports_or_airlines_found, SnackbarUtil.SnackbarType.NOTICE),
     NOTICE_NO_AIRPORTS_FOUND(R.string.notice_no_airports_found, SnackbarUtil.SnackbarType.NOTICE),
     NOTICE_NO_AIRLINES_FOUND(R.string.notice_no_airlines_found, SnackbarUtil.SnackbarType.NOTICE),

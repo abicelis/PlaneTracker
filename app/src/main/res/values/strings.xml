@@ -119,6 +119,7 @@
     <string name="error_getting_airports_or_airlines">Sorry, could not get airports or airlines</string>
     <string name="error_getting_airports">Sorry, could not get airports</string>
     <string name="error_getting_airlines">Sorry, could not get airlines</string>
+    <string name="error_getting_flights">Sorry, could not get flights</string>
     <string name="notice_no_airports_or_airlines_found">No airports or airlines found</string>
     <string name="notice_no_airports_found">No airports found</string>
     <string name="notice_no_airlines_found">No airlines found</string>

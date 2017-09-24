@@ -75,7 +75,7 @@ public class FlightResultsFragment extends Fragment {
 
         mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mFlightAdapter = new FlightAdapter(getActivity());
-        mFlightAdapter.useSmallViews(true);
+        //mFlightAdapter.useSmallViews(true);
         mFlightAdapter.setFlightClickedListener(flight -> {
             //Relay event to activity
             mListener.onFlightSelected(flight);

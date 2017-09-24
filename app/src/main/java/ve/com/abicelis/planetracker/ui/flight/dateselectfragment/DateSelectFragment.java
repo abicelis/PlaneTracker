@@ -43,7 +43,11 @@ public class DateSelectFragment extends Fragment {
             mListener.onDateSelected(date.getCalendar());
         });
         mCalendar.setDateTextAppearance(R.style.CustomDayTextAppearance);
-        mCalendar.setDateSelected(CalendarDay.today(), true);
+
+        Calendar initialDate = mListener.getInitialDateOrNone();
+        if(initialDate != null)
+            mCalendar.setDateSelected(CalendarDay.from(initialDate), true);
+
         return view;
     }
 
@@ -73,4 +77,6 @@ public class DateSelectFragment extends Fragment {
 
     public interface DateSelectedListener {
         void onDateSelected(Calendar calendar);
+        @Nullable Calendar getInitialDateOrNone();
+
     }}

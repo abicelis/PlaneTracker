@@ -22,6 +22,7 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     //DATA
     private List<FlightViewModel> mFlights = new ArrayList<>();
+    private long mTripId;
     private FlightClickedListener mListener;
     private LayoutInflater mInflater;
     private Activity mActivity;
@@ -124,6 +125,13 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public int getItemCount() {
         return mFlights.size();
+    }
+
+    public void setTripId(long tripId) {
+        mTripId = tripId;
+    }
+    public long getTripId() {
+        return mTripId;
     }
 
 

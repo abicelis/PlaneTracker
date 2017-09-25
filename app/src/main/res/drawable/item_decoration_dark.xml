@@ -5,7 +5,7 @@
             <size android:width="1px" android:height="1px" />
             <!--<solid android:color="?horizontal_divider" />-->
             <!--API < 21 does not support attrs as color attributes...-->
-            <solid android:color="@color/divider" />
+            <solid android:color="@color/dark_divider" />
         </shape>
     </item>
 </layer-list>

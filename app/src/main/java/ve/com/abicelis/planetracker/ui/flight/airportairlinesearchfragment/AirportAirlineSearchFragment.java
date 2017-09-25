@@ -26,9 +26,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Message;
+import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
 import ve.com.abicelis.planetracker.data.model.AirportAirlineHeader;
 import ve.com.abicelis.planetracker.data.model.AirportAirlineItem;
 import ve.com.abicelis.planetracker.data.model.AirportAirlineSearchType;
+import ve.com.abicelis.planetracker.data.model.AppThemeType;
 import ve.com.abicelis.planetracker.ui.base.BaseDialogFragment;
 import ve.com.abicelis.planetracker.util.SnackbarUtil;
 
@@ -116,7 +118,9 @@ public class AirportAirlineSearchFragment extends BaseDialogFragment implements 
         });
 
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), mLayoutManager.getOrientation());
-        itemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.item_decoration));
+
+        int divider = (new SharedPreferenceHelper().getAppThemeType() == AppThemeType.LIGHT ? R.drawable.item_decoration : R.drawable.item_decoration_dark);
+        itemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(), divider));
         mRecycler.addItemDecoration(itemDecoration);
 
         mRecycler.setLayoutManager(mLayoutManager);

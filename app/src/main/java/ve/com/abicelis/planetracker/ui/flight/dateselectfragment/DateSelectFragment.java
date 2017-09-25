@@ -78,5 +78,6 @@ public class DateSelectFragment extends Fragment {
     public interface DateSelectedListener {
         void onDateSelected(Calendar calendar);
         @Nullable Calendar getInitialDateOrNone();
+    }
 
-    }}
+}

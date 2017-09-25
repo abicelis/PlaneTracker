@@ -87,7 +87,7 @@ public class CalendarUtil {
         int hoursBetween = (int) (seconds / 3600);
         int minutesBetween = (int) ((seconds % 3600) / 60);
 
-        String out = (hoursBetween > 0 ? hoursBetween + "h" : "");
+        String out = (hoursBetween > 0 ? hoursBetween + "h " : "");
         out += (minutesBetween > 0 ? minutesBetween + "m" : "");
 
         return out;

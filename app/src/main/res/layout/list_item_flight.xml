@@ -26,21 +26,11 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:text="Copa Airlines"
+                android:maxEms="8"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="?primary_text"
                 android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/list_item_flight_callsign"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@+id/list_item_flight_airline"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center_vertical"
-                android:text="CM 317"
-                android:textColor="?primary_text"
-                android:textSize="14sp" />
-
             <TextView
                 android:id="@+id/list_item_flight_date"
                 android:layout_width="wrap_content"
@@ -51,6 +41,20 @@
                 android:text="Mon, 10 Oct"
                 android:textColor="?primary_text"
                 android:textSize="14sp" />
+            <TextView
+                android:id="@+id/list_item_flight_callsign"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@+id/list_item_flight_airline"
+                android:layout_toStartOf="@id/list_item_flight_date"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:text="CM 317"
+                android:textColor="?primary_text"
+                android:textSize="14sp" />
+
+
         </RelativeLayout>
 
         <View

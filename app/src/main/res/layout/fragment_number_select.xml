@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="16dp">
+
+    <com.codetroopers.betterpickers.numberpicker.NumberPicker
+        android:id="@+id/fragment_number_select_number_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingBottom="8dp"
+        android:paddingEnd="8dp"
+        >
+        <Button
+            android:id="@+id/fragment_number_select_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_done"
+            android:layout_alignParentEnd="true"
+            style="?attr/borderlessButtonStyle"/>
+    </RelativeLayout>
+</LinearLayout>

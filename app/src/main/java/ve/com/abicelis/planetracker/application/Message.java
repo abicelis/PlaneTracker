@@ -36,6 +36,10 @@ public enum Message {
     NOTICE_NO_AIRPORTS_FOUND(R.string.notice_no_airports_found, SnackbarUtil.SnackbarType.NOTICE),
     NOTICE_NO_AIRLINES_FOUND(R.string.notice_no_airlines_found, SnackbarUtil.SnackbarType.NOTICE),
     NOTICE_NO_FLIGHTS_FOUND(R.string.notice_no_flights_found, SnackbarUtil.SnackbarType.NOTICE),
+    NOTICE_ADDING_FLIGHT(R.string.notice_adding_flight, SnackbarUtil.SnackbarType.SUCCESS),
+    SUCCESS_FLIGHT_ADDED(R.string.success_flight_added, SnackbarUtil.SnackbarType.SUCCESS),
+    SUCCESS_FLIGHT_EDITED(R.string.success_flight_edited, SnackbarUtil.SnackbarType.SUCCESS),
+    ERROR_ADDING_FLIGHT(R.string.error_adding_flight, SnackbarUtil.SnackbarType.ERROR),
 
     ;
 

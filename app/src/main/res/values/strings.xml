@@ -12,14 +12,18 @@
     <string name="activity_flight_date">Date</string>
     <string name="activity_flight_by_flight_number_airline">Airline</string>
     <string name="activity_flight_by_flight_number_number">Flight #</string>
+    <string name="activity_flight_new_trip_name">New Trip</string>
+    <string name="activity_flight_new_trip_name_2">Trip to</string>
 
         <!--Airport Airline Search Fragment-->
-    <string name="airport_airline_recents">Recents</string>
-    <string name="airport_airline_search_airports_airlines">Search for Airports or Airlines above</string>
-    <string name="airport_airline_search_airports">Search for Airports above</string>
-    <string name="airport_airline_search_airlines">Search for Airlines above</string>
-    <string name="airport_airline_searching">Searching for flights&#8230;</string>
+        <string name="airport_airline_recents">Recents</string>
+        <string name="airport_airline_search_airports_airlines">Search for Airports or Airlines above</string>
+        <string name="airport_airline_search_airports">Search for Airports above</string>
+        <string name="airport_airline_search_airlines">Search for Airlines above</string>
+        <string name="airport_airline_searching">Searching for flights&#8230;</string>
 
+        <!--Number Select Fragment-->
+        <string name="fragment_number_select_title">Flight #</string>
 
 
 
@@ -31,8 +35,7 @@
     <string name="activity_trip_detail_change_image">Change image</string>
     <string name="activity_trip_detail_change_name">Change trip name</string>
     <string name="activity_trip_detail_delete">Delete trip</string>
-    <string name="menu_trip_detail_edit_save">Save changes</string>
-    <string name="menu_trip_detail_edit_discard">Discard changes</string>
+    <string name="menu_trip_detail_edit_cancel">Cancel edit mode</string>
 
         <!--Edit trip name Dialog-->
         <string name="dialog_edit_trip_name_title">Edit Trip name</string>
@@ -124,6 +127,10 @@
     <string name="notice_no_airports_found">No airports found</string>
     <string name="notice_no_airlines_found">No airlines found</string>
     <string name="notice_no_flights_found">Sorry, no flights found</string>
+    <string name="notice_adding_flight">Adding flight</string>
+    <string name="success_flight_added">Flight added successfully</string>
+    <string name="success_flight_edited">Flight edited successfully</string>
+    <string name="error_adding_flight">Sorry, could not add flight</string>
 
     <!--FLIGHT VIEW MODEL-->
     <string name="flight_view_model_layover_format">%1$s layover</string>
@@ -153,4 +160,5 @@
     <!--MISC-->
     <string name="loading">Loading&#8230;</string>
     <string name="app_name">PlaneTracker</string>
+    <string name="no_image">No Image</string>
 </resources>

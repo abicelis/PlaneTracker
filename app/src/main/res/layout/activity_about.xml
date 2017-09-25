@@ -8,8 +8,9 @@
         android:id="@+id/activity_about_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?primary"
-        app:theme="@style/ToolbarTheme"
+        android:background="?attr/colorPrimary"
+        app:theme="@style/ToolbarThemeOverlay"
+        app:popupTheme="@style/PopupThemeOverlay"
         />
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"

@@ -13,8 +13,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/activity_home_appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="wrap_content">
 
         <FrameLayout
             android:id="@+id/toolbar_container"
@@ -28,10 +27,9 @@
                 android:id="@+id/activity_home_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
                 app:titleMarginStart="26dp"
-                app:theme="@style/ToolbarTheme"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:theme="@style/ToolbarThemeOverlay"
+                app:popupTheme="@style/PopupThemeOverlay"
                 />
 
             <com.miguelcatalan.materialsearchview.MaterialSearchView

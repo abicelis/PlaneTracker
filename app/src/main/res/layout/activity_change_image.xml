@@ -14,9 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:titleMarginStart="26dp"
-        app:theme="@style/ToolbarTheme"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:theme="@style/ToolbarThemeOverlay"
+        app:popupTheme="@style/PopupThemeOverlay"
         />
 
 
@@ -40,7 +39,7 @@
             android:id="@+id/activity_change_image_no_items_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:visibility="gone">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -11,10 +11,13 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/activity_flight_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:theme="@style/ToolbarThemeOverlay"
+            app:popupTheme="@style/PopupThemeOverlay"
             />
         
         <RelativeLayout
@@ -28,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:textSize="16sp"
                 custom:maxlines="1"
                 custom:icon="@drawable/ic_plane"
@@ -38,11 +41,12 @@
                 custom:hintcolor="@color/hint_text"
                 />
 
+            <!--Search by route-->
             <LinearLayout
                 android:id="@+id/activity_flight_search_by_route_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:orientation="horizontal">
 
                 <ve.com.abicelis.planetracker.ui.customviews.CustomEditText2
@@ -95,14 +99,18 @@
                     custom:hintcolor="@color/hint_text"/>
                 <ImageView
                     android:id="@+id/activity_flight_search_by_route_search"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:visibility="gone"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:visibility="visible"
                     android:src="@drawable/ic_search"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="6dp"/>
+                    android:layout_marginStart="6dp"
+                    />
             </LinearLayout>
 
+            <!--Search by flight number-->
             <LinearLayout
                 android:id="@+id/activity_flight_search_by_flight_number_container"
                 android:layout_width="match_parent"
@@ -126,7 +134,7 @@
                     custom:hintcolor="@color/hint_text"
                     />
 
-                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText2
+                <ve.com.abicelis.planetracker.ui.customviews.CustomTextView2
                     android:id="@+id/activity_flight_search_by_flight_number_number"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -142,7 +150,7 @@
                     custom:textcolor="@color/secondary_text"
                     custom:hintcolor="@color/hint_text"/>
 
-                <ve.com.abicelis.planetracker.ui.customviews.CustomEditText2
+                <ve.com.abicelis.planetracker.ui.customviews.CustomTextView2
                     android:id="@+id/activity_flight_search_by_flight_number_date"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -159,12 +167,15 @@
                     custom:hintcolor="@color/hint_text"/>
                 <ImageView
                     android:id="@+id/activity_flight_search_by_flight_number_search"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
                     android:visibility="gone"
                     android:src="@drawable/ic_search"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="6dp"/>
+                    android:layout_marginStart="6dp"
+                    />
             </LinearLayout>
 
         </RelativeLayout>

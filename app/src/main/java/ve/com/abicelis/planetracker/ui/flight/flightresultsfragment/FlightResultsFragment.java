@@ -4,15 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,10 +77,6 @@ public class FlightResultsFragment extends Fragment {
             //Relay event to activity
             mListener.onFlightSelected(flight);
         });
-
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), mLayoutManager.getOrientation());
-        itemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.item_decoration));
-        mRecycler.addItemDecoration(itemDecoration);
 
         mRecycler.setLayoutManager(mLayoutManager);
         mRecycler.setAdapter(mFlightAdapter);

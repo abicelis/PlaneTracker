@@ -3,14 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_trip_detail_edit_save"
-        android:title="@string/menu_trip_detail_edit_save"
-        android:icon="@drawable/ic_check"
-        app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/menu_trip_detail_edit_discard"
-        android:title="@string/menu_trip_detail_edit_discard"
+        android:id="@+id/menu_trip_detail_edit_cancel"
+        android:title="@string/menu_trip_detail_edit_cancel"
         android:icon="@drawable/ic_close"
         app:showAsAction="ifRoom"/>
 

@@ -15,18 +15,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:text="@string/loading"/>
         <ImageView
             android:id="@+id/list_item_trip_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
+            android:src="@drawable/error"
             />
+
+        <TextView
+            android:id="@+id/list_item_trip_no_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:scaleType="centerCrop"
+            app:layout_collapseMode="parallax"
+            android:text="@string/no_image"
+            android:textSize="22sp"
+            android:textColor="@color/secondary_text"
+            android:background="@color/transparent_loading"
+            android:gravity="center"
+            />
+
+
 
         <ImageView
             android:layout_width="match_parent"

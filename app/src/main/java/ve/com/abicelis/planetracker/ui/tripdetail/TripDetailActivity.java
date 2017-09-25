@@ -1,7 +1,5 @@
 package ve.com.abicelis.planetracker.ui.tripdetail;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -66,6 +64,8 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
     CoordinatorLayout mContainer;
     @BindView(R.id.activity_trip_detail_image)
     ImageView mImage;
+    @BindView(R.id.activity_trip_detail_no_image)
+    TextView mNoImage;
 
     @BindView(R.id.activity_trip_detail_no_items_container)
     RelativeLayout mNoItemsContainer;
@@ -94,7 +94,7 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
 
         long tripId = getIntent().getLongExtra(Constants.EXTRA_ACTIVITY_TRIP_DETAIL_TRIP_ID, -1);
         if(tripId != -1) {
-            mPresenter.getTrip(tripId);
+            mPresenter.setTripId(tripId);
         } else {
             BaseTransientBottomBar.BaseCallback<Snackbar> callback = new BaseTransientBottomBar.BaseCallback<Snackbar>() {
                 @Override
@@ -106,6 +106,12 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
             showMessage(Message.ERROR_LOADING_TRIP, callback);
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.reloadTrip();
     }
 
     private void initViews() {
@@ -199,47 +205,45 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
 
 
             // Used in edit mode
-            case R.id.menu_trip_detail_edit_save:
-                Toast.makeText(this, "save", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.menu_trip_detail_edit_discard:
-                handleEditModeDiscard(false);
+            case R.id.menu_trip_detail_edit_cancel:
+                mPresenter.discardEditModeChanges();
+                //handleEditModeDiscard(false);
                 break;
 
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        if(mPresenter.isInEditMode())
-            handleEditModeDiscard(true);
-        else
-            finish();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        if(mPresenter.isInEditMode())
+//            handleEditModeDiscard(true);
+//        else
+//            finish();
+//    }
 
-    private void handleEditModeDiscard(boolean finish) {
-        AlertDialog dialog = new AlertDialog.Builder(TripDetailActivity.this)
-                .setTitle(getResources().getString(R.string.dialog_trip_detail_activity_discard_title))
-                .setMessage(getResources().getString(R.string.dialog_trip_detail_activity_discard_message))
-                .setPositiveButton(getResources().getString(R.string.dialog_discard),  new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(finish)
-                            finish();
-                        else
-                            mPresenter.discardEditModeChanges();
-                    }
-                })
-                .setNegativeButton(getResources().getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        dialog.show();
-    }
+//    private void handleEditModeDiscard(boolean finish) {
+//        AlertDialog dialog = new AlertDialog.Builder(TripDetailActivity.this)
+//                .setTitle(getResources().getString(R.string.dialog_trip_detail_activity_discard_title))
+//                .setMessage(getResources().getString(R.string.dialog_trip_detail_activity_discard_message))
+//                .setPositiveButton(getResources().getString(R.string.dialog_discard),  new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        if(finish)
+//                            finish();
+//                        else
+//                            mPresenter.discardEditModeChanges();
+//                    }
+//                })
+//                .setNegativeButton(getResources().getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                    }
+//                })
+//                .create();
+//        dialog.show();
+//    }
 
 
     @Override
@@ -296,11 +300,8 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
 
         reloadTripImage(trip.getImage());
 
+        mFlightAdapter.setTripId(trip.getId());
         mFlightAdapter.getItems().clear();
-        mFlightAdapter.getItems().addAll(flights);
-        mFlightAdapter.getItems().addAll(flights);
-        mFlightAdapter.getItems().addAll(flights);
-        mFlightAdapter.getItems().addAll(flights);
         mFlightAdapter.getItems().addAll(flights);
         mFlightAdapter.notifyDataSetChanged();
 
@@ -318,10 +319,14 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
 
     @Override
     public void reloadTripImage(byte[] image) {
-        if(image != null)
+        if(image != null && image.length > 0) {
             mImage.setImageBitmap(ImageUtil.getBitmap(image));
-        else
+            mNoImage.setVisibility(View.GONE);
+
+        } else {
             mImage.setImageResource(R.drawable.error);
+            mNoImage.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

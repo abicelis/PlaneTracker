@@ -13,4 +13,6 @@ import ve.com.abicelis.planetracker.ui.base.MvpView;
 
 public interface FlightMvpView extends MvpView {
     void updateViews(FlightPresenter.FlightStep step, @Nullable Flight flight);
+
+    void tripSaved(long tripId, FlightPresenter.FlightProcedure mFlightProcedure);
 }

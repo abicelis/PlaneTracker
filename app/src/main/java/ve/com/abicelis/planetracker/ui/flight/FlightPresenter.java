@@ -1,9 +1,11 @@
 package ve.com.abicelis.planetracker.ui.flight;
 
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
+import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Message;
 import ve.com.abicelis.planetracker.data.DataManager;
 import ve.com.abicelis.planetracker.data.local.SharedPreferenceHelper;
@@ -18,6 +21,7 @@ import ve.com.abicelis.planetracker.data.model.Airline;
 import ve.com.abicelis.planetracker.data.model.Airport;
 import ve.com.abicelis.planetracker.data.model.AirportAirlineItem;
 import ve.com.abicelis.planetracker.data.model.Flight;
+import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.data.model.comparators.FlightByDepartureTimeComparator;
 import ve.com.abicelis.planetracker.ui.base.BasePresenter;
 
@@ -30,14 +34,12 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
     //DATA
     private long mTripId;
     private long mFlightId;
-    private long mFlightPosition;
-    private FlightProcedure mStatus;
+    private int mFlightPosition;
+    private FlightProcedure mFlightProcedure;
     private FlightStep mStep;
     private Flight mFlight;
     private List<Flight> mTempFlights;
-
     private DataManager mDataManager;
-
 
     public enum FlightProcedure {NEW_FLIGHT_IN_NEW_TRIP, NEW_FLIGHT_IN_EXISTING_TRIP, EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP}
     public enum FlightStep {SEARCHING_AIRPORTS_AIRLINES,
@@ -65,13 +67,13 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
 
 
         if(mTripId == -1) {                         //Intent came from HomeActivity, NEW_FLIGHT_IN_NEW_TRIP
-            mStatus = FlightProcedure.NEW_FLIGHT_IN_NEW_TRIP;
+            mFlightProcedure = FlightProcedure.NEW_FLIGHT_IN_NEW_TRIP;
             mStep = FlightStep.SEARCHING_AIRPORTS_AIRLINES;
             getMvpView().updateViews(mStep, null);
         } else {
             if (mFlightPosition != -1) {
-                if(mFlightId != -1) {               //Intent came from TripDetailActivity, EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP
-                    mStatus = FlightProcedure.EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP;
+                if(mFlightId != -1) {            //Intent came from TripDetailActivity, EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP
+                    mFlightProcedure = FlightProcedure.EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP;
                     mStep = FlightStep.ROUTE_SEARCH_SETTING_DATE;
 
                     mDataManager.getFlight(mFlightId)
@@ -82,25 +84,25 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
                                     mFlight = flight;
                                     getMvpView().updateViews(mStep, mFlight);
                                 } else {
-                                    //TODO notify of error
+                                    getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
+                                    Timber.e("Process: EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP, failed to fetch flight for ID=%d", mFlight);
                                 }
                             }, throwable -> {
-                                //TODO notify of huge error, stop thing
+                                getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
+                                Timber.e("Process: EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP, failed to fetch flight for ID=%d", mFlight);
                             });
 
-
-                    //TODO: get flight from db and save in mFlight. update mvpview to ROUTE_SEARCH_SETTING_DATE
-
                 } else {                            //Intent came from TripDetailActivity, NEW_FLIGHT_IN_EXISTING_TRIP
-                    mStatus = FlightProcedure.NEW_FLIGHT_IN_EXISTING_TRIP;
+                    mFlightProcedure = FlightProcedure.NEW_FLIGHT_IN_EXISTING_TRIP;
                     mStep = FlightStep.SEARCHING_AIRPORTS_AIRLINES;
                     getMvpView().updateViews(mStep, null);
                 }
 
+            } else {
+                getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
+                Timber.e("Invalid EXTRA_ACTIVITY_FLIGHT_FLIGHT_POSITION parameter passed to initialize(). TripId=%d, FlightId=%d, FlightPosition=%d", mTripId, mFlight, mFlightPosition);
             }
-
         }
-
     }
 
     public void resetToStep(FlightStep step) {
@@ -258,5 +260,52 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
                 });
     }
 
+
+
+    public void flightSelected(Flight flight) {
+        new TripSaverAsyncTask().execute(flight);
+    }
+
+
+    private class TripSaverAsyncTask extends AsyncTask<Flight, Void, Long> {
+        @Override
+        protected Long doInBackground(Flight... flights) {
+
+            switch (mFlightProcedure) {
+                case NEW_FLIGHT_IN_NEW_TRIP:
+                    Trip trip = new Trip(getMvpView().getApplicationContext().getString(R.string.activity_flight_new_trip_name), new byte[0], new ArrayList<>(Arrays.asList(flights)));
+                    trip.getFlights().get(0).setOrderInTrip(0);
+                    try{
+                        //Set trip name
+                        trip.setName(getMvpView().getApplicationContext().getString(R.string.activity_flight_new_trip_name_2) + " " + trip.getFlights().get(0).getDestination().getCity());
+                    } catch (Exception e) {/* ignore */}
+                    return mDataManager.saveTrip(trip);
+
+                case NEW_FLIGHT_IN_EXISTING_TRIP:
+                    Trip existingTrip = mDataManager.getTrip(mTripId, true).blockingGet();
+                    existingTrip.getFlights().add(mFlightPosition, flights[0]);
+
+                    for (int i = 0; i < existingTrip.getFlights().size(); i++)
+                        existingTrip.getFlights().get(i).setOrderInTrip(i);
+
+                    return mDataManager.saveTrip(existingTrip);
+
+                case EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP:
+                    return Long.valueOf(-1);
+
+                default:
+                    throw new InvalidParameterException("TripSaverAsyncTask: Invalid flight procedure!");
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Long tripId) {
+            if (tripId != -1)
+                getMvpView().tripSaved(tripId, mFlightProcedure);
+            else
+                getMvpView().showMessage(Message.ERROR_ADDING_FLIGHT, null);
+
+        }
+    }
 
 }

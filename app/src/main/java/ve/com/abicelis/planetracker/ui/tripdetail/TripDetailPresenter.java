@@ -23,6 +23,7 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
 
     //DATA
     private DataManager mDataManager;
+    private long mTripId = -1;
     private Trip mTrip;
     private boolean mIsInEditMode;
 
@@ -30,27 +31,33 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
         mDataManager = dataManager;
     }
 
+    public void setTripId(long tripId) {
+        mTripId = tripId;
+    }
 
-    public void getTrip(long tripId) {
-        mDataManager.getTrip(tripId, true)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(trip -> {
-                    mTrip = trip;
-                    if (mTrip.getFlights() != null && mTrip.getFlights().size() > 0)
-                        new GenerateFlightHeadersTask().execute(mTrip.getFlights().toArray(new Flight[mTrip.getFlights().size()]));
-                    else
-                        getMvpView().showNoFlights();
+    public void reloadTrip() {
+        if (mTripId != -1) {
+            mDataManager.getTrip(mTripId, true)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(trip -> {
+                        mTrip = trip;
+                        if (mTrip.getFlights() != null && mTrip.getFlights().size() > 0)
+                            new GenerateFlightHeadersTask().execute(mTrip.getFlights().toArray(new Flight[mTrip.getFlights().size()]));
+                        else
+                            getMvpView().showNoFlights();
 
-                }, throwable -> {
-                    Timber.e(throwable, "Error getting trip from DB, ID=%d", tripId);
-                    getMvpView().showMessage(Message.ERROR_LOADING_TRIP, null);
-                });
+                    }, throwable -> {
+                        Timber.e(throwable, "Error getting trip from DB, ID=%d", mTripId);
+                        getMvpView().showMessage(Message.ERROR_LOADING_TRIP, null);
+                    });
+        } else
+            Timber.e("Cant reload trip, tripId not set!");
     }
 
     public void discardEditModeChanges() {
         editModeToggled();
-        getTrip(mTrip.getId());
+        reloadTrip();
     }
 
 
@@ -89,6 +96,8 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
                     getMvpView().showMessage(Message.ERROR_LOADING_IMAGE, null);
                 });
     }
+
+
 
 
     private class SaveTripTask extends AsyncTask<Trip, Void, Void> {

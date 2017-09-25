@@ -38,6 +38,8 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     RelativeLayout mContainer;
     @BindView(R.id.list_item_trip_image)
     ImageView mImage;
+    @BindView(R.id.list_item_trip_no_image)
+    TextView mNoImage;
     @BindView(R.id.list_item_trip_name)
     TextView mName;
     @BindView(R.id.list_item_trip_info)
@@ -57,10 +59,13 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         mCurrent = current;
         mPosition = position;
 
-        if(mCurrent.getImage() != null && mCurrent.getImage().length != 0)
+        if(mCurrent.getImage() != null && mCurrent.getImage().length != 0) {
             mImage.setImageBitmap(ImageUtil.getBitmap(mCurrent.getImage()));
-        else
+            mNoImage.setVisibility(View.GONE);
+        } else {
             mImage.setImageResource(R.drawable.error);
+            mNoImage.setVisibility(View.VISIBLE);
+        }
 
         mName.setText(mCurrent.getName());
         mInfo.setText(mCurrent.getInfo(activity));

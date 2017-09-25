@@ -23,6 +23,7 @@
         android:id="@+id/fragment_airport_airline_search_no_items_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="16dp"
         android:visibility="gone">
         <LinearLayout
             android:layout_width="wrap_content"

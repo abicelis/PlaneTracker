@@ -83,6 +83,7 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
                                 if(flight != null) {
                                     mFlight = flight;
                                     getMvpView().updateViews(mStep, mFlight);
+                                    getMvpView().updateRouteFieldsWithExistingFlightInfo(mFlight);
                                 } else {
                                     getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
                                     Timber.e("Process: EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP, failed to fetch flight for ID=%d", mFlight);
@@ -291,7 +292,10 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
                     return mDataManager.saveTrip(existingTrip);
 
                 case EDITING_EXISTING_FLIGHT_IN_EXISTING_TRIP:
-                    return Long.valueOf(-1);
+                    flights[0].setTripId(mTripId);
+                    flights[0].setOrderInTrip(mFlightPosition);
+                    flights[0].setId(mFlightId);
+                    return mDataManager.saveFlight(flights[0]);
 
                 default:
                     throw new InvalidParameterException("TripSaverAsyncTask: Invalid flight procedure!");
@@ -302,9 +306,10 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
         protected void onPostExecute(Long tripId) {
             if (tripId != -1)
                 getMvpView().tripSaved(tripId, mFlightProcedure);
-            else
+            else {
                 getMvpView().showMessage(Message.ERROR_ADDING_FLIGHT, null);
-
+                Timber.e("Error saving trip on TripSaverAsyncTask.onPostExecute()");
+            }
         }
     }
 

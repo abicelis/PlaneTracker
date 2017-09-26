@@ -470,6 +470,22 @@ public class FlightActivity extends BaseActivity implements FlightMvpView,
         }
     }
 
+    @Override
+    public void updateRouteFieldsWithExistingFlightInfo(Flight flight) {
+        //Set origin airport
+        if(!flight.getOrigin().getIata().isEmpty())
+            mSearchByRouteOrigin.setText(flight.getOrigin().getIata());
+        else if (!flight.getOrigin().getName().isEmpty())
+            mSearchByRouteOrigin.setText(flight.getOrigin().getName());
+
+        //Set destination airport
+        if(!flight.getDestination().getIata().isEmpty())
+            mSearchByRouteDestination.setText(flight.getDestination().getIata());
+        else if (!flight.getDestination().getName().isEmpty());
+
+        mSearchByRouteDate.setText(CalendarUtil.getCuteStringDateFromCalendar(flight.getDeparture()));
+    }
+
     private void setUpContentFrame(ContentFrameType type, @Nullable AirportAirlineSearchType searchType){
         switch (type) {
             case AIRPORT_AIRLINE_SEARCH_FRAGMENT:

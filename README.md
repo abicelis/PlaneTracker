@@ -44,7 +44,7 @@ This Project uses external dependencies and SDK's
 * [RxJava 2](https://github.com/ReactiveX/RxJava) - Reactive Extensions by ReactiveX
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid) - RxJava bindings for Android by ReactiveX
 * [Retrofit](https://github.com/square/retrofit) - Type-safe HTTP client for Android by square
-* [Realm](https://github.com/realm/realm-java) - Realm mobile database by realm
+* [Room](https://developer.android.com/topic/libraries/architecture/room.html) - Room mobile database by google
 
 
 ## External APIs

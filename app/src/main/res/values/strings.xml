@@ -35,6 +35,9 @@
     <string name="activity_trip_detail_change_image">Change image</string>
     <string name="activity_trip_detail_change_name">Change trip name</string>
     <string name="activity_trip_detail_delete">Delete trip</string>
+    <string name="activity_trip_header_error_departure_before_arrival">Next flight\'s departure occurs before previous flight\'s arrival</string>
+    <string name="activity_trip_header_error_different_origin_destination">Next flight\'s origin does not match previous flight\'s destination</string>
+
     <string name="menu_trip_detail_edit_cancel">Cancel edit mode</string>
 
         <!--Edit trip name Dialog-->

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="54dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginStart="16dp"
+    android:gravity="center"
+    >
+
+
+    <LinearLayout
+        android:id="@+id/list_item_flight_header_error_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/round_error_background">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_warning"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/list_item_flight_header_error_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="?primary_text"
+            android:fontFamily="sans-serif-light"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/list_item_flight_header_error_add_flight_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:colorBackground"
+        android:visibility="invisible">
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/list_item_flight_header_error_add_flight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:backgroundTint="?primary"
+            android:textColor="@color/white_text"
+            android:drawableStart="@drawable/ic_plane"
+            android:drawablePadding="4dp"
+            android:text="@string/list_item_flight_header_add_flight_here"
+            />
+    </FrameLayout>
+
+
+
+</RelativeLayout>
+
+

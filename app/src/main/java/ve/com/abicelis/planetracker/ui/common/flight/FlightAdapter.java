@@ -47,6 +47,9 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         FlightViewModel.FlightViewModelType type = FlightViewModel.FlightViewModelType.values()[viewType];
 
         switch (type) {
+            case HEADER_ERROR_DEPARTURE_BEFORE_ARRIVAL:
+            case HEADER_ERROR_DIFFERENT_ORIGIN_DESTINATION:
+                return new FlightHeaderErrorViewHolder(mInflater.inflate(R.layout.list_item_flight_header_error, parent, false));
             case HEADER_EDIT_ONLY:
                 return new FlightHeaderEditOnlyViewHolder(mInflater.inflate(R.layout.list_item_flight_header_edit_only, parent, false));
             case HEADER_LAYOVER:
@@ -64,7 +67,14 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         FlightViewModel current = mFlights.get(position);
         switch (current.getFlightViewModelType()) {
-            case  HEADER_EDIT_ONLY:
+            case HEADER_ERROR_DEPARTURE_BEFORE_ARRIVAL:
+            case HEADER_ERROR_DIFFERENT_ORIGIN_DESTINATION:
+                FlightHeaderErrorViewHolder fev = (FlightHeaderErrorViewHolder)holder;
+                fev.setData(mActivity, this, current, position);
+                fev.setListeners();
+                break;
+
+            case HEADER_EDIT_ONLY:
                 FlightHeaderEditOnlyViewHolder fe = (FlightHeaderEditOnlyViewHolder)holder;
                 fe.setData(mActivity, this, current.getHeader(), position);
                 fe.setListeners();

@@ -13,7 +13,7 @@ import ve.com.abicelis.planetracker.data.model.Trip;
  * Created by abicelis on 30/8/2017.
  */
 
-@Database(entities = {Airport.class, Airline.class, Flight.class, Trip.class}, version = 20)
+@Database(entities = {Airport.class, Airline.class, Flight.class, Trip.class}, version = 21)
 @TypeConverters({CalendarConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract AirportDao airportDao();

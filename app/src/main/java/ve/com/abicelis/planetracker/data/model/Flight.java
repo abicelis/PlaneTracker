@@ -18,10 +18,10 @@ import ve.com.abicelis.planetracker.util.CalendarUtil;
 @Entity(tableName = "flight",
         indices = {@Index("trip_fk"), @Index("origin_fk"), @Index("destination_fk"), @Index("airline_fk")},
         foreignKeys = {
-                @ForeignKey(entity = Trip.class, parentColumns = "trip_id", childColumns = "trip_fk"),
-                @ForeignKey(entity = Airport.class, parentColumns = "airport_id", childColumns = "origin_fk"),
-                @ForeignKey(entity = Airport.class, parentColumns = "airport_id", childColumns = "destination_fk"),
-                @ForeignKey(entity = Airline.class, parentColumns = "airline_id", childColumns = "airline_fk")
+                @ForeignKey(entity = Trip.class, parentColumns = "trip_id", childColumns = "trip_fk", onDelete=ForeignKey.CASCADE),
+                @ForeignKey(entity = Airport.class, parentColumns = "airport_id", childColumns = "origin_fk", onDelete = ForeignKey.NO_ACTION),
+                @ForeignKey(entity = Airport.class, parentColumns = "airport_id", childColumns = "destination_fk", onDelete = ForeignKey.NO_ACTION),
+                @ForeignKey(entity = Airline.class, parentColumns = "airline_id", childColumns = "airline_fk", onDelete = ForeignKey.NO_ACTION)
         })
 public class Flight implements Comparable<Flight>{
 

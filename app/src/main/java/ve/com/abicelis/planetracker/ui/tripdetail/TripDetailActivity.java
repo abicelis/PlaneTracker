@@ -37,6 +37,7 @@ import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
 import ve.com.abicelis.planetracker.ui.changeimage.ChangeImageActivity;
 import ve.com.abicelis.planetracker.ui.common.flight.FlightAdapter;
+import ve.com.abicelis.planetracker.ui.flight.FlightActivity;
 import ve.com.abicelis.planetracker.util.AnimationUtil;
 import ve.com.abicelis.planetracker.util.ImageUtil;
 import ve.com.abicelis.planetracker.util.SnackbarUtil;
@@ -176,8 +177,14 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
                     dialogInterface.dismiss();
                     switch (i){
                         case 0:
-                            Toast.makeText(this, "Edit flight TODO", Toast.LENGTH_SHORT).show();
+                            editModeToggled();
+                            Intent addFlightIntent = new Intent(this, FlightActivity.class);
+                            addFlightIntent.putExtra(Constants.EXTRA_ACTIVITY_FLIGHT_TRIP_ID, flight.getTripId());
+                            addFlightIntent.putExtra(Constants.EXTRA_ACTIVITY_FLIGHT_FLIGHT_ID, flight.getId());
+                            addFlightIntent.putExtra(Constants.EXTRA_ACTIVITY_FLIGHT_FLIGHT_POSITION, flight.getOrderInTrip());
+                            startActivity(addFlightIntent);
                             break;
+
                         case 1:
                             AlertDialog dialog = new AlertDialog.Builder(this)
                                     .setTitle(getString(R.string.activity_trip_detail_delete_flight_title))
@@ -271,37 +278,6 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        if(mPresenter.isInEditMode())
-//            handleEditModeDiscard(true);
-//        else
-//            finish();
-//    }
-
-//    private void handleEditModeDiscard(boolean finish) {
-//        AlertDialog dialog = new AlertDialog.Builder(TripDetailActivity.this)
-//                .setTitle(getResources().getString(R.string.dialog_trip_detail_activity_discard_title))
-//                .setMessage(getResources().getString(R.string.dialog_trip_detail_activity_discard_message))
-//                .setPositiveButton(getResources().getString(R.string.dialog_discard),  new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        if(finish)
-//                            finish();
-//                        else
-//                            mPresenter.discardEditModeChanges();
-//                    }
-//                })
-//                .setNegativeButton(getResources().getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                    }
-//                })
-//                .create();
-//        dialog.show();
-//    }
 
 
     @Override

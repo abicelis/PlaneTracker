@@ -374,7 +374,11 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
 
     @Override
     public void reloadTripName(String tripName) {
-        mToolbar.setTitle(tripName);
+        //TODO: fix this eventually? recreate() is a hack but it works.
+        //Apparently setting the toolbar title does not work. Maybe because it is linked to an appbar/collapsetoolbarlayout?
+        //Who knows...
+        recreate();
+        //mToolbar.setTitle(tripName);
     }
 
     @Override

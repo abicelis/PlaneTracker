@@ -85,18 +85,17 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
-    <RelativeLayout
-        android:id="@+id/activity_trip_detail_no_items_container"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior = "@string/appbar_scrolling_view_behavior">
 
-    <LinearLayout
+        <LinearLayout
+            android:id="@+id/activity_trip_detail_no_items_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="60dp"
             android:gravity="center_horizontal"
             android:orientation="vertical">
             <ImageView
@@ -113,7 +112,7 @@
                 android:textColor="?secondary_text"
                 android:text="@string/activity_trip_detail_no_items"/>
         </LinearLayout>
-    </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/activity_trip_detail_fab_map"

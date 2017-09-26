@@ -83,11 +83,24 @@ public class CalendarUtil {
         long startMillis = start.getTimeInMillis();
         long endMillis = end.getTimeInMillis();
 
-        long seconds = Math.abs(endMillis - startMillis)/1000;
-        int hoursBetween = (int) (seconds / 3600);
-        int minutesBetween = (int) ((seconds % 3600) / 60);
+        endMillis +=86400;
 
-        String out = (hoursBetween > 0 ? hoursBetween + "h " : "");
+        int SECONDS_IN_DAY = 86400;
+        int SECONDS_IN_HOUR = 3600;
+        int SECONDS_IN_MINUTE = 60;
+
+        long seconds = Math.abs(endMillis - startMillis)/1000;
+
+        int daysBetween = (int) (seconds / SECONDS_IN_DAY);
+        seconds = seconds%SECONDS_IN_DAY;
+
+        int hoursBetween = (int) (seconds / SECONDS_IN_HOUR);
+        seconds = seconds%SECONDS_IN_HOUR;
+
+        int minutesBetween = (int) (seconds / SECONDS_IN_MINUTE);
+
+        String out = (daysBetween > 0 ? daysBetween + "d " : "");
+        out += (hoursBetween > 0 ? hoursBetween + "h " : "");
         out += (minutesBetween > 0 ? minutesBetween + "m" : "");
 
         return out;

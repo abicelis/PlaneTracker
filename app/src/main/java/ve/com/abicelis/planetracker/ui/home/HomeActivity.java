@@ -138,6 +138,9 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
 
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mTripAdapter = new TripAdapter(this);
+        mTripAdapter.setTripDeletedListener(trip -> {
+            mHomePresenter.deleteTrip(trip);
+        });
 
         mRecycler.setLayoutManager(mLayoutManager);
         mRecycler.setAdapter(mTripAdapter);

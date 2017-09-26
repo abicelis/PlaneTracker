@@ -10,6 +10,7 @@ import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import ve.com.abicelis.planetracker.application.Message;
 import ve.com.abicelis.planetracker.data.DataManager;
+import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.data.model.TripViewModel;
 import ve.com.abicelis.planetracker.ui.base.BasePresenter;
 
@@ -34,24 +35,42 @@ public class HomePresenter extends BasePresenter<HomeMvpView> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(trips -> {
                     getMvpView().showTrips(trips);
-                    for (TripViewModel tvm : trips)
-                        if(tvm.getTripViewModelType() == TripViewModel.TripViewModelType.TRIP)
-                            Timber.d("Trip! %s", tvm.getTrip());
+//                    for (TripViewModel tvm : trips)
+//                        if(tvm.getTripViewModelType() == TripViewModel.TripViewModelType.TRIP)
+//                            Timber.d("Trip! %s", tvm.getTrip());
                 }, throwable -> {
                     getMvpView().showMessage(Message.ERROR_LOADING_TRIPS, null);
+                    Timber.e(throwable, "Error loading trips");
                 });
     }
 
-    public void insertFakeTrip(){
-        MyTask task = new MyTask();
-        task.execute();
+    public void deleteTrip(Trip trip) {
+        new AsyncTask<Trip, Void, Long>() {
+            @Override
+            protected Long doInBackground(Trip... trips) {
+                return mDataManager.deleteTrip(trips[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Long aLong) {
+                super.onPostExecute(aLong);
+                refreshTripList(null);
+            }
+
+        }.execute(trip);
     }
 
 
-    class MyTask extends AsyncTask<Void, Void, Void> {
 
 
 
+
+    public void insertFakeTrip(){
+        FakeTripsTask task = new FakeTripsTask();
+        task.execute();
+    }
+
+    class FakeTripsTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             mDataManager.insertFakeTrips();

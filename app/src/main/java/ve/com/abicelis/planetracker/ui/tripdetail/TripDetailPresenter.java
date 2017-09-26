@@ -155,15 +155,18 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
         protected List<FlightViewModel> doInBackground(Flight... flights) {
             List<FlightViewModel> flightVM = new ArrayList<>();
 
-            flightVM.add(new FlightViewModel());    //Add start header, which will show only when edit mode is active
+            flightVM.add(new FlightViewModel(FlightViewModel.FlightViewModelType.HEADER_EDIT_ONLY));    //Add start header, which will show only when edit mode is active
 
             Flight lastFlight = null;
             for (Flight f : flights) {
                 if(lastFlight != null) {
                     if(f.getOrigin().equals(lastFlight.getDestination())) {
-                        flightVM.add(new FlightViewModel(lastFlight.getDestination().getCity(), lastFlight.getArrival(), f.getDeparture()));
+                        if(f.getDeparture().getTimeInMillis() > lastFlight.getArrival().getTimeInMillis())  //If this flight departs after last flight, all good
+                            flightVM.add(new FlightViewModel(lastFlight.getDestination().getCity(), lastFlight.getArrival(), f.getDeparture()));
+                        else //This flight departs BEFORE last flight? Error!
+                            flightVM.add(new FlightViewModel(FlightViewModel.FlightViewModelType.HEADER_ERROR_DEPARTURE_BEFORE_ARRIVAL));
                     } else {
-                        flightVM.add(new FlightViewModel());
+                        flightVM.add(new FlightViewModel(FlightViewModel.FlightViewModelType.HEADER_ERROR_DIFFERENT_ORIGIN_DESTINATION));
                     }
                 }
                 flightVM.add(new FlightViewModel(f));
@@ -171,7 +174,7 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
             }
 
             if (flights.length > 0)                     //If at least one flight
-                flightVM.add(new FlightViewModel());    //Add end header, which will show only when edit mode is active
+                flightVM.add(new FlightViewModel(FlightViewModel.FlightViewModelType.HEADER_EDIT_ONLY));    //Add end header, which will show only when edit mode is active
 
             return flightVM;
         }

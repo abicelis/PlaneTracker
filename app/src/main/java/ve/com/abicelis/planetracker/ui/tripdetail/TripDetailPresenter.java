@@ -25,6 +25,7 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
     private DataManager mDataManager;
     private long mTripId = -1;
     private Trip mTrip;
+    private boolean mTripHasFlights;
     private boolean mIsInEditMode;
 
     public TripDetailPresenter(DataManager dataManager) {
@@ -42,17 +43,23 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(trip -> {
                         mTrip = trip;
-                        if (mTrip.getFlights() != null && mTrip.getFlights().size() > 0)
+                        if (mTrip.getFlights() != null) {
+                            mTripHasFlights = (mTrip.getFlights().size() > 0);
                             new GenerateFlightHeadersTask().execute(mTrip.getFlights().toArray(new Flight[mTrip.getFlights().size()]));
-                        else
-                            getMvpView().showNoFlights();
-
+                        } else {
+                            Timber.e("Error getting trip from DB, ID=%d", mTripId);
+                            getMvpView().showMessage(Message.ERROR_LOADING_TRIP, null);
+                        }
                     }, throwable -> {
                         Timber.e(throwable, "Error getting trip from DB, ID=%d", mTripId);
                         getMvpView().showMessage(Message.ERROR_LOADING_TRIP, null);
                     });
         } else
             Timber.e("Cant reload trip, tripId not set!");
+    }
+
+    public boolean tripHasFlights() {
+        return mTripHasFlights;
     }
 
     public void discardEditModeChanges() {
@@ -98,7 +105,38 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
     }
 
 
+    public void deleteFlight(Flight flight) {
+        new AsyncTask<Flight, Void, Long>() {
+            @Override
+            protected Long doInBackground(Flight... flights) {
+                return mDataManager.deleteFlight(flights[0]);
+            }
 
+            @Override
+            protected void onPostExecute(Long aLong) {
+                super.onPostExecute(aLong);
+                reloadTrip();
+                editModeToggled();
+            }
+
+        }.execute(flight);
+    }
+
+    public void deleteTrip() {
+        new AsyncTask<Trip, Void, Long>() {
+            @Override
+            protected Long doInBackground(Trip... trips) {
+                return mDataManager.deleteTrip(trips[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Long aLong) {
+                super.onPostExecute(aLong);
+                getMvpView().tripDeletedSoFinish();
+            }
+
+        }.execute(mTrip);
+    }
 
     private class SaveTripTask extends AsyncTask<Trip, Void, Void> {
         @Override
@@ -117,14 +155,15 @@ public class TripDetailPresenter extends BasePresenter<TripDetailMvpView> {
         protected List<FlightViewModel> doInBackground(Flight... flights) {
             List<FlightViewModel> flightVM = new ArrayList<>();
 
-            if (flights.length > 0)                     //If at least one flight
-                flightVM.add(new FlightViewModel());    //Add start header, which will show only when edit mode is active
+            flightVM.add(new FlightViewModel());    //Add start header, which will show only when edit mode is active
 
             Flight lastFlight = null;
             for (Flight f : flights) {
                 if(lastFlight != null) {
                     if(f.getOrigin().equals(lastFlight.getDestination())) {
                         flightVM.add(new FlightViewModel(lastFlight.getDestination().getCity(), lastFlight.getArrival(), f.getDeparture()));
+                    } else {
+                        flightVM.add(new FlightViewModel());
                     }
                 }
                 flightVM.add(new FlightViewModel(f));

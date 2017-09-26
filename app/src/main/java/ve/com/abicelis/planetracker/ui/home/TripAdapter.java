@@ -23,6 +23,7 @@ public class TripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<TripViewModel> mTrips = new ArrayList<>();
     private LayoutInflater mInflater;
     private Activity mActivity;
+    private TripDeletedListener mListener;
 
 
     public TripAdapter(Activity activity) {
@@ -82,5 +83,22 @@ public class TripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemCount() {
         return mTrips.size();
+    }
+
+
+
+
+
+    void triggerTripDeleted(Trip trip) {
+        if(mListener != null)
+            mListener.onTripDeleted(trip);
+    }
+
+    void setTripDeletedListener(TripDeletedListener listener) {
+        mListener = listener;
+    }
+
+    public interface TripDeletedListener {
+        void onTripDeleted(Trip trip);
     }
 }

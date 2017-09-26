@@ -1,5 +1,6 @@
 package ve.com.abicelis.planetracker.ui.tripdetail;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ import butterknife.ButterKnife;
 import ve.com.abicelis.planetracker.R;
 import ve.com.abicelis.planetracker.application.Constants;
 import ve.com.abicelis.planetracker.application.Message;
+import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.data.model.FlightViewModel;
 import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
@@ -68,7 +71,7 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
     TextView mNoImage;
 
     @BindView(R.id.activity_trip_detail_no_items_container)
-    RelativeLayout mNoItemsContainer;
+    LinearLayout mNoItemsContainer;
     @BindView(R.id.activity_trip_detail_recycler)
     RecyclerView mRecycler;
     private LinearLayoutManager mLayoutManager;
@@ -145,13 +148,52 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
     private void setUpRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mFlightAdapter = new FlightAdapter(this);
-        mFlightAdapter.setFlightClickedListener(flight -> {
-            Toast.makeText(this, "TODO maybe? flight clicked! " + flight.toString(), Toast.LENGTH_SHORT).show();
-            //TODO maybe
+        mFlightAdapter.setFlightClickedListener(new FlightAdapter.FlightClickedListener() {
+            @Override
+            public void onFlightClicked(Flight flight) {
+                if(mPresenter.isInEditMode()) {
+                    handleEditShowMenu(flight);
+                }
+            }
+
+            @Override
+            public void onFlightLongClicked(Flight flight) {
+                if(mPresenter.isInEditMode()) {
+                    handleEditShowMenu(flight);
+                }
+            }
         });
 
         mRecycler.setLayoutManager(mLayoutManager);
         mRecycler.setAdapter(mFlightAdapter);
+    }
+
+    private void handleEditShowMenu(Flight flight) {
+        CharSequence options[] = new CharSequence[] {getString(R.string.activity_trip_detail_flight_context_edit), getString(R.string.activity_trip_detail_flight_context_delete)};
+
+        AlertDialog.Builder contextDialog = new AlertDialog.Builder(this)
+                .setItems(options, (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    switch (i){
+                        case 0:
+                            Toast.makeText(this, "Edit flight TODO", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 1:
+                            AlertDialog dialog = new AlertDialog.Builder(this)
+                                    .setTitle(getString(R.string.activity_trip_detail_delete_flight_title))
+                                    .setMessage(getString(R.string.activity_trip_detail_delete_flight_message))
+                                    .setPositiveButton(getString(R.string.dialog_delete), (d, w) -> {
+                                        mPresenter.deleteFlight(flight);
+                                    })
+                                    .setNegativeButton(getString(R.string.dialog_cancel), (d, w) -> {
+                                        d.dismiss();
+                                    })
+                                    .create();
+                            dialog.show();
+                            break;
+                    }
+                });
+        contextDialog.show();
     }
 
 
@@ -200,7 +242,23 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
                 break;
 
             case R.id.menu_trip_detail_delete:
-                Toast.makeText(this, "delete", Toast.LENGTH_SHORT).show();
+                AlertDialog deleteDiag = new AlertDialog.Builder(TripDetailActivity.this)
+                        .setTitle(getResources().getString(R.string.dialog_trip_detail_activity_delete_trip_title))
+                        .setMessage(getResources().getString(R.string.dialog_trip_detail_activity_delete_trip_message))
+                        .setPositiveButton(getResources().getString(R.string.dialog_delete),  new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mPresenter.deleteTrip();
+                            }
+                        })
+                        .setNegativeButton(getResources().getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .create();
+                deleteDiag.show();
                 break;
 
 
@@ -278,6 +336,17 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         //Intent goToMapIntent = new Intent();
     }
 
+    public void showNoFlights(boolean show) {
+        if(show) {
+            mNoItemsContainer.setVisibility(View.VISIBLE);
+            mRecycler.setVisibility(View.GONE);
+        } else {
+            mNoItemsContainer.setVisibility(View.GONE);
+            mRecycler.setVisibility(View.VISIBLE);
+        }
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -290,6 +359,9 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         }
     }
 
+    public void editModeToggled(){
+        mPresenter.editModeToggled();
+    }
 
     /* TripDetailMvpView implementation */
 
@@ -305,17 +377,12 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         mFlightAdapter.getItems().addAll(flights);
         mFlightAdapter.notifyDataSetChanged();
 
-        mNoItemsContainer.setVisibility(View.GONE);
-        mRecycler.setVisibility(View.VISIBLE);
+        if (mPresenter.tripHasFlights())
+            showNoFlights(false);
+        else
+            showNoFlights(true);
     }
 
-
-
-    @Override
-    public void showNoFlights() {
-        mNoItemsContainer.setVisibility(View.VISIBLE);
-        mRecycler.setVisibility(View.GONE);
-    }
 
     @Override
     public void reloadTripImage(byte[] image) {
@@ -336,6 +403,12 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
 
     @Override
     public void activateEditMode() {
+        if(mPresenter.tripHasFlights())
+            showMessage(Message.NOTICE_LONG_CLICK_FLIGHT, null);
+
+        if (!mPresenter.tripHasFlights())
+            showNoFlights(false);
+
         mFlightAdapter.toggleEditMode(true);
         invalidateOptionsMenu();
 
@@ -351,6 +424,8 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         mFlightAdapter.toggleEditMode(false);
         invalidateOptionsMenu();
 
+        if (!mPresenter.tripHasFlights())
+            showNoFlights(true);
 
         //Handle fabs
         mFabMapBehavior.setAutoHideEnabled(true);
@@ -365,5 +440,15 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
         SnackbarUtil.showSnackbar(mContainer, message.getMessageType(), message.getFriendlyNameRes(), SnackbarUtil.SnackbarDuration.SHORT, callback);
     }
 
-
+    @Override
+    public void tripDeletedSoFinish() {
+        BaseTransientBottomBar.BaseCallback<Snackbar> callback = new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                super.onDismissed(transientBottomBar, event);
+                finish();
+            }
+        };
+        showMessage(Message.SUCCESS_TRIP_DELETED, callback);
+    }
 }

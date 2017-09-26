@@ -1,7 +1,9 @@
 package ve.com.abicelis.planetracker.ui.home;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -11,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,8 +98,20 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu_list_item_delete:
-                                Toast.makeText(mActivity, "delete", Toast.LENGTH_SHORT).show();
+                                String message = String.format(Locale.getDefault(), mActivity.getString(R.string.activity_home_dialog_delete_trip_message), mCurrent.getName());
+                                AlertDialog dialog = new AlertDialog.Builder(mActivity)
+                                        .setTitle(mActivity.getString(R.string.activity_home_dialog_delete_trip_title))
+                                        .setMessage(message)
+                                        .setPositiveButton(mActivity.getString(R.string.dialog_delete), (d, w) -> {
+                                            mAdapter.triggerTripDeleted(mCurrent);
+                                        })
+                                        .setNegativeButton(mActivity.getString(R.string.dialog_cancel), (d, w) -> {
+                                            d.dismiss();
+                                        })
+                                        .create();
+                                dialog.show();
                                 return true;
+
                             case R.id.menu_list_item_change_image:
                                 Intent intent = new Intent(mActivity, ChangeImageActivity.class);
                                 intent.putExtra(Constants.EXTRA_ACTIVITY_CHANGE_IMAGE_TRIP_NAME, mCurrent.getName());

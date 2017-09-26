@@ -89,7 +89,7 @@ public class FlightHeaderViewHolder extends RecyclerView.ViewHolder implements V
         switch (id) {
             case R.id.list_item_flight_header_add_flight:
                 if(mActivity instanceof TripDetailActivity)
-                    ((TripDetailActivity)mActivity).deactivateEditMode();
+                    ((TripDetailActivity)mActivity).editModeToggled();
 
                 Intent addFlightIntent = new Intent(mActivity, FlightActivity.class);
                 addFlightIntent.putExtra(Constants.EXTRA_ACTIVITY_FLIGHT_TRIP_ID, mAdapter.getTripId());

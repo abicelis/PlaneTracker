@@ -197,62 +197,6 @@ public class DataManager {
     }
 
 
-//    /**
-//     * Returns an Observable of {@link CombinedSearchResult}, which can return a list of
-//     * Airports and/or Airlines, this search queries the local db.
-//     * @param query A string with which Airports and Airlines will be searched for. This method will
-//     *              query the db by Airline/Airport name, IATA and ICAO.
-//     */
-//    public Maybe<List<CombinedSearchResult>> findAirlinesOrAirports(@NonNull String query) {
-//        if(query.isEmpty())
-//            return Maybe.error(InvalidParameterException::new);
-//
-//        query = "%"+query+"%";
-//
-//        Maybe<List<CombinedSearchResult>> result = mAppDatabase.airportDao().find(query)
-//                .subscribe(airports -> {
-//                    Maybe<List<Airline>> airlines = mAppDatabase.airlineDao().find(query)
-//                            .subscribe(airlines1 -> )
-//                },throwable -> {
-//
-//                },() -> {
-//
-//                })
-//                .map(new Function<List<Airport>, List<CombinedSearchResult>>() {
-//                    @Override
-//                    public List<CombinedSearchResult> apply(@NonNull List<Airport> airports) throws Exception {
-//                        List<CombinedSearchResult> result = new ArrayList<>();
-//                        for (Airport a : airports)
-//                            result.add(new CombinedSearchResult(a));
-//                        return result;
-//                    }
-//                });
-//
-//
-//        Maybe<List<CombinedSearchResult>> airports = mAppDatabase.airportDao().find(query)
-//                .map(new Function<List<Airport>, List<CombinedSearchResult>>() {
-//                    @Override
-//                    public List<CombinedSearchResult> apply(@NonNull List<Airport> airports) throws Exception {
-//                        List<CombinedSearchResult> result = new ArrayList<>();
-//                        for (Airport a : airports)
-//                            result.add(new CombinedSearchResult(a));
-//                        return result;
-//                    }
-//                });
-//
-//        Maybe<List<CombinedSearchResult>> airlines = mAppDatabase.airlineDao().find(query)
-//                .map(new Function<List<Airline>, List<CombinedSearchResult>>() {
-//                    @Override
-//                    public List<CombinedSearchResult> apply(@NonNull List<Airline> airlines) throws Exception {
-//                        List<CombinedSearchResult> result = new ArrayList<>();
-//                        for (Airline a : airlines)
-//                            result.add(new CombinedSearchResult(a));
-//                        return result;
-//                    }
-//                });
-//
-//        return Maybe.concat(airports, airlines);
-//    }
 
     /**
      * Returns a Maybe of {@link Airline}, which can return a list of
@@ -271,7 +215,6 @@ public class DataManager {
         else
             return mAppDatabase.airlineDao().find(query);
     }
-
 
     /**
      * Returns a Maybe of {@link Airport}, which can return a list of
@@ -472,6 +415,9 @@ public class DataManager {
     }
 
 
+
+
+
     /**
      * Returns a {@code Single<Bitmap>} given a query string to search
      */
@@ -494,7 +440,6 @@ public class DataManager {
                     }
                 });
     }
-
 
     /**
      * Returns a {@code Single<List<String>>} containing urls of images,
@@ -521,9 +466,26 @@ public class DataManager {
      * Since these should already be saved in the db.
      * @return the id of the trip
      */
-    //TODO test this
     public long saveTrip(Trip t) {
-        Timber.d("Saving trip: %s", t.toString());
+        if (t.getId() != 0) {
+            //Check if trip exists in db
+            Trip tripCheck = mAppDatabase.tripDao().getById(t.getId()).blockingGet();
+            if(tripCheck != null) {
+                //Update trip
+                Timber.d("Updating trip: %s", t.toString());
+                mAppDatabase.tripDao().update(t);
+                for (Flight f : t.getFlights()) {
+                    f.setTripId(t.getId());
+                    mAppDatabase.flightDao().insert(f);     //OnConflict = replace!
+                }
+                if(mAppDatabase.tripDao().update(t) == 1)
+                    return t.getId();
+                return -1;                                  //Did not update trip
+            }
+        }
+
+        //Insert new trip
+        Timber.d("Inserting new trip: %s", t.toString());
         long tripId = mAppDatabase.tripDao().insert(t);
         if(t.getFlights() != null) {
             for (Flight f : t.getFlights()) {
@@ -534,6 +496,9 @@ public class DataManager {
         return tripId;
     }
 
+    public long deleteTrip(Trip trip) {
+        return mAppDatabase.tripDao().delete(trip);
+    }
 
     /**
      * Returns a Trip with or without its flights, airlines, airports depending on {@code includeExtras}
@@ -555,7 +520,6 @@ public class DataManager {
                     });
     }
 
-
     /**
      * Returns a Maybe of the image of a trip given its ID
      */
@@ -565,9 +529,6 @@ public class DataManager {
                     return trip.getImage();
                 });
     }
-
-
-
 
     public Maybe<List<TripViewModel>> getTrips(@Nullable String filter) {
         if(filter == null || filter.isEmpty())
@@ -640,6 +601,7 @@ public class DataManager {
         //Saving a flight does not save its associated airports (origin, destination) and airline because it is understood that these are already on the db
         return mAppDatabase.flightDao().insert(flight);
     }
+
     public long deleteFlight(Flight flight) {
         return mAppDatabase.flightDao().delete(flight);
     }

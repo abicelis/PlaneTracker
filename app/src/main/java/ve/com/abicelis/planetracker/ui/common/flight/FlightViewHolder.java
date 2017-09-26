@@ -20,7 +20,7 @@ import ve.com.abicelis.planetracker.util.TimezoneUtil;
  * Created by abicelis on 17/9/2017.
  */
 
-public class FlightViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class FlightViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
     //DATA
     private FlightAdapter mAdapter;
@@ -102,7 +102,9 @@ public class FlightViewHolder extends RecyclerView.ViewHolder implements View.On
     }
 
     public void setListeners() {
+
         mContainer.setOnClickListener(this);
+        mContainer.setOnLongClickListener(this);
     }
 
     @Override
@@ -113,5 +115,16 @@ public class FlightViewHolder extends RecyclerView.ViewHolder implements View.On
                 mAdapter.triggerFlightClicked(mCurrent);
                 break;
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.list_item_flight_container:
+                mAdapter.triggerFlightLongClicked(mCurrent);
+                return true;
+        }
+        return false;
     }
 }

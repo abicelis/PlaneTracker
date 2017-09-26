@@ -139,6 +139,10 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (mListener != null)
             mListener.onFlightClicked(flight);
     }
+    public void triggerFlightLongClicked(Flight flight) {
+        if (mListener != null)
+            mListener.onFlightLongClicked(flight);
+    }
 
     public void setFlightClickedListener(FlightClickedListener listener) {
         mListener = listener;
@@ -146,5 +150,6 @@ public class FlightAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public interface FlightClickedListener {
         void onFlightClicked(Flight flight);
+        void onFlightLongClicked(Flight flight);
     }
 }

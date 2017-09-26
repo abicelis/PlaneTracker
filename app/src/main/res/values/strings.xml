@@ -43,8 +43,8 @@
         <string name="dialog_edit_trip_name_title_empty">Please enter a valid name</string>
 
         <!--Discard edit trip changes dialog-->
-        <string name="dialog_trip_detail_activity_discard_title">Discard changes</string>
-        <string name="dialog_trip_detail_activity_discard_message">Are you sure you want to discard the changes?</string>
+        <string name="dialog_trip_detail_activity_delete_trip_title">Delete trip</string>
+        <string name="dialog_trip_detail_activity_delete_trip_message">Are you sure you want to delete the trip?</string>
 
         <!--List item flight-->
         <string name="list_item_flight_depart">Depart</string>
@@ -52,7 +52,13 @@
         <string name="list_item_flight_terminal">Terminal</string>
         <string name="list_item_flight_header_add_flight_here">Add a flight here</string>
 
+        <!--Flight context dialog-->
+        <string name="activity_trip_detail_flight_context_edit">Edit</string>
+        <string name="activity_trip_detail_flight_context_delete">Delete</string>
 
+        <!--Delete flight dialog-->
+        <string name="activity_trip_detail_delete_flight_title">Delete flight</string>
+        <string name="activity_trip_detail_delete_flight_message">Are you sure you want to delete this flight?</string>
 
 
     <!--Home activity-->
@@ -64,6 +70,10 @@
     <string name="activity_home_trip_item_current_info">Ends %1$s</string>          //Ends October 10
     <string name="activity_home_trip_item_upcoming_info">Starts %1$s</string>       //Starts October 10
     <string name="activity_home_trip_item_past_info">%1$s - %2$s</string>           //August 2016 - September 2016
+
+
+    <string name="activity_home_dialog_delete_trip_title">Delete trip</string>
+    <string name="activity_home_dialog_delete_trip_message">Are you sure you want to delete \'%1$s\'?</string>
 
     <string name="activity_trip_list_no_items_title">Welcome to PlaneTracker</string>
     <string name="activity_trip_list_no_items_subtitle">Add a trip by clicking the + button</string>
@@ -113,6 +123,7 @@
     <string name="error_unexpected">Unexpected error, please report this error</string>
     <string name="error_loading_trips">Sorry, could not load trips</string>
     <string name="error_loading_trip">Sorry, could not load trip</string>
+    <string name="success_trip_deleted">Trip successfully deleted</string>
     <string name="info_loading_trips">Refreshing trips</string>
     <string name="error_loading_images">Sorry, could not load images</string>
     <string name="error_loading_image">Sorry, could not load image</string>
@@ -131,6 +142,8 @@
     <string name="success_flight_added">Flight added successfully</string>
     <string name="success_flight_edited">Flight edited successfully</string>
     <string name="error_adding_flight">Sorry, could not add flight</string>
+    <string name="notice_enter_flight_date">Select a date</string>
+    <string name="notice_long_click_flight">Long-click a Flight to edit it</string>
 
     <!--FLIGHT VIEW MODEL-->
     <string name="flight_view_model_layover_format">%1$s layover</string>

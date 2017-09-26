@@ -22,6 +22,7 @@ public enum Message {
     NOTICE_LOADING_TRIPS(R.string.info_loading_trips, SnackbarUtil.SnackbarType.NOTICE),
     ERROR_LOADING_TRIPS(R.string.error_loading_trips, SnackbarUtil.SnackbarType.ERROR),
     ERROR_LOADING_TRIP(R.string.error_loading_trip, SnackbarUtil.SnackbarType.ERROR),
+    SUCCESS_TRIP_DELETED(R.string.success_trip_deleted, SnackbarUtil.SnackbarType.SUCCESS),
 
     ERROR_LOADING_IMAGES(R.string.error_loading_images, SnackbarUtil.SnackbarType.ERROR),
     ERROR_LOADING_IMAGE(R.string.error_loading_image, SnackbarUtil.SnackbarType.ERROR),
@@ -40,6 +41,8 @@ public enum Message {
     SUCCESS_FLIGHT_ADDED(R.string.success_flight_added, SnackbarUtil.SnackbarType.SUCCESS),
     SUCCESS_FLIGHT_EDITED(R.string.success_flight_edited, SnackbarUtil.SnackbarType.SUCCESS),
     ERROR_ADDING_FLIGHT(R.string.error_adding_flight, SnackbarUtil.SnackbarType.ERROR),
+    NOTICE_ENTER_FLIGHT_DATE(R.string.notice_enter_flight_date, SnackbarUtil.SnackbarType.NOTICE),
+    NOTICE_LONG_CLICK_FLIGHT(R.string.notice_long_click_flight, SnackbarUtil.SnackbarType.NOTICE),
 
     ;
 

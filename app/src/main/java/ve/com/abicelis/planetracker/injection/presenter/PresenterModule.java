@@ -9,6 +9,7 @@ import ve.com.abicelis.planetracker.data.DataManager;
 import ve.com.abicelis.planetracker.ui.changeimage.ChangeImagePresenter;
 import ve.com.abicelis.planetracker.ui.flight.FlightPresenter;
 import ve.com.abicelis.planetracker.ui.flight.airportairlinesearchfragment.AirportAirlineSearchPresenter;
+import ve.com.abicelis.planetracker.ui.tracker.TrackerPresenter;
 import ve.com.abicelis.planetracker.ui.tripdetail.TripDetailPresenter;
 import ve.com.abicelis.planetracker.ui.home.HomePresenter;
 import ve.com.abicelis.planetracker.ui.test.TestPresenter;
@@ -54,4 +55,7 @@ public class PresenterModule {
 
     @Provides
     AirportAirlineSearchPresenter airportAirlineSearchPresenter(DataManager dataManager) {return new AirportAirlineSearchPresenter(dataManager); }
+
+    @Provides
+    TrackerPresenter trackerPresenter(DataManager dataManager) {return new TrackerPresenter(dataManager); }
 }

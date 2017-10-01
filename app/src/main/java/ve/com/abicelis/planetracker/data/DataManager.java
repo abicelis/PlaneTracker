@@ -312,9 +312,11 @@ public class DataManager {
                         if (airlineFlightSchedulesResponse.getResult() != null ) {
                             for(AirlineFlightSchedulesFlights f : airlineFlightSchedulesResponse.getResult().getFlights()) {
                                 Calendar departure = CalendarUtil.getNewInstanceZeroedCalendar();
+                                departure.setTimeZone(origin.getTimezone());
                                 departure.setTimeInMillis(f.getDeparturetime()*1000);
 
                                 Calendar arrival = CalendarUtil.getNewInstanceZeroedCalendar();
+                                arrival.setTimeZone(destination.getTimezone());
                                 arrival.setTimeInMillis(f.getArrivaltime()*1000);
 
                                 //Extract 3-letter ICAO code from f.getIdent()
@@ -375,7 +377,6 @@ public class DataManager {
                         //If so... proceed to return that flight. Remember to return only one flight!
                         //The flight on "Calendar day" @param
 
-                        List<Flight> flights = new ArrayList<>();
                         for (AirlineFlightSchedulesFlights f : airlineFlightSchedulesResponse.getResult().getFlights()) {
 
                             Airport origin = mAppDatabase.airportDao().getByIcao(f.getOrigin()).blockingGet();

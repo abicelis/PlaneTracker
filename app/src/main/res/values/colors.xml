@@ -4,6 +4,7 @@
     <!--Main colors: AppTheme Common-->
     <color name="white_text">#FFFFFF</color>
     <color name="transparent_loading">#bf000000</color>
+    <color name="geodesic_line_between_airports">#29b6f6</color>
 
 
     <!--Main colors: AppTheme Light-->

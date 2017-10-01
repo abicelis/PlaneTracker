@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
+
 /**
  * Created by abicelis on 29/8/2017.
  */
@@ -12,7 +14,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(tableName = "airline",
         indices = {@Index("name"), @Index("iata"), @Index("icao"), @Index("callsign")}
 )
-public class Airline implements AirportAirlineItem {
+public class Airline implements AirportAirlineItem, Serializable {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "airline_id")

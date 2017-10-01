@@ -6,19 +6,19 @@ Its free, has NO ADS, looks great, lets you set trips with multiple flights. Tha
 
 
 Please check out the prototype by clicking [right here!](https://abicelis.github.io/PlaneTracker/ "PlaneTracker Prototype")
-<!----
-<a target="_blank" href='https://play.google.com/store/apps/details?id=ve.com.abicelis.chefbuddy&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="240px"/></a>
+
+<a target="_blank" href='https://play.google.com/store/apps/details?id=ve.com.abicelis.planetracker&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="240px"/></a>
 
 ## Screenshots
 
 
-[ ![](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/1%20chef%20buddy%20home.png) ](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/1%20chef%20buddy%20home.png)
-[ ![](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/2%20spinwheel%20start.png) ](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/2%20spinwheel%20start.png.png)
-[ ![](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/3%20recipe%20detail.png) ](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/3%20recipe%20detail.png)
-[ ![](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/4%20recipe%20search.png) ](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/4%20recipe%20search.png)
-[ ![](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/5%20ingredient%20add.png) ](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/5%20ingredient%20add.png)
-[ ![](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/6%20image%20edit.png) ](https://github.com/abicelis/ChefBuddy/blob/master/graphics/play_store/screens/v1.0/nexus5X/6%20image%20edit.png)
---->
+[ ![](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/1%20home.jpg) ](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/1%20home.png)
+[ ![](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/2%20trip%20detail.jpg) ](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/2%20trip%20detail.png)
+[ ![](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/3%20airport.jpg) ](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/3%20airport.png)
+[ ![](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/4%20flight%20route.jpg) ](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/4%20flight%20route.png)
+[ ![](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/5%20add%20a%20flight.jpg) ](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/5%20add%20a%20flight.png)
+[ ![](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/thumbs/6%20add%20a%20flight.jpg) ](https://github.com/abicelis/PlaneTracker/blob/master/graphics/play_store/screens/v1.0/nexus5X/6%20add%20a%20flight.png)
+
 
 
 ## Skills learnt while building the app 

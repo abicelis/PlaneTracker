@@ -38,6 +38,7 @@ import ve.com.abicelis.planetracker.ui.base.BaseActivity;
 import ve.com.abicelis.planetracker.ui.changeimage.ChangeImageActivity;
 import ve.com.abicelis.planetracker.ui.common.flight.FlightAdapter;
 import ve.com.abicelis.planetracker.ui.flight.FlightActivity;
+import ve.com.abicelis.planetracker.ui.tracker.TrackerActivity;
 import ve.com.abicelis.planetracker.util.AnimationUtil;
 import ve.com.abicelis.planetracker.util.ImageUtil;
 import ve.com.abicelis.planetracker.util.SnackbarUtil;
@@ -308,8 +309,9 @@ public class TripDetailActivity extends BaseActivity implements TripDetailMvpVie
     }
 
     private void handleGoToMap(){
-        Toast.makeText(this, "GOING TO MAP", Toast.LENGTH_SHORT).show();
-        //Intent goToMapIntent = new Intent();
+        Intent goToTrackerActivity = new Intent(this, TrackerActivity.class);
+        goToTrackerActivity.putExtra(Constants.EXTRA_ACTIVITY_TRACKER_TRIP_ID, mPresenter.getLoadedTrip().getId());
+        startActivity(goToTrackerActivity);
     }
 
     public void showNoFlights(boolean show) {

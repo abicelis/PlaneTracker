@@ -49,6 +49,7 @@ This Project uses external dependencies and SDK's
 
 ## External APIs
 
+* [FlightAware API](http://flightxml.flightaware.com/json/FlightXML3/) - Flight Data API
 * [ADS-B Exchange](https://www.adsbexchange.com) - Flight Data API
 * [Google Maps API](https://developers.google.com/maps/) - Google Maps API
 
@@ -57,7 +58,6 @@ This Project uses external dependencies and SDK's
 
 - Regular icons. Size 24dp, padding 2dp.
 - Large icons. Size 48dp, padding 2dp.
-
 
 
 ## Software used

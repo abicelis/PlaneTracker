@@ -6,6 +6,9 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.Serializable;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
@@ -18,7 +21,7 @@ import ve.com.abicelis.planetracker.util.TimezoneUtil;
 @Entity(tableName = "airport",
         indices = {@Index("name"), @Index("iata"), @Index("icao")}
 )
-public class Airport implements AirportAirlineItem{
+public class Airport implements AirportAirlineItem, Serializable{
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "airport_id")
@@ -87,6 +90,9 @@ public class Airport implements AirportAirlineItem{
     public String getTimezoneOffset() {return mTimezoneOffset;}
     public String getTimezoneOlson() {return mTimezoneOlson;}
     public String getDst() {return mDst;}
+    public LatLng getLatLng() {
+        return new LatLng(mLatitude, mLongitude);
+    }
 
     public void setId(long mId) {this.mId = mId;}
     public void setName(String mName) {

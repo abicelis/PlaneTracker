@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        >
+        <include layout="@layout/list_item_flight"/>
+    </FrameLayout>
+
+    <ve.com.abicelis.planetracker.ui.customviews.AirplaneProgressView
+        android:id="@+id/fragment_tracker_bottom_progress"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        >
+    </ve.com.abicelis.planetracker.ui.customviews.AirplaneProgressView>
+</LinearLayout>

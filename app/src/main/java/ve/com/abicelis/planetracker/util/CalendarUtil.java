@@ -83,7 +83,7 @@ public class CalendarUtil {
         long startMillis = start.getTimeInMillis();
         long endMillis = end.getTimeInMillis();
 
-        endMillis +=86400;
+        //endMillis +=86400;
 
         int SECONDS_IN_DAY = 86400;
         int SECONDS_IN_HOUR = 3600;
@@ -107,4 +107,27 @@ public class CalendarUtil {
     }
 
 
+//
+//
+//    public static int compareYearMonthDay(Calendar calendar1, Calendar calendar2) {
+//        if(calendar1 == null)
+//            return -1;
+//        if (calendar2 == null)
+//            return 1;
+//
+//        Calendar calendarFirst = getNewInstanceZeroedCalendar();
+//        Calendar calendarSecond = getNewInstanceZeroedCalendar();
+//        calendarFirst.set(Calendar.YEAR, calendar1.get(Calendar.YEAR));
+//        calendarFirst.set(Calendar.DAY_OF_YEAR, calendar1.get(Calendar.DAY_OF_YEAR));
+//        calendarFirst.setTimeZone(calendar1.getTimeZone());
+//        calendarSecond.set(Calendar.YEAR, calendar2.get(Calendar.YEAR));
+//        calendarSecond.set(Calendar.DAY_OF_YEAR, calendar2.get(Calendar.DAY_OF_YEAR));
+//        calendarSecond.setTimeZone(calendar2.getTimeZone());
+//
+//        if(calendarFirst.after(calendarSecond))
+//            return -1;
+//        if (calendarFirst.before(calendarSecond))
+//            return 1;
+//        else return 0;
+//    }
 }

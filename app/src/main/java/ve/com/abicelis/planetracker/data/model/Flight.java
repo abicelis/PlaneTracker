@@ -8,8 +8,10 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
+import timber.log.Timber;
 import ve.com.abicelis.planetracker.util.CalendarUtil;
 
 /**
@@ -23,7 +25,7 @@ import ve.com.abicelis.planetracker.util.CalendarUtil;
                 @ForeignKey(entity = Airport.class, parentColumns = "airport_id", childColumns = "destination_fk", onDelete = ForeignKey.NO_ACTION),
                 @ForeignKey(entity = Airline.class, parentColumns = "airline_id", childColumns = "airline_fk", onDelete = ForeignKey.NO_ACTION)
         })
-public class Flight implements Comparable<Flight>{
+public class Flight implements Comparable<Flight>, Serializable{
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "flight_id")
@@ -83,6 +85,8 @@ public class Flight implements Comparable<Flight>{
     private float heading;                  //In degrees
 
 
+
+
     public Flight(long id, String flightAwareId, int orderInTrip, String callsign, long originId, long destinationId, long airlineId, Calendar departure, Calendar arrival, String aircraftModel) {
         mId = id;
         mFlightAwareId = flightAwareId;
@@ -133,6 +137,56 @@ public class Flight implements Comparable<Flight>{
     public Calendar getDeparture() {return mDeparture;}
     public Calendar getArrival() {return mArrival;}
     public String getAircraftModel() {return mAircraftModel;}
+    public Status getStatus() {
+        if(Calendar.getInstance().before(mDeparture))
+            return Status.NOT_DEPARTED;
+        if (Calendar.getInstance().after(mArrival))
+            return Status.ARRIVED;
+        else
+            return Status.IN_AIR;
+    }
+
+    /**
+     * Returns the total flight time in seconds
+     */
+    public long getFlightTime() {
+        long startMillis = mDeparture.getTimeInMillis();
+        long endMillis = mArrival.getTimeInMillis();
+
+        long seconds = Math.abs(endMillis - startMillis)/1000;
+        return seconds;
+    }
+
+    /**
+     * If Status == IN_AIR, returns the amount of elapsed seconds between departure and now
+     * otherwise, returns getFlightTime()
+     * @return
+     */
+    public long getElapsedTime() {
+        if (getStatus().equals(Status.IN_AIR)) {
+            long startMillis = mDeparture.getTimeInMillis();
+            long endMillis = Calendar.getInstance().getTimeInMillis();
+
+            long seconds = Math.abs(endMillis - startMillis)/1000;
+            return seconds;
+        }
+        else return getFlightTime();
+    }
+
+
+    public int getTheoreticalProgress() {
+        switch (getStatus()) {
+            case NOT_DEPARTED:
+                return 0;
+            case ARRIVED:
+                return 100;
+            case IN_AIR:
+                return (int)((((float)getElapsedTime())/getFlightTime())*100);
+            default:
+                Timber.e("Warning, wrong status!");
+                return 0;
+        }
+    }
 
     public void setId(long mId) {this.mId = mId;}
     public void setTripId(long tripId) {this.mTripId = tripId;}
@@ -176,4 +230,9 @@ public class Flight implements Comparable<Flight>{
             return -1;
         return this.mDeparture.compareTo(flight.getDeparture());
     }
+
+
+
+    public enum Status { NOT_DEPARTED, ARRIVED, IN_AIR }
+
 }

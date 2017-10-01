@@ -18,6 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!--Embed the version of Google Play services that this app was compiled with.-->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/secrets.xml").
@@ -33,6 +38,7 @@
         <activity android:name=".ui.flight.FlightActivity"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity android:name=".ui.tracker.TrackerActivity"/>
         <activity android:name=".ui.tripdetail.TripDetailActivity"/>
         <activity android:name=".ui.test.TestActivity"/>
         <activity android:name=".ui.about.AboutActivity"/>

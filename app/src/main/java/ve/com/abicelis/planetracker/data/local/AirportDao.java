@@ -9,6 +9,7 @@ import android.arch.persistence.room.Update;
 import java.util.List;
 
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 import ve.com.abicelis.planetracker.data.model.Airport;
 import ve.com.abicelis.planetracker.data.model.AirportRelevance;
 
@@ -18,6 +19,9 @@ import ve.com.abicelis.planetracker.data.model.AirportRelevance;
 
 @Dao
 public interface AirportDao {
+
+    @Query("SELECT count(*) FROM airport")
+    Single<Integer> count();
 
     @Query("SELECT * FROM airport")
     Maybe<List<Airport>> getAll();

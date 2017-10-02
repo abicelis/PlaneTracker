@@ -44,6 +44,10 @@ public enum Message {
     NOTICE_ENTER_FLIGHT_DATE(R.string.notice_enter_flight_date, SnackbarUtil.SnackbarType.NOTICE),
     NOTICE_LONG_CLICK_FLIGHT(R.string.notice_long_click_flight, SnackbarUtil.SnackbarType.NOTICE),
 
+
+    NOTICE_DOWNLOADING_AIRPORT_AIRLINE_DATA(R.string.notice_downloading_airport_airline_data, SnackbarUtil.SnackbarType.NOTICE),
+    SUCCESS_DOWNLOADING_AIRPORT_AIRLINE_DATA(R.string.success_downloading_airport_airline_data, SnackbarUtil.SnackbarType.SUCCESS),
+
     ;
 
     @StringRes

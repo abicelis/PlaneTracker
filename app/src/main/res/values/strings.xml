@@ -147,6 +147,8 @@
     <string name="error_adding_flight">Sorry, could not add flight</string>
     <string name="notice_enter_flight_date">Select a date</string>
     <string name="notice_long_click_flight">Long-click a Flight to edit it</string>
+    <string name="notice_downloading_airport_airline_data">Downloading Airports and Airlines. Please wait</string>
+    <string name="success_downloading_airport_airline_data">Airports and Airlines downloaded successfully</string>
 
     <!--FLIGHT VIEW MODEL-->
     <string name="flight_view_model_layover_format">%1$s layover</string>

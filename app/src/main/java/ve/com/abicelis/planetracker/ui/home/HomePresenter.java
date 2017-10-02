@@ -59,28 +59,4 @@ public class HomePresenter extends BasePresenter<HomeMvpView> {
 
         }.execute(trip);
     }
-
-
-
-
-
-
-    public void insertFakeTrip(){
-        FakeTripsTask task = new FakeTripsTask();
-        task.execute();
-    }
-
-    class FakeTripsTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            mDataManager.insertFakeTrips();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            refreshTripList(null);
-        }
-    }
-
 }

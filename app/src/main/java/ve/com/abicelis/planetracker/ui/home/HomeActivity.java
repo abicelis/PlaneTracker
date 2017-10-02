@@ -108,8 +108,7 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
         int id = item.getItemId();
         switch (id) {
             case R.id.menu_home_settings:
-                mHomePresenter.insertFakeTrip();
-                Toast.makeText(this, "Inserting fake trips", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Under construction", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.menu_home_theme:

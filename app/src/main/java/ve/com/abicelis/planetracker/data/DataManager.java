@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -69,19 +70,23 @@ public class DataManager {
 
 
 
-    //TODO kill these, are only here for testing purposes
-    public AppDatabase getDatabase() {
-        return mAppDatabase;
+    public Single<Boolean> airportAirlineDataExists() {
+        return Single.zip(mAppDatabase.airportDao().count(),
+                mAppDatabase.airlineDao().count(), new BiFunction<Integer, Integer, Boolean>() {
+                    @Override
+                    public Boolean apply(@NonNull Integer integer, @NonNull Integer integer2) throws Exception {
+                        return (integer > 0) && (integer2 > 0);
+                    }
+                }
+        );
     }
-
-
 
     /**
      * Queries openflights.org for a recent list of Airline data and refreshes the local db
      */
-    public void refreshAirlineData() throws ErrorParsingDataException {
-        mOpenFlightsApi.getAirlines()
-                .subscribe(s -> {
+    public Single<String> refreshAirlineData() {
+        return mOpenFlightsApi.getAirlines()
+                .doOnSuccess(s -> {
                     String lines[] = s.split("\\n");
                     List<Airline> airlines = new ArrayList<>();
 
@@ -111,42 +116,41 @@ public class DataManager {
                     } else {
                         throw new ErrorParsingDataException("Received airline data, but could not extract Airlines from it. Maybe data was corrupted");
                     }
-                }, throwable -> {
-                    throw new ErrorParsingDataException("Error. Did not receive airline data");
                 });
     }
+
 
     /**
      * Queries openflights.org for a recent list of Airport data and refreshes the local db
      */
-    public void refreshAirportData() throws ErrorParsingDataException {
-        mOpenFlightsApi.getAirports()
-                .subscribe(s -> {
+    public Single<String> refreshAirportData() throws ErrorParsingDataException {
+        return mOpenFlightsApi.getAirports()
+                .doOnSuccess(s -> {
                     String lines[] = s.split("\\n");
                     List<Airport> airports = new ArrayList<>();
 
                     for (String line : lines) {
                         String fields[] = line.split(Constants.OPENFLIGHTS_SEPARATOR);
-                        if(fields.length == Constants.OPENFLIGHTS_AIRPORTS_FIELDS) {
+                        if (fields.length == Constants.OPENFLIGHTS_AIRPORTS_FIELDS) {
                             try {
-                                int id =                Integer.parseInt(fields[0]);
-                                String name =           (fields[1].equals("\\N") ? "" : fields[1].replace("\"", "").trim());
-                                String city =           (fields[2].equals("\\N") ? "" : fields[2].replace("\"", "").trim());
-                                String country =        (fields[3].equals("\\N") ? "" : fields[3].replace("\"", "").trim());
-                                String iata =           (fields[4].equals("\\N") ? "" : fields[4].replace("\"", "").trim());
-                                String icao =           (fields[5].equals("\\N") ? "" : fields[5].replace("\"", "").trim());
-                                float latitude =        Float.parseFloat(fields[6]);
-                                float longitude =       Float.parseFloat(fields[7]);
-                                int altitude =          Integer.parseInt(fields[8]);
+                                int id = Integer.parseInt(fields[0]);
+                                String name = (fields[1].equals("\\N") ? "" : fields[1].replace("\"", "").trim());
+                                String city = (fields[2].equals("\\N") ? "" : fields[2].replace("\"", "").trim());
+                                String country = (fields[3].equals("\\N") ? "" : fields[3].replace("\"", "").trim());
+                                String iata = (fields[4].equals("\\N") ? "" : fields[4].replace("\"", "").trim());
+                                String icao = (fields[5].equals("\\N") ? "" : fields[5].replace("\"", "").trim());
+                                float latitude = Float.parseFloat(fields[6]);
+                                float longitude = Float.parseFloat(fields[7]);
+                                int altitude = Integer.parseInt(fields[8]);
                                 String timezoneOffset = (fields[9].equals("\\N") ? "" : fields[9].replace("\"", "").trim());
-                                String dst =            (fields[10].equals("\\N") ? "" : fields[10].replace("\"", "").trim());
-                                String timezoneOlsen =  (fields[11].equals("\\N") ? "" : fields[11].replace("\"", "").trim());
+                                String dst = (fields[10].equals("\\N") ? "" : fields[10].replace("\"", "").trim());
+                                String timezoneOlsen = (fields[11].equals("\\N") ? "" : fields[11].replace("\"", "").trim());
                                 airports.add(new Airport(id, name, city, country, iata, icao, latitude, longitude, altitude, timezoneOffset, timezoneOlsen, dst));
-                            }catch (Exception e) {/* Just skip the line */}
+                            } catch (Exception e) {/* Just skip the line */}
                         }
                     }
 
-                    if(airports.size() > 0) {
+                    if (airports.size() > 0) {
                         //Delete old data
                         mAppDatabase.airportDao().deleteAll();
                         //Insert new data
@@ -154,9 +158,9 @@ public class DataManager {
                     } else {
                         throw new ErrorParsingDataException("Received airport data, but could not extract Airports from it. Maybe data was corrupted");
                     }
-                }, throwable -> {
-                    throw new ErrorParsingDataException("Error. Did not receive airport data", throwable);
                 });
+
+
     }
 
 
@@ -189,10 +193,10 @@ public class DataManager {
 
     public Maybe<List<AirportAirlineItem>> getRecentAirportsAndAirlines() {
         return Maybe.zip(getRecentAirports(), getRecentAirlines(), (airports, airlines) -> {
-                List<AirportAirlineItem> items = new ArrayList<>();
-                items.addAll(airports);
-                items.addAll(airlines);
-                return items;
+            List<AirportAirlineItem> items = new ArrayList<>();
+            items.addAll(airports);
+            items.addAll(airlines);
+            return items;
         });
     }
 
@@ -620,6 +624,21 @@ public class DataManager {
                 });
     }
 
+
+
+
+
+
+
+
+    //TODO kill these, are only here for testing purposes
+
+    @Deprecated
+    public AppDatabase getDatabase() {
+        return mAppDatabase;
+    }
+
+    @Deprecated
     public void insertFakeTrips() {
         Timber.d("Inserting fake trips");
 
@@ -631,8 +650,8 @@ public class DataManager {
                     if(airports == null || airports.size() == 0) {
                         Timber.d("No airports in db, refreshing airport and airline data");
                         try {
-                            refreshAirportData();
-                            refreshAirlineData();
+                            refreshAirportDataOld();
+                            refreshAirlineDataOld();
 
                             airports = getDatabase().airportDao().getAll().blockingGet();
                             if(airports == null || airports.size() == 0)
@@ -749,5 +768,87 @@ public class DataManager {
                 });
 
     }
+
+    @Deprecated
+    public void refreshAirlineDataOld() throws ErrorParsingDataException {
+        mOpenFlightsApi.getAirlines()
+                .subscribe(s -> {
+                    String lines[] = s.split("\\n");
+                    List<Airline> airlines = new ArrayList<>();
+
+                    for (String line : lines) {
+                        String fields[] = line.split(Constants.OPENFLIGHTS_SEPARATOR);
+                        if(fields.length == Constants.OPENFLIGHTS_AIRLINES_FIELDS) {
+                            try {
+                                int id =             Integer.parseInt(fields[0]);
+                                String name =       (fields[1].equals("\\N") ? "" : fields[1].replace("\"", "").trim());
+                                String alias =      (fields[2].equals("\\N") ? "" : fields[2].replace("\"", "").trim());
+                                String iata =       (fields[3].equals("\\N") ? "" : fields[3].replace("\"", "").trim());
+                                String icao =       (fields[4].equals("\\N") ? "" : fields[4].replace("\"", "").trim());
+                                String callsign =   (fields[5].equals("\\N") ? "" : fields[5].replace("\"", "").trim());
+                                String country =    (fields[6].equals("\\N") ? "" : fields[6].replace("\"", "").trim());
+
+                                if(id != -1)
+                                    airlines.add(new Airline(id, name, alias, iata, icao, callsign, country));
+                            }catch (Exception e) {/* Just skip the line */}
+                        }
+                    }
+
+                    if(airlines.size() > 0) {
+                        //Delete old data
+                        mAppDatabase.airlineDao().deleteAll();
+                        //Insert new data
+                        mAppDatabase.airlineDao().insert(airlines.toArray(new Airline[airlines.size()]));
+                    } else {
+                        throw new ErrorParsingDataException("Received airline data, but could not extract Airlines from it. Maybe data was corrupted");
+                    }
+                }, throwable -> {
+                    throw new ErrorParsingDataException("Error. Did not receive airline data");
+                });
+    }
+
+    @Deprecated
+    public void refreshAirportDataOld() throws ErrorParsingDataException {
+        Disposable d = mOpenFlightsApi.getAirports()
+                .subscribe(s -> {
+                    String lines[] = s.split("\\n");
+                    List<Airport> airports = new ArrayList<>();
+
+                    for (String line : lines) {
+                        String fields[] = line.split(Constants.OPENFLIGHTS_SEPARATOR);
+                        if(fields.length == Constants.OPENFLIGHTS_AIRPORTS_FIELDS) {
+                            try {
+                                int id =                Integer.parseInt(fields[0]);
+                                String name =           (fields[1].equals("\\N") ? "" : fields[1].replace("\"", "").trim());
+                                String city =           (fields[2].equals("\\N") ? "" : fields[2].replace("\"", "").trim());
+                                String country =        (fields[3].equals("\\N") ? "" : fields[3].replace("\"", "").trim());
+                                String iata =           (fields[4].equals("\\N") ? "" : fields[4].replace("\"", "").trim());
+                                String icao =           (fields[5].equals("\\N") ? "" : fields[5].replace("\"", "").trim());
+                                float latitude =        Float.parseFloat(fields[6]);
+                                float longitude =       Float.parseFloat(fields[7]);
+                                int altitude =          Integer.parseInt(fields[8]);
+                                String timezoneOffset = (fields[9].equals("\\N") ? "" : fields[9].replace("\"", "").trim());
+                                String dst =            (fields[10].equals("\\N") ? "" : fields[10].replace("\"", "").trim());
+                                String timezoneOlsen =  (fields[11].equals("\\N") ? "" : fields[11].replace("\"", "").trim());
+                                airports.add(new Airport(id, name, city, country, iata, icao, latitude, longitude, altitude, timezoneOffset, timezoneOlsen, dst));
+                            }catch (Exception e) {/* Just skip the line */}
+                        }
+                    }
+
+                    if(airports.size() > 0) {
+                        //Delete old data
+                        mAppDatabase.airportDao().deleteAll();
+                        //Insert new data
+                        mAppDatabase.airportDao().insert(airports.toArray(new Airport[airports.size()]));
+                    } else {
+                        throw new ErrorParsingDataException("Received airport data, but could not extract Airports from it. Maybe data was corrupted");
+                    }
+                }, throwable -> {
+                    throw new ErrorParsingDataException("Error. Did not receive airport data", throwable);
+                });
+
+
+    }
+
 
 }

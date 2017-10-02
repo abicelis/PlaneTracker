@@ -61,8 +61,8 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
 //                            if(airports.size() == 0) {
 //                                Timber.d("No airports in db, refreshing airport and airline data");
 //                                try {
-//                                    mDataManager.refreshAirportData();
-//                                    mDataManager.refreshAirlineData();
+//                                    mDataManager.refreshAirportDataOld();
+//                                    mDataManager.refreshAirlineDataOld();
 //
 //                                    mDataManager.getDatabase().airportDao().getAll()
 //                                            .subscribe(a -> {
@@ -178,8 +178,8 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-//                mDataManager.refreshAirportData();
-//                mDataManager.refreshAirlineData();
+//                mDataManager.refreshAirportDataOld();
+//                mDataManager.refreshAirlineDataOld();
 //
 //                mDataManager.findAirports("Chinita")
 //                        .observeOn(AndroidSchedulers.mainThread())
@@ -211,8 +211,8 @@ public class TestPresenter extends BasePresenter<TestMvpView> {
 
 
 //        new Thread(() -> {
-        //mDataManager.refreshAirlineData();
-        //mDataManager.refreshAirportData();
+        //mDataManager.refreshAirlineDataOld();
+        //mDataManager.refreshAirportDataOld();
 
 //                mDataManager.deleteAllAirports();
 //                mDataManager.insertAirports(new Airport(1, "La Chinita", "Maracaibo", "Venezuela", "MAR", "SVMC", 10, 10, 100, "GMT-4", "S", "America / Caracas?"));

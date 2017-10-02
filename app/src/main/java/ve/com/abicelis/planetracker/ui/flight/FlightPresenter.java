@@ -65,6 +65,25 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
         mFlightId = flightId;
         mFlightPosition = flightPosition;
 
+        checkAirportAirlineData();
+    }
+
+    private void checkAirportAirlineData() {
+        mDataManager.airportAirlineDataExists()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(dataExists -> {
+                    if(dataExists)
+                        doInitialize();
+                    else
+                        downloadAirportAirlineData();
+                }, throwable -> {
+                    Timber.e(throwable, "Error checking if Airport and Airline data exists");
+                    getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
+                });
+    }
+
+    private void doInitialize() {
 
         if(mTripId == -1) {                         //Intent came from HomeActivity, NEW_FLIGHT_IN_NEW_TRIP
             mFlightProcedure = FlightProcedure.NEW_FLIGHT_IN_NEW_TRIP;
@@ -105,6 +124,36 @@ public class FlightPresenter extends BasePresenter<FlightActivity> {
             }
         }
     }
+
+    private void downloadAirportAirlineData() {
+        //getMvpView().showDownloadingAirportAirlineDataDialog();
+        getMvpView().showMessage(Message.NOTICE_DOWNLOADING_AIRPORT_AIRLINE_DATA, null);
+
+
+        mDataManager.refreshAirlineData()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(al -> {
+
+                    mDataManager.refreshAirportData()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(ap -> {
+                                getMvpView().showMessage(Message.SUCCESS_DOWNLOADING_AIRPORT_AIRLINE_DATA, null);
+                                doInitialize();
+                            }, throwable -> {
+                                Timber.e(throwable, "Error while updating airport data");
+                                getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
+
+                            });
+
+                }, throwable -> {
+                    Timber.e(throwable, "Error while updating airline data");
+                    getMvpView().showMessage(Message.ERROR_UNEXPECTED, null);
+
+                });
+    }
+
 
     public void resetToStep(FlightStep step) {
         mStep = step;

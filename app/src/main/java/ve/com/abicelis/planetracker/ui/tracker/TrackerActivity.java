@@ -1,7 +1,6 @@
 package ve.com.abicelis.planetracker.ui.tracker;
 
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,18 +11,21 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +41,10 @@ import ve.com.abicelis.planetracker.application.Message;
 import ve.com.abicelis.planetracker.data.model.Airport;
 import ve.com.abicelis.planetracker.data.model.Flight;
 import ve.com.abicelis.planetracker.data.model.FlightProgressViewModel;
-import ve.com.abicelis.planetracker.data.model.IntegerLatLng;
 import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.ui.base.BaseActivity;
 import ve.com.abicelis.planetracker.ui.customviews.AirplaneView;
-import ve.com.abicelis.planetracker.util.ViewUtil;
+import ve.com.abicelis.planetracker.util.SnackbarUtil;
 
 /**
  * Created by abicelis on 27/9/2017.
@@ -52,37 +53,29 @@ import ve.com.abicelis.planetracker.util.ViewUtil;
 public class TrackerActivity extends BaseActivity implements
         TrackerMvpView,
         OnMapReadyCallback
-        //GoogleApiClient.ConnectionCallbacks,
-        //GoogleApiClient.OnConnectionFailedListener
 {
 
     //UI
+    @BindView(R.id.activity_tracker_container)
+    RelativeLayout mContainer;
     @BindView(R.id.activity_tracker_toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.activity_tracker_plane)
+    AirplaneView mAirplane;
     @BindView(R.id.activity_tracker_viewpager)
     ViewPager mViewPager;
     private TrackerViewPagerAdapter mTrackerViewPagerAdapter;
 
-    @BindView(R.id.activity_tracker_plane)
-    AirplaneView mAirplane;
-
     SupportMapFragment mMapFragment;
     GoogleMap mMap;
-    GoogleApiClient mGoogleApiClient;
 
 
     //DATA
     @Inject
     TrackerPresenter mPresenter;
-
-    private float mOldZoom;
-    private int mAirplaneBearing;
-    IntegerLatLng cameraStart =new IntegerLatLng(new LatLng(41.889, -87.622));
-    IntegerLatLng cameraDestination =new IntegerLatLng(new LatLng(40, -87.622));
     float zoomLevel = 13;
-    //int animationDelay = 50;
-    int animationDelay = 100;
-    int incrementStep = 10;
+    int mStepMillis = 50;
+    private boolean mAnimatingCamera;
 
 
 
@@ -130,6 +123,39 @@ public class TrackerActivity extends BaseActivity implements
 
         return false;
     }
+
+
+
+
+    /* GoogleMap OnMapReady interface */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = mMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.map_style_json));
+
+            if (!success) {
+                Timber.e("Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Timber.e(e, "Can't find style.");
+        }
+
+        mMap.setIndoorEnabled(false);
+        mMap.setBuildingsEnabled(false);
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.getUiSettings().setAllGesturesEnabled(false);
+        mMap.setOnMarkerClickListener(marker -> { return true;});   //Disable marker clicks
+        mMap.setPadding(0, 0, 0, mViewPager.getHeight());           //Pad map with bottom viewpager
+
+        mPresenter.mapReady();
+    }
+
 
     /* TrackerMvpView interface implementation */
 
@@ -184,39 +210,38 @@ public class TrackerActivity extends BaseActivity implements
         mMapFragment.getMapAsync(this);
     }
 
+    @Override
+    public void setRestrictZoom(boolean restrict) {
+//        if (restrict) {
+//            mMap.setMinZoomPreference(zoomLevel);
+//            mMap.setMaxZoomPreference(zoomLevel);
+//        }
+//        else {
+//            mMap.setMinZoomPreference(1);
+//            mMap.setMaxZoomPreference(zoomLevel);
+//        }
+    }
 
     @Override
-    public void moveCameraToLocation(@NonNull IntegerLatLng integerLatLng, boolean restrictZoom, int delay) {
-        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15), 1000, null);  //Zoom level 15 = Streets, 1000ms animation
-        // CameraPosition cameraPos = new CameraPosition.Builder().target(latlng).zoom(13).build();
-
-        //Point map camera to location
-        // LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-        //CameraPosition cameraPos = new CameraPosition.Builder().tilt(60).target(latlng).zoom(15).build();
-        //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPos), 1000, null);
-
+    public void moveCameraToLocation(@NonNull LatLng latLng, boolean restrictZoom, int delay, @Nullable GoogleMap.CancelableCallback callback) {
         setRestrictZoom(restrictZoom);
 
-                CameraPosition cameraPosition = CameraPosition.builder()
-                .target(integerLatLng.toLatLng())
+        CameraPosition cameraPosition = CameraPosition.builder()
+                .target(latLng)
                 .zoom(zoomLevel)
                 .bearing(0)
                 .build();
 
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), delay, null);
-        //mMap.animateCamera(CameraUpdateFactory.newLatLng(integerLatLng.toLatLng()), delay, null);
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), delay, callback);
     }
-
-
 
     @Override
     public void drawRouteAndMoveCameraToBoundsOf(Airport origin, Airport destination) {
         mMap.clear();
 
-
         //Add Markers
-        mMap.addMarker(new MarkerOptions().position(origin.getLatLng()).title(origin.getName()));
-        mMap.addMarker(new MarkerOptions().position(destination.getLatLng()).title(destination.getName()));
+        mMap.addMarker(new MarkerOptions().position(origin.getLatLng()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_airport_marker_origin_32)));
+        mMap.addMarker(new MarkerOptions().position(destination.getLatLng()).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_airport_marker_destination_32)));
 
         //Add geodesic line
         int color = ContextCompat.getColor(this, R.color.geodesic_line_between_airports);
@@ -235,211 +260,73 @@ public class TrackerActivity extends BaseActivity implements
         int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding));
-
-
-    }
-
-    @Override
-    public void setRestrictZoom(boolean restrict) {
-//        if (restrict) {
-//            mMap.setMinZoomPreference(zoomLevel);
-//            mMap.setMaxZoomPreference(zoomLevel);
-//        }
-//        else {
-//            mMap.setMinZoomPreference(1);
-//            mMap.setMaxZoomPreference(zoomLevel);
-//        }
     }
 
     @Override
     public void showMessage(Message message, @Nullable BaseTransientBottomBar.BaseCallback<Snackbar> callback) {
-
+        SnackbarUtil.showSnackbar(mContainer, message.getMessageType(), message.getFriendlyNameRes(), SnackbarUtil.SnackbarDuration.SHORT, callback);
     }
 
-
-//    @Override
-//    public void initGoogleApiClient() {
-//        // Build the Play services client for use by the Fused Location Provider and the Places API.
-//        // Use the addApi() method to request the Google Places API and the Fused Location Provider.
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .enableAutoManage(this /* FragmentActivity */,
-//                        this /* OnConnectionFailedListener */)
-//                .addConnectionCallbacks(this)
-////                .addApi(LocationServices.API)
-//                //               .addApi(Places.GEO_DATA_API)
-////                .addApi(Places.PLACE_DETECTION_API)
-//                .build();
-//        mGoogleApiClient.connect();
-//    }
-
-    /* GoogleApiClient implementations */
-//    @Override
-//    public void onConnected(@Nullable Bundle bundle) {
-//        // Request notification of MapFragment when the map is ready to be used.
-//        mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.activity_tracker_map);
-//        mMapFragment.getMapAsync(this);
-//    }
-//    @Override
-//    public void onConnectionSuspended(int i) {
-//        Toast.makeText(this, "Connection suspended " + i, Toast.LENGTH_SHORT).show();
-//    }
-//    @Override
-//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//        Toast.makeText(this, "Connection failed " + connectionResult.toString(), Toast.LENGTH_SHORT).show();
-//    }
-
-
-
-
-    /* GoogleMap OnMapReady interface */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+    public void animateCamera(Flight flight, int delay) {
 
-
-
-        try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
-            boolean success = mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.map_style_json));
-
-            if (!success) {
-                Timber.e("Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Timber.e(e, "Can't find style.");
-        }
-
-//        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-//        //mMap.setIndoorEnabled(true);
-//        //mMap.setBuildingsEnabled(true);
-//        mMap.getUiSettings().setZoomControlsEnabled(true);
-//
-//        //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-//        //mMap.setBuildingsEnabled(true);
-//        if(mPresenter.getLoadedTrip().getFlights().size() > 0) {
-//            Location loc = new Location(LocationManager.GPS_PROVIDER);
-//            loc.setLatitude(mPresenter.getLoadedTrip().getFlights().get(0).getDestination().getLatitude());
-//            loc.setLongitude(mPresenter.getLoadedTrip().getFlights().get(0).getDestination().getLongitude());
-//            moveCameraToLocation(loc);
-//
-//            Toast.makeText(this, "Aiming map to " + mPresenter.getLoadedTrip().getFlights().get(0).getDestination().getName(), Toast.LENGTH_SHORT).show();
-//
-//        } else
-//            Toast.makeText(this, "Map ready, trip has no flights!", Toast.LENGTH_SHORT).show();
-
-        //mMap.getUiSettings().setAllGesturesEnabled(false);
-        mMap.setIndoorEnabled(false);
-        mMap.setOnMarkerClickListener(marker -> {       //Disable marker clicks
-            return true;
-        });
-        mMap.setPadding(0, 0, 0, mViewPager.getHeight());
-        //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        //mMap.setMinZoomPreference(0);
-        //mMap.setMaxZoomPreference(zoomLevel);
-        mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+        GoogleMap.CancelableCallback callback = new GoogleMap.CancelableCallback() {
             @Override
-            public void onCameraMove() {
-                float newZoom = mMap.getCameraPosition().zoom;
-                if(mOldZoom != newZoom) {
-                    Timber.d("Zoom changed to= %f" , mMap.getCameraPosition().zoom);
-                    mOldZoom = newZoom;
-                }
+            public void onFinish() {
+                setRestrictZoom(true);
+                mAnimatingCamera = true;
+                doAnimateCamera(flight.getOrigin().getLatLng(),
+                        flight.getDestination().getLatLng(),
+                        flight.getElapsedFraction(),
+                        flight.getFractionStepForMillis(mStepMillis));
             }
+
+            @Override
+            public void onCancel() {
+
+            }
+        };
+
+        mAirplane.showAirplane(true);
+        LatLng position = SphericalUtil.interpolate(flight.getOrigin().getLatLng(), flight.getDestination().getLatLng(), flight.getElapsedFraction());
+        double bearing = SphericalUtil.computeHeading(position, flight.getDestination().getLatLng());
+        mAirplane.setBearing(false, (int)bearing);
+
+        moveCameraToLocation(position, false, delay, callback);
+    }
+
+    @Override
+    public void stopAnimatingCamera() {
+        mAnimatingCamera = false;
+        mMap.stopAnimation();
+        mAirplane.hideAirplane(true);
+    }
+
+    private void doAnimateCamera(LatLng origin, LatLng destination, double elapsedFraction, double fractionStep) {
+        LatLng position = SphericalUtil.interpolate(origin, destination, elapsedFraction);
+
+        double bearing = SphericalUtil.computeHeading(position, destination);
+        mAirplane.setBearing(false, (int)bearing);
+
+        if(!mAnimatingCamera)
+            return;
+
+        if (elapsedFraction > 1) {
+            Toast.makeText(this, "Flight arrived!", Toast.LENGTH_SHORT).show();
+            mPresenter.flightChanged(mViewPager.getCurrentItem());
+            mAnimatingCamera = false;
+            return;
+        }
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoomLevel), mStepMillis, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                doAnimateCamera(origin, destination, elapsedFraction+fractionStep, fractionStep);
+            }
+
+            @Override
+            public void onCancel() {}
         });
 
-        mPresenter.mapReady();
-        //moveCameraToLocation(cameraStart);
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraStart.toLatLng(), zoomLevel));
-//
-//        // Flat markers will rotate when the map is rotated,
-//        // and change perspective when the map is tilted.
-//        mMap.addMarker(new MarkerOptions()
-//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_plane_large))
-//                .position(mapCenter)
-//                .flat(true)
-//                .rotation(245));
-
-//        CameraPosition cameraPosition = CameraPosition.builder()
-//                .target(mapCenter2)
-//                //.zoom(zoomLevel)
-//                //.bearing(90)
-//                .build();
-
-//
-//
-//        new Handler().postDelayed(() -> {
-//            //CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(mapCenter2, zoomLevel);
-//            //mMap.animateCamera(cu, animationDuration, null);
-//            // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(13.0810,80.2740), zoomLevel), 4000, null);
-//
-//            //mMap.animateCamera(CameraUpdateFactory.scrollBy(-1000, 0), animationDuration, null);
-//            animateCamera(cameraDestination);
-//
-//            //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), animationDuration, null);
-//        }, 2000);
-
-//        new Handler().postDelayed(() -> {
-//            animateCamera(cameraDestination);
-//        }, 2000);
-
     }
-
-
-    private void animateCamera(IntegerLatLng destination) {
-
-
-        moveCameraToLocation(destination, true, 500);
-
-
-        mAirplaneBearing++;
-        if (mAirplaneBearing == 1) {
-            mAirplane.showAirplane(true);
-        }
-        if (mAirplaneBearing == 50) {
-            mAirplane.setBearing(true, 90);
-        }
-        if (mAirplaneBearing == 70) {
-            mAirplane.setBearing(true, 240);
-        }
-        if (mAirplaneBearing == 100) {
-            mAirplane.hideAirplane(true);
-        }
-
-
-//        if(mAirplaneBearing < 300) {
-//            mAirplane.setBearing(mAirplaneBearing);
-//            mAirplaneBearing += 1;
-//            if (mAirplaneBearing == 299)
-//                mAirplane.hideAirplane();
-//        }
-
-        IntegerLatLng current = new IntegerLatLng(mMap.getCameraPosition().target);
-
-        if(current.compareTo(destination) != 0) {
-            current.stepTo(incrementStep, destination);
-
-//            Timber.d("Lat=%f, Long=%f. Animating to Lat=%d, Long=%d",
-//                    mMap.getCameraPosition().target.latitude,
-//                    mMap.getCameraPosition().target.longitude,
-//                    current.getLatitude(),
-//                    current.getLongitude());
-
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(current.toLatLng()), animationDelay, new GoogleMap.CancelableCallback() {
-                @Override
-                public void onFinish() {
-                    animateCamera(destination);
-                }
-
-                @Override
-                public void onCancel() {}
-            });
-        }
-
-
-    }
-
 }

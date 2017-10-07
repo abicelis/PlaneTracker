@@ -70,7 +70,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_plane_largest_120"
+                android:src="@drawable/ic_plane_120"
                 android:tint="@color/accent"/>
             <TextView
                 android:layout_width="wrap_content"

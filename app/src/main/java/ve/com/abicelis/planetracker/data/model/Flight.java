@@ -9,6 +9,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
+import java.security.InvalidParameterException;
 import java.util.Calendar;
 
 import timber.log.Timber;
@@ -160,17 +161,48 @@ public class Flight implements Comparable<Flight>, Serializable{
     /**
      * If Status == IN_AIR, returns the amount of elapsed seconds between departure and now
      * otherwise, returns getFlightTime()
-     * @return
+     * if NOT_DEPARTED returns 0
+     * if ARRIVED returns getFlightTime();
      */
     public long getElapsedTime() {
-        if (getStatus().equals(Status.IN_AIR)) {
-            long startMillis = mDeparture.getTimeInMillis();
-            long endMillis = Calendar.getInstance().getTimeInMillis();
+        switch (getStatus()) {
+            case NOT_DEPARTED:
+                return 0;
+            case ARRIVED:
+                return getFlightTime();
+            case IN_AIR:
+                long startMillis = mDeparture.getTimeInMillis();
+                long endMillis = Calendar.getInstance().getTimeInMillis();
 
-            long seconds = Math.abs(endMillis - startMillis)/1000;
-            return seconds;
+                long seconds = Math.abs(endMillis - startMillis)/1000;
+                return seconds;
+            default:
+                throw new InvalidParameterException("Invalid Flight Status!");
         }
-        else return getFlightTime();
+    }
+
+    /**
+     * If Status == IN_AIR, returns a fraction (number between 0 - 1) representing the percentage
+     * of elapsed flight
+     * if NOT_DEPARTED returns 0
+     * if ARRIVED returns 1
+     */
+    public double getElapsedFraction() {
+        switch (getStatus()) {
+            case NOT_DEPARTED:
+                return 0;
+            case ARRIVED:
+                return 1;
+            case IN_AIR:
+                return  ((double)getElapsedTime()) / getFlightTime();
+            default:
+                throw new InvalidParameterException("Invalid Flight Status!");
+        }
+    }
+
+    public double getFractionStepForMillis(int fractionMillis) {
+        long flightTimeMillis = getFlightTime()*1000;
+        return ((double)fractionMillis) / flightTimeMillis;
     }
 
 

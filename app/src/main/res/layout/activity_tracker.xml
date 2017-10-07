@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_tracker_container"
+
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
@@ -20,9 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="200dp"
-        custom:src="@drawable/ic_plane_largest_120"
-        custom:plane_size="0.5"
-        />
+        custom:src="@drawable/ic_plane_shaded_120"
+        custom:plane_size="0.2" />
 
     <ve.com.abicelis.planetracker.ui.customviews.WrapContentHeightViewPager
         android:id="@+id/activity_tracker_viewpager"

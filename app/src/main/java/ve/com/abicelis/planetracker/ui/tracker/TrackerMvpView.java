@@ -1,14 +1,15 @@
 package ve.com.abicelis.planetracker.ui.tracker;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
 import ve.com.abicelis.planetracker.data.model.Airport;
 import ve.com.abicelis.planetracker.data.model.Flight;
-import ve.com.abicelis.planetracker.data.model.IntegerLatLng;
 import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.ui.base.MvpView;
 
@@ -21,8 +22,9 @@ public interface TrackerMvpView extends MvpView {
     void initViewPager(List<Flight> flights);
     void initMap(Trip trip);
     void setRestrictZoom(boolean restrict);
-    void moveCameraToLocation(@NonNull IntegerLatLng integerLatLng, boolean restrictZoom, int delay);
+    void moveCameraToLocation(@NonNull LatLng latLng, boolean restrictZoom, int delay, @Nullable GoogleMap.CancelableCallback callback);
     void drawRouteAndMoveCameraToBoundsOf(Airport origin, Airport destination);
 
-    // void initGoogleApiClient();
+    void animateCamera(Flight flight, int delay);
+    void stopAnimatingCamera();
 }

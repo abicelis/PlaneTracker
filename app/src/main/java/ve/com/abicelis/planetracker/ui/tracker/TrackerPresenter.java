@@ -2,15 +2,12 @@ package ve.com.abicelis.planetracker.ui.tracker;
 
 import android.os.Handler;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import ve.com.abicelis.planetracker.application.Message;
 import ve.com.abicelis.planetracker.data.DataManager;
 import ve.com.abicelis.planetracker.data.model.Flight;
-import ve.com.abicelis.planetracker.data.model.IntegerLatLng;
 import ve.com.abicelis.planetracker.data.model.Trip;
 import ve.com.abicelis.planetracker.ui.base.BasePresenter;
 
@@ -21,8 +18,8 @@ import ve.com.abicelis.planetracker.ui.base.BasePresenter;
 public class TrackerPresenter extends BasePresenter<TrackerMvpView> {
 
     //CONST
-    private static final int AIRPORT_ZOOM_IN_DELAY = 500;
-    private static final int AIRPORT_ZOOM_IN_TIME = 1000;
+    private static final int AIRPORT_ZOOM_IN_DELAY = 100;
+    private static final int AIRPORT_ZOOM_IN_TIME = 2000;
 
     //DATA
     private DataManager mDataManager;
@@ -55,29 +52,24 @@ public class TrackerPresenter extends BasePresenter<TrackerMvpView> {
     public void flightChanged(int index) {
         currentFlight = index;
         Flight f = mTrip.getFlights().get(currentFlight);
+        getMvpView().stopAnimatingCamera();
 
         switch (f.getStatus()) {
             case NOT_DEPARTED:
                 new Handler().postDelayed(() -> {
-                    IntegerLatLng latLng = new IntegerLatLng(f.getOrigin().getLatitude(), f.getOrigin().getLongitude());
-                    //getMvpView().moveCameraToLocation(latLng, false, AIRPORT_ZOOM_IN_TIME);
                     getMvpView().drawRouteAndMoveCameraToBoundsOf(f.getOrigin(), f.getDestination());
                 }, AIRPORT_ZOOM_IN_DELAY);
                 break;
 
             case ARRIVED:
                 new Handler().postDelayed(() -> {
-                    IntegerLatLng latLng = new IntegerLatLng(f.getDestination().getLatitude(), f.getDestination().getLongitude());
-                    getMvpView().moveCameraToLocation(latLng, false, AIRPORT_ZOOM_IN_TIME);
+                    getMvpView().moveCameraToLocation(f.getDestination().getLatLng(), false, AIRPORT_ZOOM_IN_TIME, null);
                 }, AIRPORT_ZOOM_IN_DELAY);
                 break;
 
             case IN_AIR:
-                //TODO change this
                 new Handler().postDelayed(() -> {
-                    IntegerLatLng latLng = new IntegerLatLng(f.getOrigin().getLatitude(), f.getOrigin().getLongitude());
-                    //getMvpView().moveCameraToLocation(latLng, false, AIRPORT_ZOOM_IN_TIME);
-                    getMvpView().drawRouteAndMoveCameraToBoundsOf(f.getOrigin(), f.getDestination());
+                    getMvpView().animateCamera(f, AIRPORT_ZOOM_IN_TIME);
                 }, AIRPORT_ZOOM_IN_DELAY);
                 break;
 
@@ -88,5 +80,4 @@ public class TrackerPresenter extends BasePresenter<TrackerMvpView> {
     public Trip getLoadedTrip() {
         return mTrip;
     }
-
 }

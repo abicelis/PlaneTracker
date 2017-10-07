@@ -52,6 +52,7 @@ This Project uses external dependencies and SDK's
 * [FlightAware API](http://flightxml.flightaware.com/json/FlightXML3/) - Flight Data API
 * [ADS-B Exchange](https://www.adsbexchange.com) - Flight Data API
 * [Google Maps API](https://developers.google.com/maps/) - Google Maps API
+* [Google Maps Utils](https://github.com/googlemaps/android-maps-utils) - Google Maps Utils API
 
 
 ## Drawable sizes

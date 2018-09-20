@@ -8,10 +8,10 @@
         android:title="@string/activity_home_menu_search"
         app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/menu_home_settings"
-        android:title="@string/activity_home_menu_settings"
-        app:showAsAction="never"/>
+    <!--<item-->
+        <!--android:id="@+id/menu_home_settings"-->
+        <!--android:title="@string/activity_home_menu_settings"-->
+        <!--app:showAsAction="never"/>-->
 
     <item
         android:id="@+id/menu_home_theme"

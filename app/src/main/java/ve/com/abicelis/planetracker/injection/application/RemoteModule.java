@@ -9,6 +9,7 @@ import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import okhttp3.Route;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -89,11 +90,18 @@ public class RemoteModule {
 
         OkHttpClient.Builder client = new OkHttpClient().newBuilder();
 
+        //Basic Auth
         client.authenticator((Route route, Response response) -> {
             String credential = Credentials.basic(user, key);
             return response.request().newBuilder().header("Authorization", credential).build();
         });
 
+        // Logging
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
+        // add logging as last interceptor
+        client.addInterceptor(logging);
 
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)

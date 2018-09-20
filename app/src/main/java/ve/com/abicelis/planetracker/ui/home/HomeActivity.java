@@ -107,9 +107,9 @@ public class HomeActivity extends BaseActivity implements HomeMvpView {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.menu_home_settings:
-                Toast.makeText(this, "Under construction", Toast.LENGTH_SHORT).show();
-                break;
+//            case R.id.menu_home_settings:
+//                Toast.makeText(this, "Under construction", Toast.LENGTH_SHORT).show();
+//                break;
 
             case R.id.menu_home_theme:
                 new SharedPreferenceHelper().toggleAppThemeType();

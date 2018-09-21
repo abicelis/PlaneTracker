@@ -1,3 +1,10 @@
+# PLEASE READ #
+
+Sadly.. FlightAware made some changes to its API, basically removing the free tier. As of now (Sept 2018) Plane Tracker has been unpublished from the Play Store :(
+I may look into swapping out FlightAware, sometime in the future.
+Sorry folks.
+
+
 # Plane Tracker #
 
 I don't like huge, slow, complicated, non-intuitive, odd-looking, bloated, add-riddled flight tracking apps. Plane Tracker is a simple, lightweight yet good-looking plane/flight tracking app.
